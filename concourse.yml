@@ -1,0 +1,231 @@
+resources:
+- name: git-clone-leaf
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ratpoison-io/leaf.git
+
+- name: git-clone-collenchyma-nn
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ratpoison-io/collenchyma-nn.git
+
+- name: git-clone-collenchyma-blas
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ratpoison-io/collenchyma-blas.git
+
+- name: git-clone-collenchyma
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ratpoison-io/collenchyma.git
+
+- name: git-clone-cuticula
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ratpoison-io/cuticula.git
+
+- name: git-clone-rust-cudnn
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ratpoison-io/rust-cudnn.git
+
+- name: git-clone-rust-cublas
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ratpoison-io/rust-cublas.git
+
+- name: git-clone-ci
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ratpoison-io/continuous-integration.git
+
+- name: container
+  type: docker-image
+  source:
+    repository: quay.io/ratpoison/machine-learning-container
+    username: {{quay-username}}
+    password: {{quay-password}}
+
+
+jobs:
+  - name: build-container
+    public: true
+    plan:
+      - get: git-clone-ci
+        trigger: true
+      - put: container
+        params:
+          cache: true
+          tag_as_latest: true
+          build: git-clone-ci/container
+
+  - name: test-collenchyma
+    public: true
+    plan:
+    - aggregate:
+      - get: git-clone-rust-cudnn
+        trigger: true
+      - get: git-clone-rust-cublas
+        trigger: true
+      - get: git-clone-collenchyma
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [build-container]
+    - task: compile
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: { repository: quay.io/ratpoison/machine-learning-container }
+        inputs:
+        - name: git-clone-rust-cublas
+        - name: git-clone-rust-cudnn
+        - name: git-clone-collenchyma
+        run:
+          path: cargo
+          args: ["t", "--no-default-features","--features=\"native\""]
+          dir: "collenchyma"
+
+
+  - name: test-collenchyma-blas
+    public: true
+    plan:
+    - aggregate:
+      - get: git-clone-rust-cublas
+        trigger: true
+      - get: git-clone-collenchyma
+        trigger: true
+      - get: git-clone-collenchyma-blas
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [build-container, test-collenchyma]
+    - task: compile
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: { repository: quay.io/ratpoison/machine-learning-container }
+        inputs:
+        - name: git-clone-rust-cublas
+        - name: git-clone-collenchyma
+        - name: git-clone-collenchyma-blas
+        run:
+          path: cargo
+          args: ["t", "--no-default-features","--features=\"native\""]
+          dir: "collenchyma-blas"
+
+  - name: test-collenchyma-nn
+    public: true
+    plan:
+    - aggregate:
+      - get: git-clone-rust-cudnn
+        trigger: true
+      - get: git-clone-rust-cublas
+        trigger: true
+      - get: git-clone-collenchyma
+        trigger: true
+      - get: git-clone-collenchyma-blas
+        trigger: true
+      - get: git-clone-collenchyma-nn
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [build-container, test-collenchyma]
+    - task: compile
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: { repository: quay.io/ratpoison/machine-learning-container }
+        inputs:
+        - name: git-clone-rust-cudnn
+        - name: git-clone-rust-cublas
+        - name: git-clone-collenchyma
+        - name: git-clone-collenchyma-blas
+        - name: git-clone-collenchyma-nn
+        run:
+          path: cargo
+          args: ["t", "--no-default-features","--features=\"native\""]
+          dir: "collenchyma-nn"
+
+  - name: test-leaf
+    public: true
+    plan:
+    - aggregate:
+      - get: git-clone-rust-cudnn
+        trigger: true
+      - get: git-clone-rust-cublas
+        trigger: true
+      - get: git-clone-collenchyma
+        trigger: true
+      - get: git-clone-collenchyma-blas
+        trigger: true
+      - get: git-clone-collenchyma-nn
+        trigger: true
+      - get: git-clone-leaf
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [build-container, test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
+    - task: compile
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: { repository: quay.io/ratpoison/machine-learning-container }
+        inputs:
+        - name: git-clone-rust-cudnn
+        - name: git-clone-rust-cublas
+        - name: git-clone-collenchyma
+        - name: git-clone-collenchyma-blas
+        - name: git-clone-collenchyma-nn
+        - name: git-clone-leaf
+        run:
+          path: cargo
+          args: ["t", "--no-default-features","--features=\"native\""]
+          dir: "collenchyma-nn"
+
+  - name: test-cuticula
+    public: true
+    plan:
+    - aggregate:
+      - get: git-clone-rust-cudnn
+        trigger: true
+      - get: git-clone-rust-cublas
+        trigger: true
+      - get: git-clone-collenchyma
+        trigger: true
+      - get: git-clone-collenchyma-blas
+        trigger: true
+      - get: git-clone-collenchyma-nn
+        trigger: true
+      - get: git-clone-cuticula
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [build-container, test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
+    - task: compile
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: { repository: quay.io/ratpoison/machine-learning-container }
+        inputs:
+        - name: git-clone-rust-cudnn
+        - name: git-clone-rust-cublas
+        - name: git-clone-collenchyma
+        - name: git-clone-cuticula
+        run:
+          path: cargo
+          args: ["t", "--no-default-features","--features=\"native\""]
+          dir: "git-clone-cuticula"
