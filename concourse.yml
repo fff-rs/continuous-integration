@@ -81,11 +81,9 @@ jobs:
         trigger: true
         passed: [build-container]
     - task: compile
+      image: container
       config:
         platform: linux
-        image_resource:
-          type: docker-image
-          source: { repository: quay.io/ratpoison/machine-learning-container }
         inputs:
         - name: rust-cublas
         - name: rust-cudnn
@@ -110,11 +108,9 @@ jobs:
         trigger: true
         passed: [build-container, test-collenchyma]
     - task: compile
+      image: container
       config:
         platform: linux
-        image_resource:
-          type: docker-image
-          source: { repository: quay.io/ratpoison/machine-learning-container }
         inputs:
         - name: rust-cublas
         - name: collenchyma
@@ -142,11 +138,9 @@ jobs:
         trigger: true
         passed: [build-container, test-collenchyma]
     - task: compile
+      image: container
       config:
         platform: linux
-        image_resource:
-          type: docker-image
-          source: { repository: quay.io/ratpoison/machine-learning-container }
         inputs:
         - name: rust-cudnn
         - name: rust-cublas
@@ -178,11 +172,9 @@ jobs:
         trigger: true
         passed: [build-container, test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
     - task: compile
+      image: container
       config:
         platform: linux
-        image_resource:
-          type: docker-image
-          source: { repository: quay.io/ratpoison/machine-learning-container }
         inputs:
         - name: rust-cudnn
         - name: rust-cublas
@@ -215,11 +207,9 @@ jobs:
         trigger: true
         passed: [build-container, test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
     - task: compile
+      image: container
       config:
         platform: linux
-        image_resource:
-          type: docker-image
-          source: { repository: quay.io/ratpoison/machine-learning-container }
         inputs:
         - name: rust-cudnn
         - name: rust-cublas
