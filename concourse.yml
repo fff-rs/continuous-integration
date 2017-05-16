@@ -41,6 +41,12 @@ resources:
     branch: master
     uri: https://github.com/ratpoison-io/rust-cublas.git
 
+- name: rust-blas
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ratpoison-io/rust-blas.git
+
 - name: continuous-integration
   type: git
   source:
@@ -73,6 +79,8 @@ jobs:
     - aggregate:
       - get: rust-cudnn
         trigger: true
+      - get: rust-blas
+        trigger: true
       - get: rust-cublas
         trigger: true
       - get: collenchyma
@@ -85,8 +93,6 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: rust-cublas
-        - name: rust-cudnn
         - name: collenchyma
         run:
           path: cargo
@@ -104,6 +110,8 @@ jobs:
         trigger: true
       - get: collenchyma-blas
         trigger: true
+      - get: rust-blas
+        trigger: true
       - get: container
         trigger: true
         passed: [build-container, test-collenchyma]
@@ -112,6 +120,7 @@ jobs:
       config:
         platform: linux
         inputs:
+        - name: rust-blas
         - name: rust-cublas
         - name: collenchyma
         - name: collenchyma-blas
@@ -125,6 +134,8 @@ jobs:
     plan:
     - aggregate:
       - get: rust-cudnn
+        trigger: true
+      - get: rust-blas
         trigger: true
       - get: rust-cublas
         trigger: true
@@ -143,6 +154,7 @@ jobs:
         platform: linux
         inputs:
         - name: rust-cudnn
+        - name: rust-blas
         - name: rust-cublas
         - name: collenchyma
         - name: collenchyma-blas
@@ -157,6 +169,8 @@ jobs:
     plan:
     - aggregate:
       - get: rust-cudnn
+        trigger: true
+      - get: rust-blas
         trigger: true
       - get: rust-cublas
         trigger: true
@@ -177,6 +191,7 @@ jobs:
         platform: linux
         inputs:
         - name: rust-cudnn
+        - name: rust-blas
         - name: rust-cublas
         - name: collenchyma
         - name: collenchyma-blas
@@ -192,6 +207,8 @@ jobs:
     plan:
     - aggregate:
       - get: rust-cudnn
+        trigger: true
+      - get: rust-blas
         trigger: true
       - get: rust-cublas
         trigger: true
@@ -212,6 +229,7 @@ jobs:
         platform: linux
         inputs:
         - name: rust-cudnn
+        - name: rust-blas
         - name: rust-cublas
         - name: collenchyma
         - name: cuticula
