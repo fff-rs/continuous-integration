@@ -63,6 +63,7 @@ resources:
 
 jobs:
   - name: build-container
+    serial: true
     public: true
     plan:
       - get: continuous-integration
