@@ -1,47 +1,47 @@
 resources:
-- name: git-clone-leaf
+- name: leaf
   type: git
   source:
     branch: master
     uri: https://github.com/ratpoison-io/leaf.git
 
-- name: git-clone-collenchyma-nn
+- name: collenchyma-nn
   type: git
   source:
     branch: master
     uri: https://github.com/ratpoison-io/collenchyma-nn.git
 
-- name: git-clone-collenchyma-blas
+- name: collenchyma-blas
   type: git
   source:
     branch: master
     uri: https://github.com/ratpoison-io/collenchyma-blas.git
 
-- name: git-clone-collenchyma
+- name: collenchyma
   type: git
   source:
     branch: master
     uri: https://github.com/ratpoison-io/collenchyma.git
 
-- name: git-clone-cuticula
+- name: cuticula
   type: git
   source:
     branch: master
     uri: https://github.com/ratpoison-io/cuticula.git
 
-- name: git-clone-rust-cudnn
+- name: rust-cudnn
   type: git
   source:
     branch: master
     uri: https://github.com/ratpoison-io/rust-cudnn.git
 
-- name: git-clone-rust-cublas
+- name: rust-cublas
   type: git
   source:
     branch: master
     uri: https://github.com/ratpoison-io/rust-cublas.git
 
-- name: git-clone-ci
+- name: continuous-integration
   type: git
   source:
     branch: master
@@ -59,23 +59,23 @@ jobs:
   - name: build-container
     public: true
     plan:
-      - get: git-clone-ci
+      - get: continuous-integration
         trigger: true
       - put: container
         params:
           cache: true
           tag_as_latest: true
-          build: git-clone-ci/container
+          build: continuous-integration/container
 
   - name: test-collenchyma
     public: true
     plan:
     - aggregate:
-      - get: git-clone-rust-cudnn
+      - get: rust-cudnn
         trigger: true
-      - get: git-clone-rust-cublas
+      - get: rust-cublas
         trigger: true
-      - get: git-clone-collenchyma
+      - get: collenchyma
         trigger: true
       - get: container
         trigger: true
@@ -87,9 +87,9 @@ jobs:
           type: docker-image
           source: { repository: quay.io/ratpoison/machine-learning-container }
         inputs:
-        - name: git-clone-rust-cublas
-        - name: git-clone-rust-cudnn
-        - name: git-clone-collenchyma
+        - name: rust-cublas
+        - name: rust-cudnn
+        - name: collenchyma
         run:
           path: cargo
           args: ["t", "--no-default-features","--features=\"native\""]
@@ -100,11 +100,11 @@ jobs:
     public: true
     plan:
     - aggregate:
-      - get: git-clone-rust-cublas
+      - get: rust-cublas
         trigger: true
-      - get: git-clone-collenchyma
+      - get: collenchyma
         trigger: true
-      - get: git-clone-collenchyma-blas
+      - get: collenchyma-blas
         trigger: true
       - get: container
         trigger: true
@@ -116,9 +116,9 @@ jobs:
           type: docker-image
           source: { repository: quay.io/ratpoison/machine-learning-container }
         inputs:
-        - name: git-clone-rust-cublas
-        - name: git-clone-collenchyma
-        - name: git-clone-collenchyma-blas
+        - name: rust-cublas
+        - name: collenchyma
+        - name: collenchyma-blas
         run:
           path: cargo
           args: ["t", "--no-default-features","--features=\"native\""]
@@ -128,15 +128,15 @@ jobs:
     public: true
     plan:
     - aggregate:
-      - get: git-clone-rust-cudnn
+      - get: rust-cudnn
         trigger: true
-      - get: git-clone-rust-cublas
+      - get: rust-cublas
         trigger: true
-      - get: git-clone-collenchyma
+      - get: collenchyma
         trigger: true
-      - get: git-clone-collenchyma-blas
+      - get: collenchyma-blas
         trigger: true
-      - get: git-clone-collenchyma-nn
+      - get: collenchyma-nn
         trigger: true
       - get: container
         trigger: true
@@ -148,11 +148,11 @@ jobs:
           type: docker-image
           source: { repository: quay.io/ratpoison/machine-learning-container }
         inputs:
-        - name: git-clone-rust-cudnn
-        - name: git-clone-rust-cublas
-        - name: git-clone-collenchyma
-        - name: git-clone-collenchyma-blas
-        - name: git-clone-collenchyma-nn
+        - name: rust-cudnn
+        - name: rust-cublas
+        - name: collenchyma
+        - name: collenchyma-blas
+        - name: collenchyma-nn
         run:
           path: cargo
           args: ["t", "--no-default-features","--features=\"native\""]
@@ -162,17 +162,17 @@ jobs:
     public: true
     plan:
     - aggregate:
-      - get: git-clone-rust-cudnn
+      - get: rust-cudnn
         trigger: true
-      - get: git-clone-rust-cublas
+      - get: rust-cublas
         trigger: true
-      - get: git-clone-collenchyma
+      - get: collenchyma
         trigger: true
-      - get: git-clone-collenchyma-blas
+      - get: collenchyma-blas
         trigger: true
-      - get: git-clone-collenchyma-nn
+      - get: collenchyma-nn
         trigger: true
-      - get: git-clone-leaf
+      - get: leaf
         trigger: true
       - get: container
         trigger: true
@@ -184,12 +184,12 @@ jobs:
           type: docker-image
           source: { repository: quay.io/ratpoison/machine-learning-container }
         inputs:
-        - name: git-clone-rust-cudnn
-        - name: git-clone-rust-cublas
-        - name: git-clone-collenchyma
-        - name: git-clone-collenchyma-blas
-        - name: git-clone-collenchyma-nn
-        - name: git-clone-leaf
+        - name: rust-cudnn
+        - name: rust-cublas
+        - name: collenchyma
+        - name: collenchyma-blas
+        - name: collenchyma-nn
+        - name: leaf
         run:
           path: cargo
           args: ["t", "--no-default-features","--features=\"native\""]
@@ -199,17 +199,17 @@ jobs:
     public: true
     plan:
     - aggregate:
-      - get: git-clone-rust-cudnn
+      - get: rust-cudnn
         trigger: true
-      - get: git-clone-rust-cublas
+      - get: rust-cublas
         trigger: true
-      - get: git-clone-collenchyma
+      - get: collenchyma
         trigger: true
-      - get: git-clone-collenchyma-blas
+      - get: collenchyma-blas
         trigger: true
-      - get: git-clone-collenchyma-nn
+      - get: collenchyma-nn
         trigger: true
-      - get: git-clone-cuticula
+      - get: cuticula
         trigger: true
       - get: container
         trigger: true
@@ -221,11 +221,11 @@ jobs:
           type: docker-image
           source: { repository: quay.io/ratpoison/machine-learning-container }
         inputs:
-        - name: git-clone-rust-cudnn
-        - name: git-clone-rust-cublas
-        - name: git-clone-collenchyma
-        - name: git-clone-cuticula
+        - name: rust-cudnn
+        - name: rust-cublas
+        - name: collenchyma
+        - name: cuticula
         run:
           path: cargo
           args: ["t", "--no-default-features","--features=\"native\""]
-          dir: "git-clone-cuticula"
+          dir: "cuticula"
