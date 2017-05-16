@@ -90,7 +90,7 @@ jobs:
         - name: collenchyma
         run:
           path: cargo
-          args: ["t", "--no-default-features","--features=\"native\""]
+          args: ["test", "--no-default-features","--features=native"]
           dir: "collenchyma"
 
 
@@ -117,7 +117,7 @@ jobs:
         - name: collenchyma-blas
         run:
           path: cargo
-          args: ["t", "--no-default-features","--features=\"native\""]
+          args: ["test", "--no-default-features","--features=native"]
           dir: "collenchyma-blas"
 
   - name: test-collenchyma-nn
@@ -149,7 +149,7 @@ jobs:
         - name: collenchyma-nn
         run:
           path: cargo
-          args: ["t", "--no-default-features","--features=\"native\""]
+          args: ["test", "--no-default-features","--features=native"]
           dir: "collenchyma-nn"
 
   - name: test-leaf
@@ -184,7 +184,7 @@ jobs:
         - name: leaf
         run:
           path: cargo
-          args: ["t", "--no-default-features","--features=\"native\""]
+          args: ["test", "--no-default-features","--features=native"]
           dir: "collenchyma-nn"
 
   - name: test-cuticula
@@ -217,5 +217,5 @@ jobs:
         - name: cuticula
         run:
           path: cargo
-          args: ["t", "--no-default-features","--features=\"native\""]
+          args: ["test", "--no-default-features","--features=native"]
           dir: "cuticula"
