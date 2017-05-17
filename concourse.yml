@@ -78,12 +78,6 @@ jobs:
     public: true
     plan:
     - aggregate:
-      - get: rust-cudnn
-        trigger: true
-      - get: rust-blas
-        trigger: true
-      - get: rust-cublas
-        trigger: true
       - get: collenchyma
         trigger: true
       - get: container
