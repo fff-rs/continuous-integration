@@ -1,4 +1,10 @@
 resources:
+- name: leaf-examples
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/ratpoison-io/leaf-examples.git
+
 - name: leaf
   type: git
   source:
@@ -159,16 +165,47 @@ jobs:
           args: ["test", "--no-default-features","--features=native"]
           dir: "collenchyma-nn"
 
+  - name: test-cuticula
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: collenchyma
+        trigger: true
+      - get: collenchyma-blas
+        trigger: true
+      - get: collenchyma-nn
+        trigger: true
+      - get: cuticula
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [build-container, test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
+    - task: compile
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: collenchyma
+        - name: cuticula
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native"]
+          dir: "cuticula"
+
+
   - name: test-leaf
     public: true
     plan:
     - aggregate:
       - get: rust-cudnn
-        trigger: true
       - get: rust-blas
-        trigger: true
       - get: rust-cublas
-        trigger: true
       - get: collenchyma
         trigger: true
       - get: collenchyma-blas
@@ -197,27 +234,24 @@ jobs:
           args: ["test", "--no-default-features","--features=native"]
           dir: "collenchyma-nn"
 
-  - name: test-cuticula
+  - name: test-leaf-examples
     public: true
     plan:
     - aggregate:
       - get: rust-cudnn
-        trigger: true
       - get: rust-blas
-        trigger: true
       - get: rust-cublas
-        trigger: true
+      - get: collenchyma-blas
+      - get: collenchyma-nn
       - get: collenchyma
         trigger: true
-      - get: collenchyma-blas
+      - get: leaf
         trigger: true
-      - get: collenchyma-nn
-        trigger: true
-      - get: cuticula
+      - get: leaf-examples
         trigger: true
       - get: container
         trigger: true
-        passed: [build-container, test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
+        passed: [build-container, test-collenchyma, test-leaf, test-cuticula]
     - task: compile
       image: container
       config:
@@ -227,8 +261,11 @@ jobs:
         - name: rust-blas
         - name: rust-cublas
         - name: collenchyma
-        - name: cuticula
+        - name: collenchyma-blas
+        - name: collenchyma-nn
+        - name: leaf
+        - name: leaf-examples
         run:
           path: cargo
-          args: ["test", "--no-default-features","--features=native"]
-          dir: "cuticula"
+          args: ["b", "--no-default-features","--features=native"]
+          dir: "leaf-examples"
