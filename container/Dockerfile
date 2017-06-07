@@ -9,8 +9,8 @@ RUN dnf install -y capnproto capnproto-libs capnproto-devel  && dnf clean dbcach
 RUN dnf install -y dnf-plugins-core \
 	&& dnf config-manager -y --add-repo=http://negativo17.org/repos/fedora-nvidia.repo \
 	&& dnf install -y compat-gcc-53 \
-			cuda-cudnn5.1 \
-			cuda-cudnn5.1-devel \
+			cuda-cudnn \
+			cuda-cudnn-devel \
 			cuda \
 			cuda-devel \
 			cuda-cublas \
