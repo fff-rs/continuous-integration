@@ -7,6 +7,7 @@ RUN dnf update -y \
 	&& dnf install -y compat-gcc-53 cuda-cudnn5.1 cuda-cudnn5.1-devel cuda cuda-devel cuda-cublas cuda-cublas-devel cuda-cudart cuda-cudart-devel \
 	&& dnf install -y clang \
 	&& dnf install -y openssl-static openssl-libs openssl-devel \
+	&& dnf install -y capnproto capnproto-libs capnproto-devel \
 	&& dnf clean all \
 	&& curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
 
