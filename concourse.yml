@@ -53,12 +53,6 @@ resources:
     branch: master
     uri: https://github.com/ratpoison-io/rust-blas.git
 
-- name: continuous-integration
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/ratpoison-io/continuous-integration.git
-
 - name: container
   type: docker-image
   source:
@@ -68,18 +62,6 @@ resources:
 
 
 jobs:
-  - name: build-container
-    serial: true
-    public: true
-    plan:
-      - get: continuous-integration
-        trigger: true
-      - put: container
-        params:
-          cache: true
-          tag_as_latest: true
-          build: continuous-integration/container
-
   - name: test-collenchyma
     public: true
     plan:
@@ -88,7 +70,6 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [build-container]
     - task: compile
       image: container
       config:
@@ -115,7 +96,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [build-container, test-collenchyma]
+        passed: [test-collenchyma]
     - task: compile
       image: container
       config:
@@ -148,7 +129,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [build-container, test-collenchyma]
+        passed: [test-collenchyma]
     - task: compile
       image: container
       config:
@@ -182,7 +163,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [build-container, test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
+        passed: [test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
     - task: compile
       image: container
       config:
@@ -216,7 +197,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [build-container, test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
+        passed: [test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
     - task: compile
       image: container
       config:
@@ -251,7 +232,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [build-container, test-collenchyma, test-leaf, test-cuticula]
+        passed: [test-collenchyma, test-leaf, test-cuticula]
     - task: compile
       image: container
       config:
