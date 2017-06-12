@@ -11,23 +11,23 @@ resources:
     branch: master
     uri: https://github.com/ratpoison-io/leaf.git
 
-- name: collenchyma-nn
+- name: coaster-nn
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/collenchyma-nn.git
+    uri: https://github.com/ratpoison-io/coaster-nn.git
 
-- name: collenchyma-blas
+- name: coaster-blas
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/collenchyma-blas.git
+    uri: https://github.com/ratpoison-io/coaster-blas.git
 
-- name: collenchyma
+- name: coaster
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/collenchyma.git
+    uri: https://github.com/ratpoison-io/coaster.git
 
 - name: cuticula
   type: git
@@ -62,11 +62,11 @@ resources:
 
 
 jobs:
-  - name: test-collenchyma
+  - name: test-coaster
     public: true
     plan:
     - aggregate:
-      - get: collenchyma
+      - get: coaster
         trigger: true
       - get: container
         trigger: true
@@ -75,28 +75,28 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: collenchyma
+        - name: coaster
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: "collenchyma"
+          dir: "coaster"
 
 
-  - name: test-collenchyma-blas
+  - name: test-coaster-blas
     public: true
     plan:
     - aggregate:
       - get: rust-cublas
         trigger: true
-      - get: collenchyma
+      - get: coaster
         trigger: true
-      - get: collenchyma-blas
+      - get: coaster-blas
         trigger: true
       - get: rust-blas
         trigger: true
       - get: container
         trigger: true
-        passed: [test-collenchyma]
+        passed: [test-coaster]
     - task: compile
       image: container
       config:
@@ -104,14 +104,14 @@ jobs:
         inputs:
         - name: rust-blas
         - name: rust-cublas
-        - name: collenchyma
-        - name: collenchyma-blas
+        - name: coaster
+        - name: coaster-blas
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: "collenchyma-blas"
+          dir: "coaster-blas"
 
-  - name: test-collenchyma-nn
+  - name: test-coaster-nn
     public: true
     plan:
     - aggregate:
@@ -121,15 +121,15 @@ jobs:
         trigger: true
       - get: rust-cublas
         trigger: true
-      - get: collenchyma
+      - get: coaster
         trigger: true
-      - get: collenchyma-blas
+      - get: coaster-blas
         trigger: true
-      - get: collenchyma-nn
+      - get: coaster-nn
         trigger: true
       - get: container
         trigger: true
-        passed: [test-collenchyma]
+        passed: [test-coaster]
     - task: compile
       image: container
       config:
@@ -138,13 +138,13 @@ jobs:
         - name: rust-cudnn
         - name: rust-blas
         - name: rust-cublas
-        - name: collenchyma
-        - name: collenchyma-blas
-        - name: collenchyma-nn
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: "collenchyma-nn"
+          dir: "coaster-nn"
 
   - name: test-cuticula
     public: true
@@ -153,17 +153,17 @@ jobs:
       - get: rust-cudnn
       - get: rust-blas
       - get: rust-cublas
-      - get: collenchyma
+      - get: coaster
         trigger: true
-      - get: collenchyma-blas
+      - get: coaster-blas
         trigger: true
-      - get: collenchyma-nn
+      - get: coaster-nn
         trigger: true
       - get: cuticula
         trigger: true
       - get: container
         trigger: true
-        passed: [test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
+        passed: [test-coaster, test-coaster-nn, test-coaster-blas]
     - task: compile
       image: container
       config:
@@ -172,7 +172,7 @@ jobs:
         - name: rust-cudnn
         - name: rust-blas
         - name: rust-cublas
-        - name: collenchyma
+        - name: coaster
         - name: cuticula
         run:
           path: cargo
@@ -187,17 +187,17 @@ jobs:
       - get: rust-cudnn
       - get: rust-blas
       - get: rust-cublas
-      - get: collenchyma
+      - get: coaster
         trigger: true
-      - get: collenchyma-blas
+      - get: coaster-blas
         trigger: true
-      - get: collenchyma-nn
+      - get: coaster-nn
         trigger: true
       - get: leaf
         trigger: true
       - get: container
         trigger: true
-        passed: [test-collenchyma, test-collenchyma-nn, test-collenchyma-blas]
+        passed: [test-coaster, test-coaster-nn, test-coaster-blas]
     - task: compile
       image: container
       config:
@@ -206,14 +206,14 @@ jobs:
         - name: rust-cudnn
         - name: rust-blas
         - name: rust-cublas
-        - name: collenchyma
-        - name: collenchyma-blas
-        - name: collenchyma-nn
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
         - name: leaf
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: "collenchyma-nn"
+          dir: "coaster-nn"
 
   - name: test-leaf-examples
     public: true
@@ -222,9 +222,9 @@ jobs:
       - get: rust-cudnn
       - get: rust-blas
       - get: rust-cublas
-      - get: collenchyma-blas
-      - get: collenchyma-nn
-      - get: collenchyma
+      - get: coaster-blas
+      - get: coaster-nn
+      - get: coaster
         trigger: true
       - get: leaf
         trigger: true
@@ -232,7 +232,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [test-collenchyma, test-leaf, test-cuticula]
+        passed: [test-coaster, test-leaf, test-cuticula]
     - task: compile
       image: container
       config:
@@ -241,9 +241,9 @@ jobs:
         - name: rust-cudnn
         - name: rust-blas
         - name: rust-cublas
-        - name: collenchyma
-        - name: collenchyma-blas
-        - name: collenchyma-nn
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
         - name: leaf
         - name: leaf-examples
         run:
