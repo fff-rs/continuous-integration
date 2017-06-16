@@ -3,60 +3,60 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/leaf-examples.git
+    uri: https://github.com/spearow/leaf-examples.git
 
 - name: leaf
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/leaf.git
+    uri: https://github.com/spearow/leaf.git
 
 - name: coaster-nn
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/coaster-nn.git
+    uri: https://github.com/spearow/coaster-nn.git
 
 - name: coaster-blas
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/coaster-blas.git
+    uri: https://github.com/spearow/coaster-blas.git
 
 - name: coaster
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/coaster.git
+    uri: https://github.com/spearow/coaster.git
 
-- name: cuticula
+- name: greenglas
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/cuticula.git
+    uri: https://github.com/spearow/greenglas.git
 
 - name: rust-cudnn
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/rust-cudnn.git
+    uri: https://github.com/spearow/rust-cudnn.git
 
 - name: rust-cublas
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/rust-cublas.git
+    uri: https://github.com/spearow/rust-cublas.git
 
 - name: rust-blas
   type: git
   source:
     branch: master
-    uri: https://github.com/ratpoison-io/rust-blas.git
+    uri: https://github.com/spearow/rust-blas.git
 
 - name: container
   type: docker-image
   source:
-    repository: quay.io/ratpoison/machine-learning-container
+    repository: quay.io/spearow/machine-learning-container
     username: {{quay-username}}
     password: {{quay-password}}
 
@@ -146,7 +146,7 @@ jobs:
           args: ["test", "--no-default-features","--features=native"]
           dir: "coaster-nn"
 
-  - name: test-cuticula
+  - name: test-greenglas
     public: true
     plan:
     - aggregate:
@@ -159,7 +159,7 @@ jobs:
         trigger: true
       - get: coaster-nn
         trigger: true
-      - get: cuticula
+      - get: greenglas
         trigger: true
       - get: container
         trigger: true
@@ -173,11 +173,11 @@ jobs:
         - name: rust-blas
         - name: rust-cublas
         - name: coaster
-        - name: cuticula
+        - name: greenglas
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: "cuticula"
+          dir: "greenglas"
 
 
   - name: test-leaf
@@ -232,7 +232,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [test-coaster, test-leaf, test-cuticula]
+        passed: [test-coaster, test-leaf, test-greenglas]
     - task: compile
       image: container
       config:
