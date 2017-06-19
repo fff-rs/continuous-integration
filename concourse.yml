@@ -79,8 +79,67 @@ jobs:
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: "coaster"
+          dir: coaster
 
+  - name: test-coaster-cuda
+    public: true
+    plan:
+    - aggregate:
+      - get: coaster
+        trigger: true
+      - get: container
+        trigger: true
+        tags: [cuda]
+    - task: compile
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: coaster
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,cuda"]
+          dir: coaster
+
+  - name: test-coaster-opencl
+    public: true
+    plan:
+    - aggregate:
+      - get: coaster
+        trigger: true
+      - get: container
+        trigger: true
+      tags: [opencl]
+    - task: compile
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: coaster
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,opencl"]
+          dir: coaster
+
+  - name: test-coaster-default
+    public: true
+    plan:
+    - aggregate:
+      - get: coaster
+        trigger: true
+      - get: container
+        trigger: true
+      tags: [opencl,cuda]
+    - task: compile
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: coaster
+        run:
+          path: cargo
+          args: ["test"]
+          dir: coaster
 
   - name: test-coaster-blas
     public: true
@@ -109,7 +168,97 @@ jobs:
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: "coaster-blas"
+          dir: coaster-blas
+
+  - name: test-coaster-blas-cuda
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cublas
+        trigger: true
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: rust-blas
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-cuda]
+      tags: [cuda]
+    - task: compile
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,cuda"]
+          dir: coaster-blas
+
+  - name: test-coaster-blas-opencl
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cublas
+        trigger: true
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: rust-blas
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-opencl]
+      tags: [opencl]
+    - task: compile
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,opencl"]
+          dir: coaster-blas
+
+  - name: test-coaster-blas-default
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cublas
+        trigger: true
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: rust-blas
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-default]
+      tags: [opencl,cuda]
+    - task: compile
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        run:
+          path: cargo
+          args: ["test"]
+          dir: coaster-blas
 
   - name: test-coaster-nn
     public: true
@@ -144,7 +293,115 @@ jobs:
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: "coaster-nn"
+          dir: coaster-nn
+
+  - name: test-coaster-nn-cuda
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+        trigger: true
+      - get: rust-blas
+        trigger: true
+      - get: rust-cublas
+        trigger: true
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: coaster-nn
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-cuda]
+      tags: [cuda]
+    - task: compile
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,cuda"]
+          dir: coaster-nn
+
+  - name: test-coaster-nn-opencl
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+        trigger: true
+      - get: rust-blas
+        trigger: true
+      - get: rust-cublas
+        trigger: true
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: coaster-nn
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-opencl]
+      tags: [opencl]
+    - task: compile-opencl
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,opencl"]
+          dir: coaster-nn
+
+  - name: test-coaster-nn-default
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+        trigger: true
+      - get: rust-blas
+        trigger: true
+      - get: rust-cublas
+        trigger: true
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: coaster-nn
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-default]
+      tags: [cuda,opencl]
+    - task: compile-default
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        run:
+          path: cargo
+          args: ["test"]
+          dir: coaster-nn
 
   - name: test-greenglas
     public: true
@@ -177,8 +434,109 @@ jobs:
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: "greenglas"
+          dir: greenglas
 
+  - name: test-greenglas-cuda
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: coaster-nn
+        trigger: true
+      - get: greenglas
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-cuda, test-coaster-nn-cuda, test-coaster-blas-cuda]
+      tags: [cuda]
+    - task: compile-cuda
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: greenglas
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,cuda"]
+          dir: greenglas
+
+  - name: test-greenglas-opencl
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: coaster-nn
+        trigger: true
+      - get: greenglas
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-opencl, test-coaster-nn-opencl, test-coaster-blas-opencl]
+      tags: [opencl]
+    - task: compile-opencl
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: greenglas
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,opencl"]
+          dir: greenglas
+
+  - name: test-greenglas-default
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: coaster-nn
+        trigger: true
+      - get: greenglas
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-default, test-coaster-nn-default, test-coaster-blas-default]
+      tags: [cuda,opencl]
+    - task: compile-default
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: greenglas
+        run:
+          path: cargo
+          args: ["test"]
+          dir: greenglas
 
   - name: test-leaf
     public: true
@@ -213,7 +571,115 @@ jobs:
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: "coaster-nn"
+          dir: coaster-nn
+
+  - name: test-leaf-cuda
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: coaster-nn
+        trigger: true
+      - get: leaf
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-cuda, test-coaster-nn-cuda, test-coaster-blas-cuda]
+      tags: [cuda]
+    - task: compile-cuda
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: leaf
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,cuda"]
+          dir: coaster-nn
+
+  - name: test-leaf-opencl
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: coaster-nn
+        trigger: true
+      - get: leaf
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-opencl, test-coaster-nn-opencl, test-coaster-blas-opencl]
+      tags: [opencl]
+    - task: compile-cuda
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: leaf
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,opencl"]
+          dir: coaster-nn
+
+  - name: test-leaf-default
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: coaster-nn
+        trigger: true
+      - get: leaf
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-default, test-coaster-nn-default, test-coaster-blas-default]
+      tags: [cuda,opencl]
+    - task: compile-opencl
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: leaf
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,opencl"]
+          dir: coaster-nn
 
   - name: test-leaf-examples
     public: true
@@ -248,5 +714,116 @@ jobs:
         - name: leaf-examples
         run:
           path: cargo
-          args: ["b", "--no-default-features","--features=native"]
-          dir: "leaf-examples"
+          args: ["test", "--no-default-features","--features=native"]
+          dir: leaf-examples
+
+  - name: test-leaf-examples-cuda
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster-blas
+      - get: coaster-nn
+      - get: coaster
+        trigger: true
+      - get: leaf
+        trigger: true
+      - get: leaf-examples
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-cuda, test-leaf-cuda, test-greenglas-cuda]
+      tags: [cuda]
+    - task: compile-cuda
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: leaf
+        - name: leaf-examples
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,cuda"]
+          dir: leaf-examples
+
+  - name: test-leaf-examples-opencl
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster-blas
+      - get: coaster-nn
+      - get: coaster
+        trigger: true
+      - get: leaf
+        trigger: true
+      - get: leaf-examples
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-opencl, test-leaf-opencl, test-greenglas-opencl]
+      tags: [opencl]
+    - task: compile-opencl
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: leaf
+        - name: leaf-examples
+        run:
+          path: cargo
+          args: ["test", "--no-default-features","--features=native,opencl"]
+          dir: leaf-examples
+
+  - name: test-leaf-examples-default
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster-blas
+      - get: coaster-nn
+      - get: coaster
+        trigger: true
+      - get: leaf
+        trigger: true
+      - get: leaf-examples
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster-default, test-leaf-default, test-greenglas-default]
+      tags: [cuda,opencl]
+    - task: compile-default
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: leaf
+        - name: leaf-examples
+        run:
+          path: cargo
+          args: ["test"]
+          dir: leaf-examples
