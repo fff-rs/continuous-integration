@@ -89,7 +89,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        tags: [cuda]
+      tags: [cuda]
     - task: compile
       image: container
       config:
