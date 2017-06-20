@@ -63,6 +63,7 @@ resources:
 
 jobs:
   - name: test-coaster
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -82,6 +83,7 @@ jobs:
           dir: coaster
 
   - name: test-coaster-cuda
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -102,6 +104,7 @@ jobs:
           dir: coaster
 
   - name: test-coaster-opencl
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -122,6 +125,7 @@ jobs:
           dir: coaster
 
   - name: test-coaster-default
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -142,6 +146,7 @@ jobs:
           dir: coaster
 
   - name: test-coaster-blas
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -171,6 +176,7 @@ jobs:
           dir: coaster-blas
 
   - name: test-coaster-blas-cuda
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -201,6 +207,7 @@ jobs:
           dir: coaster-blas
 
   - name: test-coaster-blas-opencl
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -231,6 +238,7 @@ jobs:
           dir: coaster-blas
 
   - name: test-coaster-blas-default
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -261,6 +269,7 @@ jobs:
           dir: coaster-blas
 
   - name: test-coaster-nn
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -296,6 +305,7 @@ jobs:
           dir: coaster-nn
 
   - name: test-coaster-nn-cuda
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -332,6 +342,7 @@ jobs:
           dir: coaster-nn
 
   - name: test-coaster-nn-opencl
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -368,6 +379,7 @@ jobs:
           dir: coaster-nn
 
   - name: test-coaster-nn-default
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -404,6 +416,7 @@ jobs:
           dir: coaster-nn
 
   - name: test-greenglas
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -437,6 +450,7 @@ jobs:
           dir: greenglas
 
   - name: test-greenglas-cuda
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -471,6 +485,7 @@ jobs:
           dir: greenglas
 
   - name: test-greenglas-opencl
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -505,6 +520,7 @@ jobs:
           dir: greenglas
 
   - name: test-greenglas-default
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -539,6 +555,7 @@ jobs:
           dir: greenglas
 
   - name: test-leaf
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -574,6 +591,7 @@ jobs:
           dir: coaster-nn
 
   - name: test-leaf-cuda
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -610,6 +628,7 @@ jobs:
           dir: coaster-nn
 
   - name: test-leaf-opencl
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -646,6 +665,7 @@ jobs:
           dir: coaster-nn
 
   - name: test-leaf-default
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -682,6 +702,7 @@ jobs:
           dir: coaster-nn
 
   - name: test-leaf-examples
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -718,6 +739,7 @@ jobs:
           dir: leaf-examples
 
   - name: test-leaf-examples-cuda
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -755,6 +777,7 @@ jobs:
           dir: leaf-examples
 
   - name: test-leaf-examples-opencl
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
@@ -792,6 +815,7 @@ jobs:
           dir: leaf-examples
 
   - name: test-leaf-examples-default
+    build_logs_to_retain: 20
     public: true
     plan:
     - aggregate:
