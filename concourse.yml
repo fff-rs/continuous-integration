@@ -1,15 +1,15 @@
 resources:
-- name: leaf-examples
+- name: juice-examples
   type: git
   source:
     branch: master
-    uri: https://github.com/spearow/leaf-examples.git
+    uri: https://github.com/spearow/juice-examples.git
 
-- name: leaf
+- name: juice
   type: git
   source:
     branch: master
-    uri: https://github.com/spearow/leaf.git
+    uri: https://github.com/spearow/juice.git
 
 - name: coaster-nn
   type: git
@@ -554,7 +554,7 @@ jobs:
           args: ["test"]
           dir: greenglas
 
-  - name: test-leaf
+  - name: test-juice
     build_logs_to_retain: 20
     public: true
     plan:
@@ -568,7 +568,7 @@ jobs:
         trigger: true
       - get: coaster-nn
         trigger: true
-      - get: leaf
+      - get: juice
         trigger: true
       - get: container
         trigger: true
@@ -584,13 +584,13 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: leaf
+        - name: juice
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
           dir: coaster-nn
 
-  - name: test-leaf-cuda
+  - name: test-juice-cuda
     build_logs_to_retain: 20
     public: true
     plan:
@@ -604,7 +604,7 @@ jobs:
         trigger: true
       - get: coaster-nn
         trigger: true
-      - get: leaf
+      - get: juice
         trigger: true
       - get: container
         trigger: true
@@ -621,13 +621,13 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: leaf
+        - name: juice
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native,cuda"]
           dir: coaster-nn
 
-  - name: test-leaf-opencl
+  - name: test-juice-opencl
     build_logs_to_retain: 20
     public: true
     plan:
@@ -641,7 +641,7 @@ jobs:
         trigger: true
       - get: coaster-nn
         trigger: true
-      - get: leaf
+      - get: juice
         trigger: true
       - get: container
         trigger: true
@@ -658,13 +658,13 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: leaf
+        - name: juice
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native,opencl"]
           dir: coaster-nn
 
-  - name: test-leaf-default
+  - name: test-juice-default
     build_logs_to_retain: 20
     public: true
     plan:
@@ -678,7 +678,7 @@ jobs:
         trigger: true
       - get: coaster-nn
         trigger: true
-      - get: leaf
+      - get: juice
         trigger: true
       - get: container
         trigger: true
@@ -695,13 +695,13 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: leaf
+        - name: juice
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native,opencl"]
           dir: coaster-nn
 
-  - name: test-leaf-examples
+  - name: test-juice-examples
     build_logs_to_retain: 20
     public: true
     plan:
@@ -713,13 +713,13 @@ jobs:
       - get: coaster-nn
       - get: coaster
         trigger: true
-      - get: leaf
+      - get: juice
         trigger: true
-      - get: leaf-examples
+      - get: juice-examples
         trigger: true
       - get: container
         trigger: true
-        passed: [test-coaster, test-leaf, test-greenglas]
+        passed: [test-coaster, test-juice, test-greenglas]
     - task: compile
       image: container
       config:
@@ -731,14 +731,14 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: leaf
-        - name: leaf-examples
+        - name: juice
+        - name: juice-examples
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native"]
-          dir: leaf-examples
+          dir: juice-examples
 
-  - name: test-leaf-examples-cuda
+  - name: test-juice-examples-cuda
     build_logs_to_retain: 20
     public: true
     plan:
@@ -750,13 +750,13 @@ jobs:
       - get: coaster-nn
       - get: coaster
         trigger: true
-      - get: leaf
+      - get: juice
         trigger: true
-      - get: leaf-examples
+      - get: juice-examples
         trigger: true
       - get: container
         trigger: true
-        passed: [test-coaster-cuda, test-leaf-cuda, test-greenglas-cuda]
+        passed: [test-coaster-cuda, test-juice-cuda, test-greenglas-cuda]
       tags: [cuda]
     - task: compile-cuda
       image: container
@@ -769,14 +769,14 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: leaf
-        - name: leaf-examples
+        - name: juice
+        - name: juice-examples
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: leaf-examples
+          dir: juice-examples
 
-  - name: test-leaf-examples-opencl
+  - name: test-juice-examples-opencl
     build_logs_to_retain: 20
     public: true
     plan:
@@ -788,13 +788,13 @@ jobs:
       - get: coaster-nn
       - get: coaster
         trigger: true
-      - get: leaf
+      - get: juice
         trigger: true
-      - get: leaf-examples
+      - get: juice-examples
         trigger: true
       - get: container
         trigger: true
-        passed: [test-coaster-opencl, test-leaf-opencl, test-greenglas-opencl]
+        passed: [test-coaster-opencl, test-juice-opencl, test-greenglas-opencl]
       tags: [opencl]
     - task: compile-opencl
       image: container
@@ -807,14 +807,14 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: leaf
-        - name: leaf-examples
+        - name: juice
+        - name: juice-examples
         run:
           path: cargo
           args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: leaf-examples
+          dir: juice-examples
 
-  - name: test-leaf-examples-default
+  - name: test-juice-examples-default
     build_logs_to_retain: 20
     public: true
     plan:
@@ -826,13 +826,13 @@ jobs:
       - get: coaster-nn
       - get: coaster
         trigger: true
-      - get: leaf
+      - get: juice
         trigger: true
-      - get: leaf-examples
+      - get: juice-examples
         trigger: true
       - get: container
         trigger: true
-        passed: [test-coaster-default, test-leaf-default, test-greenglas-default]
+        passed: [test-coaster-default, test-juice-default, test-greenglas-default]
       tags: [cuda,opencl]
     - task: compile-default
       image: container
@@ -845,9 +845,9 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: leaf
-        - name: leaf-examples
+        - name: juice
+        - name: juice-examples
         run:
           path: cargo
           args: ["test"]
-          dir: leaf-examples
+          dir: juice-examples
