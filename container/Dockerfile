@@ -2,7 +2,7 @@ FROM fedora:latest
 MAINTAINER Bernhard Schuster "bernhard@ratpoison.io"
 
 RUN dnf update -y
-RUN dnf install -y curl clang make cmake  &&  dnf clean dbcache
+RUN dnf install -y curl clang make cmake git &&  dnf clean dbcache
 RUN dnf install -y openblas-static openblas-openmp openblas-devel  && dnf clean dbcache
 RUN dnf install -y openssl-static openssl-libs openssl-devel  && dnf clean dbcache
 RUN dnf install -y capnproto capnproto-libs capnproto-devel  && dnf clean dbcache

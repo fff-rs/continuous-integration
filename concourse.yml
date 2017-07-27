@@ -29,6 +29,13 @@ resources:
     branch: master
     uri: https://github.com/spearow/coaster.git
 
+- name: doc-coaster
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster.git
+    private_key: {{ssh-key}}
+
 - name: greenglas
   type: git
   source:
@@ -62,6 +69,42 @@ resources:
 
 
 jobs:
+  - name: doc-coaster
+    build_logs_to_retain: 20
+    public: true
+    plan:
+    - aggregate:
+      - get: doc-coaster
+        params: {depth: 1}
+      - get: coaster
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster]
+    - put: doc-coaster
+      params: { repository: doc-coaster, force: true }
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: coaster
+        outputs:
+        - name: doc-coaster
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cargo doc --no-deps
+            cp -rf target/doc/* ../doc-coaster/
+            cd ../doc-coaster/
+            echo "<meta http-equiv=refresh content=0;url=coaster/index.html>" > index.html
+            git init .
+            git commit -am"doc/automatic: update"
+          dir: coaster
+
+
   - name: test-coaster
     build_logs_to_retain: 20
     public: true
