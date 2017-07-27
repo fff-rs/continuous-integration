@@ -1,5 +1,5 @@
 FROM fedora:latest
-MAINTAINER Bernhard Schuster "bernhard@ratpoison.io"
+MAINTAINER Bernhard Schuster "bernhard@spearow.io"
 
 RUN dnf update -y
 RUN dnf install -y curl clang make cmake git &&  dnf clean dbcache
@@ -19,7 +19,7 @@ RUN dnf install -y dnf-plugins-core \
 			cuda-cudart-devel \
 	&& dnf clean all
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
+RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
 
 ENV PATH=/root/.cargo/bin:$PATH
 ENV CMAKE_MAKE_PROGRAM=make
