@@ -80,38 +80,40 @@ jobs:
     plan:
     - aggregate:
       - get: doc-coaster
-        params: {depth: 1}
       - get: coaster
+        params: {depth: 1}
         trigger: true
       - get: container
         trigger: true
         passed: [test-coaster]
-    - put: doc-coaster
-      params: { repository: doc-coaster, force: true }
     - task: gen-doc
       image: container
       config:
         platform: linux
         inputs:
         - name: coaster
-        outputs:
         - name: doc-coaster
+        outputs:
+        - name: doc-coaster-updated
         run:
           path: sh
           args:
           - -exc
           - |
+            cd coaster
             cargo doc --no-deps
-            cp -rf target/doc/* ../doc-coaster/
-            cd ../doc-coaster/
+            cd -
+            git clone doc-coaster doc-coaster-updated
+            rm -rf doc-coaster-updated/*
+            cp -rf coaster/target/doc/* doc-coaster-updated/
+            cd doc-coaster-updated
             echo "<meta http-equiv=refresh content=0;url=coaster/index.html>" > index.html
-            git init .
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
             git add -A
             git commit -m"doc/automatic: update"
-          dir: coaster
-
+    - put: doc-coaster
+      params: { repository: doc-coaster-updated, force: true }
 
   - name: test-coaster
     build_logs_to_retain: 20
