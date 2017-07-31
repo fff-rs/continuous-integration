@@ -35,6 +35,11 @@ resources:
     branch: gh-pages
     uri: git@github.com:spearow/coaster.git
     private_key: {{ssh-key}}
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
 
 - name: greenglas
   type: git
@@ -101,7 +106,10 @@ jobs:
             cd ../doc-coaster/
             echo "<meta http-equiv=refresh content=0;url=coaster/index.html>" > index.html
             git init .
-            git commit -am"doc/automatic: update"
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A
+            git commit -m"doc/automatic: update"
           dir: coaster
 
 
