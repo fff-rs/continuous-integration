@@ -11,17 +11,53 @@ resources:
     branch: master
     uri: https://github.com/spearow/juice.git
 
+- name: doc-juice
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/juice.git
+    private_key: {{ssh-key}}
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
 - name: coaster-nn
   type: git
   source:
     branch: master
     uri: https://github.com/spearow/coaster-nn.git
 
+- name: doc-coaster-nn
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster-nn.git
+    private_key: {{ssh-key}}
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
 - name: coaster-blas
   type: git
   source:
     branch: master
     uri: https://github.com/spearow/coaster-blas.git
+
+- name: doc-coaster-blas
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster-blas.git
+    private_key: {{ssh-key}}
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
 
 - name: coaster
   type: git
@@ -46,6 +82,18 @@ resources:
   source:
     branch: master
     uri: https://github.com/spearow/greenglas.git
+
+- name: doc-greenglas
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/greenglas.git
+    private_key: {{ssh-key}}
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
 
 - name: rust-cudnn
   type: git
@@ -114,6 +162,207 @@ jobs:
             git commit -m"doc/automatic: update"
     - put: doc-coaster
       params: { repository: doc-coaster-updated, force: true }
+
+  - name: doc-coaster-nn
+    build_logs_to_retain: 20
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+      - get: doc-coaster-nn
+      - get: coaster-nn
+        params: {depth: 1}
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster]
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cudnn
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-nn
+        - name: doc-coaster-nn
+        outputs:
+        - name: doc-coaster-nn-updated
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd coaster-nn
+            cargo doc --no-deps
+            cd -
+            git clone doc-coaster-nn doc-coaster-nn-updated
+            rm -rf doc-coaster-nn-updated/*
+            cp -rf coaster-nn/target/doc/* doc-coaster-nn-updated/
+            cd doc-coaster-nn-updated
+            echo "<meta http-equiv=refresh content=0;url=coaster-nn/index.html>" > index.html
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A
+            git commit -m"doc/automatic: update"
+    - put: doc-coaster-nn
+      params: { repository: doc-coaster-nn-updated, force: true }
+
+  - name: doc-coaster-blas
+    build_logs_to_retain: 20
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+      - get: doc-coaster-blas
+      - get: coaster-blas
+        params: {depth: 1}
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster]
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cudnn
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: doc-coaster-blas
+        outputs:
+        - name: doc-coaster-blas-updated
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd coaster-blas
+            cargo doc --no-deps
+            cd -
+            git clone doc-coaster-blas doc-coaster-blas-updated
+            rm -rf doc-coaster-blas-updated/*
+            cp -rf coaster-blas/target/doc/* doc-coaster-blas-updated/
+            cd doc-coaster-blas-updated
+            echo "<meta http-equiv=refresh content=0;url=coaster-blas/index.html>" > index.html
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A
+            git commit -m"doc/automatic: update"
+    - put: doc-coaster-blas
+      params: { repository: doc-coaster-blas-updated, force: true }
+
+  - name: doc-greenglas
+    build_logs_to_retain: 20
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+      - get: doc-greenglas
+      - get: greenglas
+        params: {depth: 1}
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster]
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: coaster
+        - name: rust-blas
+        - name: rust-cublas
+        - name: rust-cudnn
+        - name: greenglas
+        - name: doc-greenglas
+        outputs:
+        - name: doc-greenglas-updated
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd greenglas
+            cargo doc --no-deps
+            cd -
+            git clone doc-greenglas doc-greenglas-updated
+            rm -rf doc-greenglas-updated/*
+            cp -rf greenglas/target/doc/* doc-greenglas-updated/
+            cd doc-greenglas-updated
+            echo "<meta http-equiv=refresh content=0;url=greenglas/index.html>" > index.html
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A
+            git commit -m"doc/automatic: update"
+    - put: doc-greenglas
+      params: { repository: doc-greenglas-updated, force: true }
+
+  - name: doc-juice
+    build_logs_to_retain: 20
+    public: true
+    plan:
+    - aggregate:
+
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster-blas
+      - get: coaster-nn
+      - get: coaster
+      - get: doc-juice
+      - get: juice
+        params: {depth: 1}
+        trigger: true
+      - get: container
+        trigger: true
+        passed: [test-coaster]
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: coaster
+        - name: coaster-nn
+        - name: coaster-blas
+        - name: rust-blas
+        - name: rust-cublas
+        - name: rust-cudnn
+        - name: juice
+        - name: doc-juice
+        outputs:
+        - name: doc-juice-updated
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd juice
+            cargo doc --no-deps
+            cd -
+            git clone doc-juice doc-juice-updated
+            rm -rf doc-juice-updated/*
+            cp -rf juice/target/doc/* doc-juice-updated/
+            cd doc-juice-updated
+            echo "<meta http-equiv=refresh content=0;url=juice/index.html>" > index.html
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A
+            git commit -m"doc/automatic: update"
+    - put: doc-juice
+      params: { repository: doc-juice-updated, force: true }
 
   - name: test-coaster
     build_logs_to_retain: 20
