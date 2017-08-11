@@ -204,7 +204,7 @@ jobs:
             rm -rf doc-coaster-nn-updated/*
             cp -rf coaster-nn/target/doc/* doc-coaster-nn-updated/
             cd doc-coaster-nn-updated
-            echo "<meta http-equiv=refresh content=0;url=coaster-nn/index.html>" > index.html
+            echo "<meta http-equiv=refresh content=0;url=coaster_nn/index.html>" > index.html
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
             git add -A
@@ -253,7 +253,7 @@ jobs:
             rm -rf doc-coaster-blas-updated/*
             cp -rf coaster-blas/target/doc/* doc-coaster-blas-updated/
             cd doc-coaster-blas-updated
-            echo "<meta http-equiv=refresh content=0;url=coaster-blas/index.html>" > index.html
+            echo "<meta http-equiv=refresh content=0;url=coaster_blas/index.html>" > index.html
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
             git add -A
