@@ -158,8 +158,7 @@ jobs:
             echo "<meta http-equiv=refresh content=0;url=coaster/index.html>" > index.html
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
-            git add -A
-            git commit -m"doc/automatic: update"
+            git add -A && git commit -m"doc/automatic: update" || true
     - put: doc-coaster
       params: { repository: doc-coaster-updated, force: true }
 
@@ -207,8 +206,7 @@ jobs:
             echo "<meta http-equiv=refresh content=0;url=coaster_nn/index.html>" > index.html
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
-            git add -A
-            git commit -m"doc/automatic: update"
+            git add -A && git commit -m"doc/automatic: update" || true
     - put: doc-coaster-nn
       params: { repository: doc-coaster-nn-updated, force: true }
 
@@ -256,8 +254,7 @@ jobs:
             echo "<meta http-equiv=refresh content=0;url=coaster_blas/index.html>" > index.html
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
-            git add -A
-            git commit -m"doc/automatic: update"
+            git add -A && git commit -m"doc/automatic: update" || true
     - put: doc-coaster-blas
       params: { repository: doc-coaster-blas-updated, force: true }
 
@@ -305,8 +302,7 @@ jobs:
             echo "<meta http-equiv=refresh content=0;url=greenglas/index.html>" > index.html
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
-            git add -A
-            git commit -m"doc/automatic: update"
+            git add -A && git commit -m"doc/automatic: update" || true
     - put: doc-greenglas
       params: { repository: doc-greenglas-updated, force: true }
 
@@ -359,8 +355,7 @@ jobs:
             echo "<meta http-equiv=refresh content=0;url=juice/index.html>" > index.html
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
-            git add -A
-            git commit -m"doc/automatic: update"
+            git add -A && git commit -m"doc/automatic: update" || true
     - put: doc-juice
       params: { repository: doc-juice-updated, force: true }
 
