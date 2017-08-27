@@ -1,7 +1,11 @@
 credentials.yml
 credentials.yaml
+.credentials.yml
+.credentials.yaml
+.creds.yml
+.creds.yaml
 creds.yml
 creds.yaml
 *~
-.*
-
+/target/
+**/*.rs.bk

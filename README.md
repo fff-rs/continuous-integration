@@ -15,4 +15,4 @@ Project related
 | docker registry | [![Docker Repository on Quay](https://quay.io/repository/spearow/machine-learning-container/status "Docker Repository on Quay")](https://quay.io/repository/spearow/machine-learning-container) |
 
 
-
+To regenerate the `concourse.yml` used, make sure to run `cargo b` and `cargo r`, the resulting file `concourse.yml` in the root of this repository is the expaneded version.

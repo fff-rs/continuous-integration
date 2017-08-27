@@ -1,0 +1,11 @@
+[package]
+name = "concourse-matrix"
+version = "0.1.0"
+authors = ["Bernhard Schuster <bernhard@ahoi.io>"]
+build = "build.rs"
+
+[dependencies]
+askama = "0.3"
+
+[build-dependencies]
+askama = "0.3"

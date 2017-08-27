@@ -114,21 +114,14 @@ resources:
     uri: https://github.com/spearow/rust-blas.git
 
 
-
-- name: container-fedora
+{% for os in operatingsystems %}
+- name: container-{{ os }}
   type: docker-image
   source:
-    repository: quay.io/spearow/machine-learning-container-fedora
+    repository: quay.io/spearow/machine-learning-container-{{ os }}
     username: ((quay-username))
     password: ((quay-password))
-
-- name: container-ubuntu
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-ubuntu
-    username: ((quay-username))
-    password: ((quay-password))
-
+{% endfor %}
 
 jobs:
   - name: doc-coaster
@@ -377,9 +370,9 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-
-    - task: compile-fedora
-      image: container-fedora
+{% for os in operatingsystems %}
+    - task: compile-{{ os }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -388,8 +381,8 @@ jobs:
           path: cargo
           args: ["test"]
           dir: coaster
-
-    - task: compile-fedora-native
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
       image: container
       config:
         platform: linux
@@ -397,77 +390,10 @@ jobs:
         - name: coaster
         run:
           path: cargo
-          args: ["test", "--no-default-features","--features=native,native"]
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
           dir: coaster
-
-    - task: compile-fedora-cuda
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: coaster
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: coaster
-
-    - task: compile-fedora-opencl
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: coaster
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: coaster
-
-
-    - task: compile-ubuntu
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: coaster
-        run:
-          path: cargo
-          args: ["test"]
-          dir: coaster
-
-    - task: compile-ubuntu-native
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: coaster
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,native"]
-          dir: coaster
-
-    - task: compile-ubuntu-cuda
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: coaster
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: coaster
-
-    - task: compile-ubuntu-opencl
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: coaster
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: coaster
-
-
+{% endfor %}
+{% endfor %}
 
   - name: test-coaster-blas
     build_logs_to_retain: 5
@@ -485,9 +411,9 @@ jobs:
       - get: container
         trigger: true
         passed: [test-coaster]
-
-    - task: compile-fedora
-      image: container-fedora
+{% for os in operatingsystems%}
+    - task: compile-{{ os }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -499,9 +425,9 @@ jobs:
           path: cargo
           args: ["test"]
           dir: coaster-blas
-
-    - task: compile-fedora-native
-      image: container-fedora
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -511,95 +437,10 @@ jobs:
         - name: coaster-blas
         run:
           path: cargo
-          args: ["test", "--no-default-features","--features=native,native"]
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
           dir: coaster-blas
-
-    - task: compile-fedora-cuda
-      image: container-fedora
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: coaster-blas
-
-    - task: compile-fedora-opencl
-      image: container-fedora
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: coaster-blas
-
-
-    - task: compile-ubuntu
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        run:
-          path: cargo
-          args: ["test"]
-          dir: coaster-blas
-
-    - task: compile-ubuntu-native
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,native"]
-          dir: coaster-blas
-
-    - task: compile-ubuntu-cuda
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: coaster-blas
-
-    - task: compile-ubuntu-opencl
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: coaster-blas
-
-
+{% endfor %}
+{% endfor %}
 
 
   - name: test-coaster-nn
@@ -658,9 +499,9 @@ jobs:
       - get: container
         trigger: true
         passed: [test-coaster]
-
-    - task: compile-fedora
-      image: container-fedora
+{% for os in operatingsystems%}
+    - task: compile-{{ os }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -674,9 +515,9 @@ jobs:
           path: cargo
           args: ["test"]
           dir: coaster-nn
-
-    - task: compile-fedora-native
-      image: container-fedora
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -688,107 +529,10 @@ jobs:
         - name: coaster-nn
         run:
           path: cargo
-          args: ["test", "--no-default-features","--features=native,native"]
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
           dir: coaster-nn
-
-    - task: compile-fedora-cuda
-      image: container-fedora
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: coaster-nn
-
-    - task: compile-fedora-opencl
-      image: container-fedora
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: coaster-nn
-
-
-    - task: compile-ubuntu
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        run:
-          path: cargo
-          args: ["test"]
-          dir: coaster-nn
-
-    - task: compile-ubuntu-native
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,native"]
-          dir: coaster-nn
-
-    - task: compile-ubuntu-cuda
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: coaster-nn
-
-    - task: compile-ubuntu-opencl
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: coaster-nn
-
-
+{% endfor %}
+{% endfor %}
 
   - name: test-greenglas
     build_logs_to_retain: 20
@@ -809,9 +553,9 @@ jobs:
       - get: container
         trigger: true
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
-
-    - task: compile-fedora
-      image: container-fedora
+{% for os in operatingsystems%}
+    - task: compile-{{ os }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -824,9 +568,9 @@ jobs:
           path: cargo
           args: ["test"]
           dir: greenglas
-
-    - task: compile-fedora-native
-      image: container-fedora
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -839,99 +583,8 @@ jobs:
           path: cargo
           args: ["test"]
           dir: greenglas
-
-    - task: compile-fedora-cuda
-      image: container-fedora
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: greenglas
-        run:
-          path: cargo
-          args: ["test"]
-          dir: greenglas
-
-    - task: compile-fedora-opencl
-      image: container-fedora
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: greenglas
-        run:
-          path: cargo
-          args: ["test"]
-          dir: greenglas
-
-
-    - task: compile-ubuntu
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: greenglas
-        run:
-          path: cargo
-          args: ["test"]
-          dir: greenglas
-
-    - task: compile-ubuntu-native
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: greenglas
-        run:
-          path: cargo
-          args: ["test"]
-          dir: greenglas
-
-    - task: compile-ubuntu-cuda
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: greenglas
-        run:
-          path: cargo
-          args: ["test"]
-          dir: greenglas
-
-    - task: compile-ubuntu-opencl
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: greenglas
-        run:
-          path: cargo
-          args: ["test"]
-          dir: greenglas
-
-
+{% endfor %}
+{% endfor %}
 
   - name: test-juice
     build_logs_to_retain: 20
@@ -952,9 +605,9 @@ jobs:
       - get: container
         trigger: true
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
-
-    - task: compile-fedora
-      image: container-fedora
+{% for os in operatingsystems%}
+    - task: compile-{{ os }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -969,9 +622,9 @@ jobs:
           path: cargo
           args: ["test"]
           dir: coaster-nn
-
-    - task: compile-fedora-native
-      image: container-fedora
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -984,113 +637,10 @@ jobs:
         - name: juice
         run:
           path: cargo
-          args: ["test", "--no-default-features","--features=native,native"]
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
           dir: coaster-nn
-
-    - task: compile-fedora-cuda
-      image: container-fedora
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: coaster-nn
-
-    - task: compile-fedora-opencl
-      image: container-fedora
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: coaster-nn
-
-
-    - task: compile-ubuntu
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        run:
-          path: cargo
-          args: ["test"]
-          dir: coaster-nn
-
-    - task: compile-ubuntu-native
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,native"]
-          dir: coaster-nn
-
-    - task: compile-ubuntu-cuda
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: coaster-nn
-
-    - task: compile-ubuntu-opencl
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: coaster-nn
-
-
+{% endfor %}
+{% endfor %}
 
   - name: test-juice-examples
     build_logs_to_retain: 20
@@ -1111,9 +661,9 @@ jobs:
       - get: container
         trigger: true
         passed: [test-coaster, test-juice, test-greenglas]
-
-    - task: compile-fedora
-      image: container-fedora
+{% for os in operatingsystems%}
+    - task: compile-{{ os }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -1129,9 +679,9 @@ jobs:
           path: cargo
           args: ["test"]
           dir: juice-examples
-
-    - task: compile-fedora-native
-      image: container-fedora
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}
       config:
         platform: linux
         inputs:
@@ -1145,115 +695,7 @@ jobs:
         - name: juice-examples
         run:
           path: cargo
-          args: ["test", "--no-default-features","--features=native,native"]
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
           dir: juice-examples
-
-    - task: compile-fedora-cuda
-      image: container-fedora
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        - name: juice-examples
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: juice-examples
-
-    - task: compile-fedora-opencl
-      image: container-fedora
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        - name: juice-examples
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: juice-examples
-
-
-    - task: compile-ubuntu
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        - name: juice-examples
-        run:
-          path: cargo
-          args: ["test"]
-          dir: juice-examples
-
-    - task: compile-ubuntu-native
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        - name: juice-examples
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,native"]
-          dir: juice-examples
-
-    - task: compile-ubuntu-cuda
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        - name: juice-examples
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,cuda"]
-          dir: juice-examples
-
-    - task: compile-ubuntu-opencl
-      image: container-ubuntu
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        - name: juice-examples
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native,opencl"]
-          dir: juice-examples
-
+{% endfor %}
+{% endfor %}
