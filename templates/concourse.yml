@@ -16,7 +16,7 @@ resources:
   source:
     branch: gh-pages
     uri: git@github.com:spearow/juice.git
-    private_key: ((ssh-key))
+    private_key: (( ssh-key ))
     git_config:
     - name: user.email
       value: sirmergealot@spearow.io
@@ -34,7 +34,7 @@ resources:
   source:
     branch: gh-pages
     uri: git@github.com:spearow/coaster-nn.git
-    private_key: ((ssh-key))
+    private_key: (( ssh-key ))
     git_config:
     - name: user.email
       value: sirmergealot@spearow.io
@@ -52,7 +52,7 @@ resources:
   source:
     branch: gh-pages
     uri: git@github.com:spearow/coaster-blas.git
-    private_key: ((ssh-key))
+    private_key: (( ssh-key ))
     git_config:
     - name: user.email
       value: sirmergealot@spearow.io
@@ -70,7 +70,7 @@ resources:
   source:
     branch: gh-pages
     uri: git@github.com:spearow/coaster.git
-    private_key: ((ssh-key))
+    private_key: (( ssh-key ))
     git_config:
     - name: user.email
       value: sirmergealot@spearow.io
@@ -88,7 +88,7 @@ resources:
   source:
     branch: gh-pages
     uri: git@github.com:spearow/greenglas.git
-    private_key: ((ssh-key))
+    private_key: (( ssh-key ))
     git_config:
     - name: user.email
       value: sirmergealot@spearow.io
@@ -126,8 +126,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-{{ os }}-{{ backend }}
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 {% endfor %}
 {% endfor %}
 
@@ -135,8 +135,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 
 jobs:
 {% for os in operatingsystems %}
