@@ -16,7 +16,7 @@ resources:
   source:
     branch: gh-pages
     uri: git@github.com:spearow/juice.git
-    private_key: ((ssh-key))
+    private_key: (( ssh-key ))
     git_config:
     - name: user.email
       value: sirmergealot@spearow.io
@@ -34,7 +34,7 @@ resources:
   source:
     branch: gh-pages
     uri: git@github.com:spearow/coaster-nn.git
-    private_key: ((ssh-key))
+    private_key: (( ssh-key ))
     git_config:
     - name: user.email
       value: sirmergealot@spearow.io
@@ -52,7 +52,7 @@ resources:
   source:
     branch: gh-pages
     uri: git@github.com:spearow/coaster-blas.git
-    private_key: ((ssh-key))
+    private_key: (( ssh-key ))
     git_config:
     - name: user.email
       value: sirmergealot@spearow.io
@@ -70,7 +70,7 @@ resources:
   source:
     branch: gh-pages
     uri: git@github.com:spearow/coaster.git
-    private_key: ((ssh-key))
+    private_key: (( ssh-key ))
     git_config:
     - name: user.email
       value: sirmergealot@spearow.io
@@ -88,7 +88,7 @@ resources:
   source:
     branch: gh-pages
     uri: git@github.com:spearow/greenglas.git
-    private_key: ((ssh-key))
+    private_key: (( ssh-key ))
     git_config:
     - name: user.email
       value: sirmergealot@spearow.io
@@ -126,29 +126,29 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-default
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 
 - name: container-fedora-native
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-native
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 
 - name: container-fedora-cuda
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-cuda
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 
 - name: container-fedora-opencl
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-opencl
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 
 
 
@@ -156,29 +156,29 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-ubuntu-default
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 
 - name: container-ubuntu-native
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-ubuntu-native
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 
 - name: container-ubuntu-cuda
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-ubuntu-cuda
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 
 - name: container-ubuntu-opencl
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-ubuntu-opencl
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 
 
 
@@ -186,8 +186,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container
-    username: ((quay-username))
-    password: ((quay-password))
+    username: (( quay-username ))
+    password: (( quay-password ))
 
 jobs:
 
@@ -195,6 +195,7 @@ jobs:
   - name: build-fedora-default
     plan:
     - get: git-continuous-integration
+      trigger: true
     - task: gen-doc
       image: container
       config:
@@ -214,12 +215,12 @@ jobs:
           dir: git-continuous-integration
 
     - put: container-fedora-default
-      params:
-      - build: recombined
+      params: {build: recombined}
 
   - name: build-fedora-native
     plan:
     - get: git-continuous-integration
+      trigger: true
     - task: gen-doc
       image: container
       config:
@@ -239,12 +240,12 @@ jobs:
           dir: git-continuous-integration
 
     - put: container-fedora-native
-      params:
-      - build: recombined
+      params: {build: recombined}
 
   - name: build-fedora-cuda
     plan:
     - get: git-continuous-integration
+      trigger: true
     - task: gen-doc
       image: container
       config:
@@ -264,12 +265,12 @@ jobs:
           dir: git-continuous-integration
 
     - put: container-fedora-cuda
-      params:
-      - build: recombined
+      params: {build: recombined}
 
   - name: build-fedora-opencl
     plan:
     - get: git-continuous-integration
+      trigger: true
     - task: gen-doc
       image: container
       config:
@@ -289,14 +290,14 @@ jobs:
           dir: git-continuous-integration
 
     - put: container-fedora-opencl
-      params:
-      - build: recombined
+      params: {build: recombined}
 
 
 
   - name: build-ubuntu-default
     plan:
     - get: git-continuous-integration
+      trigger: true
     - task: gen-doc
       image: container
       config:
@@ -316,12 +317,12 @@ jobs:
           dir: git-continuous-integration
 
     - put: container-ubuntu-default
-      params:
-      - build: recombined
+      params: {build: recombined}
 
   - name: build-ubuntu-native
     plan:
     - get: git-continuous-integration
+      trigger: true
     - task: gen-doc
       image: container
       config:
@@ -341,12 +342,12 @@ jobs:
           dir: git-continuous-integration
 
     - put: container-ubuntu-native
-      params:
-      - build: recombined
+      params: {build: recombined}
 
   - name: build-ubuntu-cuda
     plan:
     - get: git-continuous-integration
+      trigger: true
     - task: gen-doc
       image: container
       config:
@@ -366,12 +367,12 @@ jobs:
           dir: git-continuous-integration
 
     - put: container-ubuntu-cuda
-      params:
-      - build: recombined
+      params: {build: recombined}
 
   - name: build-ubuntu-opencl
     plan:
     - get: git-continuous-integration
+      trigger: true
     - task: gen-doc
       image: container
       config:
@@ -391,13 +392,12 @@ jobs:
           dir: git-continuous-integration
 
     - put: container-ubuntu-opencl
-      params:
-      - build: recombined
+      params: {build: recombined}
 
 
 
   - name: doc-coaster
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -405,9 +405,9 @@ jobs:
       - get: coaster
         params: {depth: 1}
         trigger: true
+        passed: [test-coaster]
       - get: container
         trigger: true
-        passed: [test-coaster]
     - task: gen-doc
       image: container
       config:
@@ -437,7 +437,7 @@ jobs:
       params: { repository: doc-coaster-updated, force: true }
 
   - name: doc-coaster-nn
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -449,9 +449,9 @@ jobs:
       - get: coaster-nn
         params: {depth: 1}
         trigger: true
+        passed: [test-coaster-nn]
       - get: container
         trigger: true
-        passed: [test-coaster-nn]
     - task: gen-doc
       image: container
       config:
@@ -485,7 +485,7 @@ jobs:
       params: { repository: doc-coaster-nn-updated, force: true }
 
   - name: doc-coaster-blas
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -497,9 +497,9 @@ jobs:
       - get: coaster-blas
         params: {depth: 1}
         trigger: true
+        passed: [test-coaster-blas]
       - get: container
         trigger: true
-        passed: [test-coaster-blas]
     - task: gen-doc
       image: container
       config:
@@ -533,7 +533,7 @@ jobs:
       params: { repository: doc-coaster-blas-updated, force: true }
 
   - name: doc-greenglas
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -545,9 +545,9 @@ jobs:
       - get: greenglas
         params: {depth: 1}
         trigger: true
+        passed: [test-greenglas]
       - get: container
         trigger: true
-        passed: [test-greenglas]
     - task: gen-doc
       image: container
       config:
@@ -581,24 +581,24 @@ jobs:
       params: { repository: doc-greenglas-updated, force: true }
 
   - name: doc-juice
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
-
       - get: rust-cudnn
       - get: rust-blas
       - get: rust-cublas
       - get: coaster-blas
       - get: coaster-nn
       - get: coaster
+        passed: [test-coaster]
       - get: doc-juice
       - get: juice
         params: {depth: 1}
         trigger: true
+        passed: [test-juice]
       - get: container
         trigger: true
-        passed: [test-coaster]
     - task: gen-doc
       image: container
       config:
@@ -640,8 +640,35 @@ jobs:
     - aggregate:
       - get: coaster
         trigger: true
-      - get: container
+
+
+      - get: container-fedora-default
         trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-default
+        trigger: true
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-cuda
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
 
 
     - task: compile-fedora-default
@@ -761,13 +788,40 @@ jobs:
         trigger: true
       - get: coaster
         trigger: true
+        passed: [test-coaster]
       - get: coaster-blas
         trigger: true
       - get: rust-blas
         trigger: true
-      - get: container
+
+
+      - get: container-fedora-default
         trigger: true
-        passed: [test-coaster]
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-default
+        trigger: true
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-cuda
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
 
 
     - task: compile-fedora-default
@@ -904,7 +958,7 @@ jobs:
 
 
   - name: test-coaster-nn
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -915,14 +969,41 @@ jobs:
       - get: rust-cublas
         trigger: true
       - get: coaster
+        passed: [test-coaster]
         trigger: true
       - get: coaster-blas
         trigger: true
       - get: coaster-nn
         trigger: true
-      - get: container
+
+
+      - get: container-fedora-default
         trigger: true
-        passed: [test-coaster]
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-default
+        trigger: true
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-cuda
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
 
 
     - task: compile-fedora-default
@@ -1074,7 +1155,7 @@ jobs:
 
 
   - name: test-greenglas
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -1083,14 +1164,44 @@ jobs:
       - get: rust-cublas
       - get: coaster
         trigger: true
+        passed: [test-coaster]
       - get: coaster-blas
         trigger: true
+        passed: [test-coaster-blas]
       - get: coaster-nn
         trigger: true
+        passed: [test-coaster-nn]
       - get: greenglas
         trigger: true
-      - get: container
+
+
+      - get: container-fedora-default
         trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-default
+        trigger: true
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-cuda
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
 
 
@@ -1235,7 +1346,7 @@ jobs:
 
 
   - name: test-juice
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -1244,15 +1355,44 @@ jobs:
       - get: rust-cublas
       - get: coaster
         trigger: true
+        passed: [test-coaster]
       - get: coaster-blas
         trigger: true
+        passed: [test-coaster-blas]
       - get: coaster-nn
         trigger: true
+        passed: [test-coaster-nn]
       - get: juice
         trigger: true
-      - get: container
+
+
+      - get: container-fedora-default
         trigger: true
-        passed: [test-coaster, test-coaster-nn, test-coaster-blas]
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-default
+        trigger: true
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-cuda
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
 
 
     - task: compile-fedora-default
@@ -1412,7 +1552,7 @@ jobs:
 
 
   - name: test-juice-examples
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -1423,13 +1563,44 @@ jobs:
       - get: coaster-nn
       - get: coaster
         trigger: true
+        passed: [test-coaster]
+      - get: greenglas
+        trigger: true
+        passed: [test-greenglas]
       - get: juice
         trigger: true
+        passed: [test-juice]
       - get: juice-examples
         trigger: true
-      - get: container
+
+
+      - get: container-fedora-default
         trigger: true
-        passed: [test-coaster, test-juice, test-greenglas]
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-default
+        trigger: true
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-cuda
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
 
 
     - task: compile-fedora-default

@@ -144,6 +144,7 @@ jobs:
   - name: build-{{ os }}-{{ backend }}
     plan:
     - get: git-continuous-integration
+      trigger: true
     - task: gen-doc
       image: container
       config:
@@ -163,13 +164,12 @@ jobs:
           dir: git-continuous-integration
 
     - put: container-{{ os }}-{{ backend }}
-      params:
-      - build: recombined
+      params: {build: recombined}
 {% endfor %}
 {% endfor %}
 
   - name: doc-coaster
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -177,9 +177,9 @@ jobs:
       - get: coaster
         params: {depth: 1}
         trigger: true
+        passed: [test-coaster]
       - get: container
         trigger: true
-        passed: [test-coaster]
     - task: gen-doc
       image: container
       config:
@@ -209,7 +209,7 @@ jobs:
       params: { repository: doc-coaster-updated, force: true }
 
   - name: doc-coaster-nn
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -221,9 +221,9 @@ jobs:
       - get: coaster-nn
         params: {depth: 1}
         trigger: true
+        passed: [test-coaster-nn]
       - get: container
         trigger: true
-        passed: [test-coaster-nn]
     - task: gen-doc
       image: container
       config:
@@ -257,7 +257,7 @@ jobs:
       params: { repository: doc-coaster-nn-updated, force: true }
 
   - name: doc-coaster-blas
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -269,9 +269,9 @@ jobs:
       - get: coaster-blas
         params: {depth: 1}
         trigger: true
+        passed: [test-coaster-blas]
       - get: container
         trigger: true
-        passed: [test-coaster-blas]
     - task: gen-doc
       image: container
       config:
@@ -305,7 +305,7 @@ jobs:
       params: { repository: doc-coaster-blas-updated, force: true }
 
   - name: doc-greenglas
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -317,9 +317,9 @@ jobs:
       - get: greenglas
         params: {depth: 1}
         trigger: true
+        passed: [test-greenglas]
       - get: container
         trigger: true
-        passed: [test-greenglas]
     - task: gen-doc
       image: container
       config:
@@ -353,24 +353,24 @@ jobs:
       params: { repository: doc-greenglas-updated, force: true }
 
   - name: doc-juice
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
-
       - get: rust-cudnn
       - get: rust-blas
       - get: rust-cublas
       - get: coaster-blas
       - get: coaster-nn
       - get: coaster
+        passed: [test-coaster]
       - get: doc-juice
       - get: juice
         params: {depth: 1}
         trigger: true
+        passed: [test-juice]
       - get: container
         trigger: true
-        passed: [test-coaster]
     - task: gen-doc
       image: container
       config:
@@ -412,8 +412,12 @@ jobs:
     - aggregate:
       - get: coaster
         trigger: true
-      - get: container
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
         trigger: true
+{% endfor %}
+{% endfor %}
 {% for os in operatingsystems %}
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
@@ -442,13 +446,17 @@ jobs:
         trigger: true
       - get: coaster
         trigger: true
+        passed: [test-coaster]
       - get: coaster-blas
         trigger: true
       - get: rust-blas
         trigger: true
-      - get: container
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
         trigger: true
-        passed: [test-coaster]
+{% endfor %}
+{% endfor %}
 {% for os in operatingsystems %}
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
@@ -473,7 +481,7 @@ jobs:
 
 
   - name: test-coaster-nn
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -484,14 +492,18 @@ jobs:
       - get: rust-cublas
         trigger: true
       - get: coaster
+        passed: [test-coaster]
         trigger: true
       - get: coaster-blas
         trigger: true
       - get: coaster-nn
         trigger: true
-      - get: container
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
         trigger: true
-        passed: [test-coaster]
+{% endfor %}
+{% endfor %}
 {% for os in operatingsystems %}
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
@@ -517,7 +529,7 @@ jobs:
 {% endfor %}
 
   - name: test-greenglas
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -526,14 +538,21 @@ jobs:
       - get: rust-cublas
       - get: coaster
         trigger: true
+        passed: [test-coaster]
       - get: coaster-blas
         trigger: true
+        passed: [test-coaster-blas]
       - get: coaster-nn
         trigger: true
+        passed: [test-coaster-nn]
       - get: greenglas
         trigger: true
-      - get: container
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
         trigger: true
+{% endfor %}
+{% endfor %}
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
 {% for os in operatingsystems %}
 {% for backend in backends %}
@@ -559,7 +578,7 @@ jobs:
 {% endfor %}
 
   - name: test-juice
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -568,15 +587,21 @@ jobs:
       - get: rust-cublas
       - get: coaster
         trigger: true
+        passed: [test-coaster]
       - get: coaster-blas
         trigger: true
+        passed: [test-coaster-blas]
       - get: coaster-nn
         trigger: true
+        passed: [test-coaster-nn]
       - get: juice
         trigger: true
-      - get: container
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
         trigger: true
-        passed: [test-coaster, test-coaster-nn, test-coaster-blas]
+{% endfor %}
+{% endfor %}
 {% for os in operatingsystems %}
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
@@ -603,7 +628,7 @@ jobs:
 {% endfor %}
 
   - name: test-juice-examples
-    build_logs_to_retain: 20
+    build_logs_to_retain: 3
     public: true
     plan:
     - aggregate:
@@ -614,13 +639,21 @@ jobs:
       - get: coaster-nn
       - get: coaster
         trigger: true
+        passed: [test-coaster]
+      - get: greenglas
+        trigger: true
+        passed: [test-greenglas]
       - get: juice
         trigger: true
+        passed: [test-juice]
       - get: juice-examples
         trigger: true
-      - get: container
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
         trigger: true
-        passed: [test-coaster, test-juice, test-greenglas]
+{% endfor %}
+{% endfor %}
 {% for os in operatingsystems %}
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
