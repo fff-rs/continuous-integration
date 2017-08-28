@@ -143,8 +143,10 @@ jobs:
 {% for backend in backends %}
   - name: build-{{ os }}-{{ backend }}
     plan:
-    - get: git-continuous-integration
-      trigger: true
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
     - task: gen-doc
       image: container
       config:
