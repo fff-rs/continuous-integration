@@ -17,7 +17,7 @@ struct ConcourseYml<'a> {
 fn main() {
     // TODO read this from a `matrix.yml` file
     let operatingsystems = &vec!["fedora".to_string(),"ubuntu".to_string()];
-    let backends = &vec!["native".to_string(),"cuda".to_string(),"opencl".to_string()];
+    let backends = &vec!["default".to_string(),"native".to_string(),"cuda".to_string(),"opencl".to_string()];
 
     let config = ConcourseYml {
          operatingsystems: operatingsystems,
@@ -29,5 +29,9 @@ fn main() {
                             .create(true)
                             .truncate(true)
                             .open("concourse.yml").unwrap();
+
+    {
+        println!("{}", config.render());
+    }
     file.write_all(config.render().as_str().as_bytes()).unwrap();
 }

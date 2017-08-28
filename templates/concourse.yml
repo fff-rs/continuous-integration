@@ -114,16 +114,60 @@ resources:
     uri: https://github.com/spearow/rust-blas.git
 
 
+- name: git-continuous-integration
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/continuous-integration.git
+
 {% for os in operatingsystems %}
-- name: container-{{ os }}
+{% for backend in backends %}
+- name: container-{{ os }}-{{ backend }}
   type: docker-image
   source:
-    repository: quay.io/spearow/machine-learning-container-{{ os }}
+    repository: quay.io/spearow/machine-learning-container-{{ os }}-{{ backend }}
     username: ((quay-username))
     password: ((quay-password))
 {% endfor %}
+{% endfor %}
+
+- name: container
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container
+    username: ((quay-username))
+    password: ((quay-password))
 
 jobs:
+{% for os in operatingsystems %}
+{% for backend in backends %}
+  - name: build-{{ os }}-{{ backend }}
+    plan:
+    - get: git-continuous-integration
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp container/{{ os }}/Dockerfile ../recombined/Dockerfile
+            cp container/{{ os }}/pkg.sh.{{ backend }} ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-{{ os }}-{{ backend }}
+      params:
+      - build: recombined
+{% endfor %}
+{% endfor %}
+
   - name: doc-coaster
     build_logs_to_retain: 20
     public: true
@@ -179,7 +223,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [test-coaster]
+        passed: [test-coaster-nn]
     - task: gen-doc
       image: container
       config:
@@ -227,7 +271,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [test-coaster]
+        passed: [test-coaster-blas]
     - task: gen-doc
       image: container
       config:
@@ -275,7 +319,7 @@ jobs:
         trigger: true
       - get: container
         trigger: true
-        passed: [test-coaster]
+        passed: [test-greenglas]
     - task: gen-doc
       image: container
       config:
@@ -371,26 +415,20 @@ jobs:
       - get: container
         trigger: true
 {% for os in operatingsystems %}
-    - task: compile-{{ os }}
-      image: container-{{ os }}
-      config:
-        platform: linux
-        inputs:
-        - name: coaster
-        run:
-          path: cargo
-          args: ["test"]
-          dir: coaster
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
-      image: container
+      image: container-{{ os }}-{{ backend }}
       config:
         platform: linux
         inputs:
         - name: coaster
         run:
           path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
           args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
           dir: coaster
 {% endfor %}
 {% endfor %}
@@ -411,23 +449,10 @@ jobs:
       - get: container
         trigger: true
         passed: [test-coaster]
-{% for os in operatingsystems%}
-    - task: compile-{{ os }}
-      image: container-{{ os }}
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        run:
-          path: cargo
-          args: ["test"]
-          dir: coaster-blas
+{% for os in operatingsystems %}
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}
+      image: container-{{ os }}-{{ backend }}
       config:
         platform: linux
         inputs:
@@ -437,7 +462,11 @@ jobs:
         - name: coaster-blas
         run:
           path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
           args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
           dir: coaster-blas
 {% endfor %}
 {% endfor %}
@@ -463,61 +492,10 @@ jobs:
       - get: container
         trigger: true
         passed: [test-coaster]
-    - task: compile
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        run:
-          path: cargo
-          args: ["test", "--no-default-features","--features=native"]
-          dir: coaster-nn
-
-  - name: test-coaster-nn-cuda
-    build_logs_to_retain: 20
-    public: true
-    plan:
-    - aggregate:
-      - get: rust-cudnn
-        trigger: true
-      - get: rust-blas
-        trigger: true
-      - get: rust-cublas
-        trigger: true
-      - get: coaster
-        trigger: true
-      - get: coaster-blas
-        trigger: true
-      - get: coaster-nn
-        trigger: true
-      - get: container
-        trigger: true
-        passed: [test-coaster]
-{% for os in operatingsystems%}
-    - task: compile-{{ os }}
-      image: container-{{ os }}
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        run:
-          path: cargo
-          args: ["test"]
-          dir: coaster-nn
+{% for os in operatingsystems %}
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}
+      image: container-{{ os }}-{{ backend }}
       config:
         platform: linux
         inputs:
@@ -529,7 +507,11 @@ jobs:
         - name: coaster-nn
         run:
           path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
           args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
           dir: coaster-nn
 {% endfor %}
 {% endfor %}
@@ -553,24 +535,10 @@ jobs:
       - get: container
         trigger: true
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
-{% for os in operatingsystems%}
-    - task: compile-{{ os }}
-      image: container-{{ os }}
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: greenglas
-        run:
-          path: cargo
-          args: ["test"]
-          dir: greenglas
+{% for os in operatingsystems %}
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}
+      image: container-{{ os }}-{{ backend }}
       config:
         platform: linux
         inputs:
@@ -581,7 +549,11 @@ jobs:
         - name: greenglas
         run:
           path: cargo
+{% if backend == "default" %}
           args: ["test"]
+{% else %}
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
           dir: greenglas
 {% endfor %}
 {% endfor %}
@@ -605,26 +577,10 @@ jobs:
       - get: container
         trigger: true
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
-{% for os in operatingsystems%}
-    - task: compile-{{ os }}
-      image: container-{{ os }}
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        run:
-          path: cargo
-          args: ["test"]
-          dir: coaster-nn
+{% for os in operatingsystems %}
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}
+      image: container-{{ os }}-{{ backend }}
       config:
         platform: linux
         inputs:
@@ -637,7 +593,11 @@ jobs:
         - name: juice
         run:
           path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
           args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
           dir: coaster-nn
 {% endfor %}
 {% endfor %}
@@ -661,27 +621,10 @@ jobs:
       - get: container
         trigger: true
         passed: [test-coaster, test-juice, test-greenglas]
-{% for os in operatingsystems%}
-    - task: compile-{{ os }}
-      image: container-{{ os }}
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: coaster
-        - name: coaster-blas
-        - name: coaster-nn
-        - name: juice
-        - name: juice-examples
-        run:
-          path: cargo
-          args: ["test"]
-          dir: juice-examples
+{% for os in operatingsystems %}
 {% for backend in backends %}
     - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}
+      image: container-{{ os }}-{{ backend }}
       config:
         platform: linux
         inputs:
@@ -695,7 +638,11 @@ jobs:
         - name: juice-examples
         run:
           path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
           args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
           dir: juice-examples
 {% endfor %}
 {% endfor %}
