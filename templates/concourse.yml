@@ -1,0 +1,687 @@
+resources:
+- name: juice-examples
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/juice-examples.git
+
+- name: juice
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/juice.git
+
+- name: doc-juice
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/juice.git
+    private_key: ((ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: coaster-nn
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/coaster-nn.git
+
+- name: doc-coaster-nn
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster-nn.git
+    private_key: ((ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: coaster-blas
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/coaster-blas.git
+
+- name: doc-coaster-blas
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster-blas.git
+    private_key: ((ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: coaster
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/coaster.git
+
+- name: doc-coaster
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster.git
+    private_key: ((ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: greenglas
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/greenglas.git
+
+- name: doc-greenglas
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/greenglas.git
+    private_key: ((ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: rust-cudnn
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/rust-cudnn.git
+
+- name: rust-cublas
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/rust-cublas.git
+
+- name: rust-blas
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/rust-blas.git
+
+
+- name: git-continuous-integration
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/continuous-integration.git
+
+{% for os in operatingsystems %}
+{% for backend in backends %}
+- name: container-{{ os }}-{{ backend }}
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-{{ os }}-{{ backend }}
+    username: ((quay-username))
+    password: ((quay-password))
+{% endfor %}
+{% endfor %}
+
+- name: container
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container
+    username: ((quay-username))
+    password: ((quay-password))
+
+jobs:
+{% for os in operatingsystems %}
+{% for backend in backends %}
+  - name: build-{{ os }}-{{ backend }}
+    plan:
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo ((quay-password))
+            echo ((quay-username))
+            cp container/{{ os }}/Dockerfile ../recombined/Dockerfile
+            cp container/{{ os }}/pkg.sh.{{ backend }} ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-{{ os }}-{{ backend }}
+      params:
+        build: recombined
+        tag_as_latest: true
+{% endfor %}
+{% endfor %}
+
+  - name: doc-coaster
+    build_logs_to_retain: 3
+    public: true
+    plan:
+    - aggregate:
+      - get: doc-coaster
+      - get: coaster
+        params: {depth: 1}
+        trigger: true
+        passed: [test-coaster]
+      - get: container
+        trigger: true
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: coaster
+        - name: doc-coaster
+        outputs:
+        - name: doc-coaster-updated
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd coaster
+            cargo doc --no-deps
+            cd -
+            git clone doc-coaster doc-coaster-updated
+            rm -rf doc-coaster-updated/*
+            cp -rf coaster/target/doc/* doc-coaster-updated/
+            cd doc-coaster-updated
+            echo "<meta http-equiv=refresh content=0;url=coaster/index.html>" > index.html
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A && git commit -m"doc/automatic: update" || true
+    - put: doc-coaster
+      params: { repository: doc-coaster-updated, force: true }
+
+  - name: doc-coaster-nn
+    build_logs_to_retain: 3
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+      - get: doc-coaster-nn
+      - get: coaster-nn
+        params: {depth: 1}
+        trigger: true
+        passed: [test-coaster-nn]
+      - get: container
+        trigger: true
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cudnn
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-nn
+        - name: doc-coaster-nn
+        outputs:
+        - name: doc-coaster-nn-updated
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd coaster-nn
+            cargo doc --no-deps
+            cd -
+            git clone doc-coaster-nn doc-coaster-nn-updated
+            rm -rf doc-coaster-nn-updated/*
+            cp -rf coaster-nn/target/doc/* doc-coaster-nn-updated/
+            cd doc-coaster-nn-updated
+            echo "<meta http-equiv=refresh content=0;url=coaster_nn/index.html>" > index.html
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A && git commit -m"doc/automatic: update" || true
+    - put: doc-coaster-nn
+      params: { repository: doc-coaster-nn-updated, force: true }
+
+  - name: doc-coaster-blas
+    build_logs_to_retain: 3
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+      - get: doc-coaster-blas
+      - get: coaster-blas
+        params: {depth: 1}
+        trigger: true
+        passed: [test-coaster-blas]
+      - get: container
+        trigger: true
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cudnn
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: doc-coaster-blas
+        outputs:
+        - name: doc-coaster-blas-updated
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd coaster-blas
+            cargo doc --no-deps
+            cd -
+            git clone doc-coaster-blas doc-coaster-blas-updated
+            rm -rf doc-coaster-blas-updated/*
+            cp -rf coaster-blas/target/doc/* doc-coaster-blas-updated/
+            cd doc-coaster-blas-updated
+            echo "<meta http-equiv=refresh content=0;url=coaster_blas/index.html>" > index.html
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A && git commit -m"doc/automatic: update" || true
+    - put: doc-coaster-blas
+      params: { repository: doc-coaster-blas-updated, force: true }
+
+  - name: doc-greenglas
+    build_logs_to_retain: 3
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+      - get: doc-greenglas
+      - get: greenglas
+        params: {depth: 1}
+        trigger: true
+        passed: [test-greenglas]
+      - get: container
+        trigger: true
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: coaster
+        - name: rust-blas
+        - name: rust-cublas
+        - name: rust-cudnn
+        - name: greenglas
+        - name: doc-greenglas
+        outputs:
+        - name: doc-greenglas-updated
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd greenglas
+            cargo doc --no-deps
+            cd -
+            git clone doc-greenglas doc-greenglas-updated
+            rm -rf doc-greenglas-updated/*
+            cp -rf greenglas/target/doc/* doc-greenglas-updated/
+            cd doc-greenglas-updated
+            echo "<meta http-equiv=refresh content=0;url=greenglas/index.html>" > index.html
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A && git commit -m"doc/automatic: update" || true
+    - put: doc-greenglas
+      params: { repository: doc-greenglas-updated, force: true }
+
+  - name: doc-juice
+    build_logs_to_retain: 3
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster-blas
+      - get: coaster-nn
+      - get: coaster
+        passed: [test-coaster]
+      - get: doc-juice
+      - get: juice
+        params: {depth: 1}
+        trigger: true
+        passed: [test-juice]
+      - get: container
+        trigger: true
+    - task: gen-doc
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: coaster
+        - name: coaster-nn
+        - name: coaster-blas
+        - name: rust-blas
+        - name: rust-cublas
+        - name: rust-cudnn
+        - name: juice
+        - name: doc-juice
+        outputs:
+        - name: doc-juice-updated
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd juice
+            cargo doc --no-deps
+            cd -
+            git clone doc-juice doc-juice-updated
+            rm -rf doc-juice-updated/*
+            cp -rf juice/target/doc/* doc-juice-updated/
+            cd doc-juice-updated
+            echo "<meta http-equiv=refresh content=0;url=juice/index.html>" > index.html
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A && git commit -m"doc/automatic: update" || true
+    - put: doc-juice
+      params: { repository: doc-juice-updated, force: true }
+
+  - name: test-coaster
+    build_logs_to_retain: 5
+    public: true
+    plan:
+    - aggregate:
+      - get: coaster
+        trigger: true
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
+        trigger: true
+{% endfor %}
+{% endfor %}
+{% for os in operatingsystems %}
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}-{{ backend }}
+      config:
+        platform: linux
+        inputs:
+        - name: coaster
+        run:
+          path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
+          dir: coaster
+{% endfor %}
+{% endfor %}
+
+  - name: test-coaster-blas
+    build_logs_to_retain: 5
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cublas
+        trigger: true
+      - get: coaster
+        trigger: true
+        passed: [test-coaster]
+      - get: coaster-blas
+        trigger: true
+      - get: rust-blas
+        trigger: true
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
+        trigger: true
+{% endfor %}
+{% endfor %}
+{% for os in operatingsystems %}
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}-{{ backend }}
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        run:
+          path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
+          dir: coaster-blas
+{% endfor %}
+{% endfor %}
+
+
+  - name: test-coaster-nn
+    build_logs_to_retain: 3
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+        trigger: true
+      - get: rust-blas
+        trigger: true
+      - get: rust-cublas
+        trigger: true
+      - get: coaster
+        passed: [test-coaster]
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: coaster-nn
+        trigger: true
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
+        trigger: true
+{% endfor %}
+{% endfor %}
+{% for os in operatingsystems %}
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}-{{ backend }}
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        run:
+          path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
+          dir: coaster-nn
+{% endfor %}
+{% endfor %}
+
+  - name: test-greenglas
+    build_logs_to_retain: 3
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+        trigger: true
+        passed: [test-coaster]
+      - get: coaster-blas
+        trigger: true
+        passed: [test-coaster-blas]
+      - get: coaster-nn
+        trigger: true
+        passed: [test-coaster-nn]
+      - get: greenglas
+        trigger: true
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
+        trigger: true
+{% endfor %}
+{% endfor %}
+        passed: [test-coaster, test-coaster-nn, test-coaster-blas]
+{% for os in operatingsystems %}
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}-{{ backend }}
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: greenglas
+        run:
+          path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
+          dir: greenglas
+{% endfor %}
+{% endfor %}
+
+  - name: test-juice
+    build_logs_to_retain: 3
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+        trigger: true
+        passed: [test-coaster]
+      - get: coaster-blas
+        trigger: true
+        passed: [test-coaster-blas]
+      - get: coaster-nn
+        trigger: true
+        passed: [test-coaster-nn]
+      - get: juice
+        trigger: true
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
+        trigger: true
+{% endfor %}
+{% endfor %}
+{% for os in operatingsystems %}
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}-{{ backend }}
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        run:
+          path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
+          dir: coaster-nn
+{% endfor %}
+{% endfor %}
+
+  - name: test-juice-examples
+    build_logs_to_retain: 3
+    public: true
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster-blas
+      - get: coaster-nn
+      - get: coaster
+        trigger: true
+        passed: [test-coaster]
+      - get: greenglas
+        trigger: true
+        passed: [test-greenglas]
+      - get: juice
+        trigger: true
+        passed: [test-juice]
+      - get: juice-examples
+        trigger: true
+{% for os in operatingsystems %}
+{% for backend in backends %}
+      - get: container-{{ os }}-{{ backend }}
+        trigger: true
+{% endfor %}
+{% endfor %}
+{% for os in operatingsystems %}
+{% for backend in backends %}
+    - task: compile-{{ os }}-{{ backend }}
+      image: container-{{ os }}-{{ backend }}
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: juice-examples
+        run:
+          path: cargo
+{% if backend == "default" %}
+          args: ["test"]
+{% else %}
+          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+{% endif %}
+          dir: juice-examples
+{% endfor %}
+{% endfor %}
