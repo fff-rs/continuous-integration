@@ -142,12 +142,13 @@ jobs:
 {% for os in operatingsystems %}
 {% for backend in backends %}
   - name: build-{{ os }}-{{ backend }}
+    serial_groups: [constructors]
     plan:
     - aggregate:
       - get: git-continuous-integration
         trigger: true
       - get: container
-    - task: gen-doc
+    - task: gen-container
       image: container
       config:
         platform: linux
