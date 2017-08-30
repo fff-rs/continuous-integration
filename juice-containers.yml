@@ -1,0 +1,335 @@
+resources:
+- name: git-continuous-integration
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/continuous-integration.git
+
+- name: container-fedora-default
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-fedora-default
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-fedora-native
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-fedora-native
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-fedora-cuda
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-fedora-cuda
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-fedora-opencl
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-fedora-opencl
+    username: ((quay-username))
+    password: ((quay-password))
+
+
+
+- name: container-ubuntu-default
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-ubuntu-default
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-ubuntu-native
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-ubuntu-native
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-ubuntu-cuda
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-ubuntu-cuda
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-ubuntu-opencl
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-ubuntu-opencl
+    username: ((quay-username))
+    password: ((quay-password))
+
+
+
+- name: container
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container
+    username: ((quay-username))
+    password: ((quay-password))
+
+
+
+jobs:
+  - name: build-fedora-default
+    serial_groups: [constructors]
+    plan:
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo ((quay-password))
+            echo ((quay-username))
+            cp container/fedora/Dockerfile ../recombined/Dockerfile
+            cp container/fedora/pkg.sh.default ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-fedora-default
+      params:
+        build: recombined
+        tag_as_latest: true
+
+  - name: build-fedora-native
+    serial_groups: [constructors]
+    plan:
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo ((quay-password))
+            echo ((quay-username))
+            cp container/fedora/Dockerfile ../recombined/Dockerfile
+            cp container/fedora/pkg.sh.native ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-fedora-native
+      params:
+        build: recombined
+        tag_as_latest: true
+
+  - name: build-fedora-cuda
+    serial_groups: [constructors]
+    plan:
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo ((quay-password))
+            echo ((quay-username))
+            cp container/fedora/Dockerfile ../recombined/Dockerfile
+            cp container/fedora/pkg.sh.cuda ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-fedora-cuda
+      params:
+        build: recombined
+        tag_as_latest: true
+
+  - name: build-fedora-opencl
+    serial_groups: [constructors]
+    plan:
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo ((quay-password))
+            echo ((quay-username))
+            cp container/fedora/Dockerfile ../recombined/Dockerfile
+            cp container/fedora/pkg.sh.opencl ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-fedora-opencl
+      params:
+        build: recombined
+        tag_as_latest: true
+
+
+
+  - name: build-ubuntu-default
+    serial_groups: [constructors]
+    plan:
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo ((quay-password))
+            echo ((quay-username))
+            cp container/ubuntu/Dockerfile ../recombined/Dockerfile
+            cp container/ubuntu/pkg.sh.default ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-ubuntu-default
+      params:
+        build: recombined
+        tag_as_latest: true
+
+  - name: build-ubuntu-native
+    serial_groups: [constructors]
+    plan:
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo ((quay-password))
+            echo ((quay-username))
+            cp container/ubuntu/Dockerfile ../recombined/Dockerfile
+            cp container/ubuntu/pkg.sh.native ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-ubuntu-native
+      params:
+        build: recombined
+        tag_as_latest: true
+
+  - name: build-ubuntu-cuda
+    serial_groups: [constructors]
+    plan:
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo ((quay-password))
+            echo ((quay-username))
+            cp container/ubuntu/Dockerfile ../recombined/Dockerfile
+            cp container/ubuntu/pkg.sh.cuda ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-ubuntu-cuda
+      params:
+        build: recombined
+        tag_as_latest: true
+
+  - name: build-ubuntu-opencl
+    serial_groups: [constructors]
+    plan:
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo ((quay-password))
+            echo ((quay-username))
+            cp container/ubuntu/Dockerfile ../recombined/Dockerfile
+            cp container/ubuntu/pkg.sh.opencl ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-ubuntu-opencl
+      params:
+        build: recombined
+        tag_as_latest: true
+

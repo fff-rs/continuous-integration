@@ -1,0 +1,17 @@
+{% for os in operatingsystems %}
+{% for backend in backends %}
+- name: container-{{ os }}-{{ backend }}
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-{{ os }}-{{ backend }}
+    username: ((quay-username))
+    password: ((quay-password))
+{% endfor %}
+{% endfor %}
+
+- name: container
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container
+    username: ((quay-username))
+    password: ((quay-password))

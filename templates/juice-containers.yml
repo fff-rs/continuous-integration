@@ -1,0 +1,45 @@
+resources:
+- name: git-continuous-integration
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/spearow/continuous-integration.git
+
+{% include "container-resourses.yml" %}
+
+jobs:
+{% for os in operatingsystems %}
+{% for backend in backends %}
+  - name: build-{{ os }}-{{ backend }}
+    serial_groups: [constructors]
+    plan:
+    - aggregate:
+      - get: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: git-continuous-integration
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo ((quay-password))
+            echo ((quay-username))
+            cp container/{{ os }}/Dockerfile ../recombined/Dockerfile
+            cp container/{{ os }}/pkg.sh.{{ backend }} ../recombined/pkg.sh
+            cp container/escalate.sh ../recombined/escalate.sh
+          dir: git-continuous-integration
+
+    - put: container-{{ os }}-{{ backend }}
+      params:
+        build: recombined
+        tag_as_latest: true
+{% endfor %}
+{% endfor %}
