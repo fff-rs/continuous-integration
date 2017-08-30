@@ -79,6 +79,7 @@ jobs:
 
   - name: build-fedora-default
     serial_groups: [constructors]
+    build_logs_to_retain: 1
     plan:
     - aggregate:
       - get: git-continuous-integration
@@ -111,6 +112,7 @@ jobs:
 
   - name: build-fedora-native
     serial_groups: [constructors]
+    build_logs_to_retain: 1
     plan:
     - aggregate:
       - get: git-continuous-integration
@@ -143,6 +145,7 @@ jobs:
 
   - name: build-fedora-cuda
     serial_groups: [constructors]
+    build_logs_to_retain: 1
     plan:
     - aggregate:
       - get: git-continuous-integration
@@ -175,6 +178,7 @@ jobs:
 
   - name: build-fedora-opencl
     serial_groups: [constructors]
+    build_logs_to_retain: 1
     plan:
     - aggregate:
       - get: git-continuous-integration
@@ -209,6 +213,7 @@ jobs:
 
   - name: build-ubuntu-default
     serial_groups: [constructors]
+    build_logs_to_retain: 1
     plan:
     - aggregate:
       - get: git-continuous-integration
@@ -241,6 +246,7 @@ jobs:
 
   - name: build-ubuntu-native
     serial_groups: [constructors]
+    build_logs_to_retain: 1
     plan:
     - aggregate:
       - get: git-continuous-integration
@@ -273,6 +279,7 @@ jobs:
 
   - name: build-ubuntu-cuda
     serial_groups: [constructors]
+    build_logs_to_retain: 1
     plan:
     - aggregate:
       - get: git-continuous-integration
@@ -305,6 +312,7 @@ jobs:
 
   - name: build-ubuntu-opencl
     serial_groups: [constructors]
+    build_logs_to_retain: 1
     plan:
     - aggregate:
       - get: git-continuous-integration

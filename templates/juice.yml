@@ -117,13 +117,12 @@ resources:
 
 jobs:
   - name: doc-coaster
-    build_logs_to_retain: 3
+    build_logs_to_retain: 2
     public: true
     plan:
     - aggregate:
       - get: doc-coaster
       - get: coaster
-        params: {depth: 1}
         trigger: true
         passed: [test-coaster]
       - get: container
@@ -157,7 +156,7 @@ jobs:
       params: { repository: doc-coaster-updated, force: true }
 
   - name: doc-coaster-nn
-    build_logs_to_retain: 3
+    build_logs_to_retain: 2
     public: true
     plan:
     - aggregate:
@@ -167,7 +166,6 @@ jobs:
       - get: coaster
       - get: doc-coaster-nn
       - get: coaster-nn
-        params: {depth: 1}
         trigger: true
         passed: [test-coaster-nn]
       - get: container
@@ -205,7 +203,7 @@ jobs:
       params: { repository: doc-coaster-nn-updated, force: true }
 
   - name: doc-coaster-blas
-    build_logs_to_retain: 3
+    build_logs_to_retain: 2
     public: true
     plan:
     - aggregate:
@@ -215,7 +213,6 @@ jobs:
       - get: coaster
       - get: doc-coaster-blas
       - get: coaster-blas
-        params: {depth: 1}
         trigger: true
         passed: [test-coaster-blas]
       - get: container
@@ -253,7 +250,7 @@ jobs:
       params: { repository: doc-coaster-blas-updated, force: true }
 
   - name: doc-greenglas
-    build_logs_to_retain: 3
+    build_logs_to_retain: 2
     public: true
     plan:
     - aggregate:
@@ -263,7 +260,6 @@ jobs:
       - get: coaster
       - get: doc-greenglas
       - get: greenglas
-        params: {depth: 1}
         trigger: true
         passed: [test-greenglas]
       - get: container
@@ -301,7 +297,7 @@ jobs:
       params: { repository: doc-greenglas-updated, force: true }
 
   - name: doc-juice
-    build_logs_to_retain: 3
+    build_logs_to_retain: 2
     public: true
     plan:
     - aggregate:
@@ -314,7 +310,6 @@ jobs:
         passed: [test-coaster]
       - get: doc-juice
       - get: juice
-        params: {depth: 1}
         trigger: true
         passed: [test-juice]
       - get: container
@@ -354,7 +349,7 @@ jobs:
       params: { repository: doc-juice-updated, force: true }
 
   - name: test-coaster
-    build_logs_to_retain: 5
+    build_logs_to_retain: 4
     public: true
     plan:
     - aggregate:
@@ -386,7 +381,7 @@ jobs:
 {% endfor %}
 
   - name: test-coaster-blas
-    build_logs_to_retain: 5
+    build_logs_to_retain: 4
     public: true
     plan:
     - aggregate:
@@ -429,7 +424,7 @@ jobs:
 
 
   - name: test-coaster-nn
-    build_logs_to_retain: 3
+    build_logs_to_retain: 4
     public: true
     plan:
     - aggregate:
@@ -477,7 +472,7 @@ jobs:
 {% endfor %}
 
   - name: test-greenglas
-    build_logs_to_retain: 3
+    build_logs_to_retain: 4
     public: true
     plan:
     - aggregate:
@@ -526,7 +521,7 @@ jobs:
 {% endfor %}
 
   - name: test-juice
-    build_logs_to_retain: 3
+    build_logs_to_retain: 4
     public: true
     plan:
     - aggregate:
@@ -576,7 +571,7 @@ jobs:
 {% endfor %}
 
   - name: test-juice-examples
-    build_logs_to_retain: 3
+    build_logs_to_retain: 4
     public: true
     plan:
     - aggregate:
