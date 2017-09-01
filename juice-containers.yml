@@ -82,7 +82,8 @@ jobs:
     build_logs_to_retain: 1
     plan:
     - aggregate:
-      - get: git-continuous-integration
+      - get: ci
+        resource: git-continuous-integration
         trigger: true
       - get: container
     - task: gen-container
@@ -90,7 +91,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: git-continuous-integration
+        - name: ci
         outputs:
         - name: recombined
         run:
@@ -98,12 +99,9 @@ jobs:
           args:
           - -exc
           - |
-            echo ((quay-password))
-            echo ((quay-username))
-            cp container/fedora/Dockerfile ../recombined/Dockerfile
-            cp container/fedora/pkg.sh.default ../recombined/pkg.sh
-            cp container/escalate.sh ../recombined/escalate.sh
-          dir: git-continuous-integration
+            cp ci/container/fedora/Dockerfile recombined/Dockerfile
+            cp ci/container/fedora/pkg.sh.default recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-fedora-default
       params:
@@ -115,7 +113,8 @@ jobs:
     build_logs_to_retain: 1
     plan:
     - aggregate:
-      - get: git-continuous-integration
+      - get: ci
+        resource: git-continuous-integration
         trigger: true
       - get: container
     - task: gen-container
@@ -123,7 +122,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: git-continuous-integration
+        - name: ci
         outputs:
         - name: recombined
         run:
@@ -131,12 +130,9 @@ jobs:
           args:
           - -exc
           - |
-            echo ((quay-password))
-            echo ((quay-username))
-            cp container/fedora/Dockerfile ../recombined/Dockerfile
-            cp container/fedora/pkg.sh.native ../recombined/pkg.sh
-            cp container/escalate.sh ../recombined/escalate.sh
-          dir: git-continuous-integration
+            cp ci/container/fedora/Dockerfile recombined/Dockerfile
+            cp ci/container/fedora/pkg.sh.native recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-fedora-native
       params:
@@ -148,7 +144,8 @@ jobs:
     build_logs_to_retain: 1
     plan:
     - aggregate:
-      - get: git-continuous-integration
+      - get: ci
+        resource: git-continuous-integration
         trigger: true
       - get: container
     - task: gen-container
@@ -156,7 +153,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: git-continuous-integration
+        - name: ci
         outputs:
         - name: recombined
         run:
@@ -164,12 +161,9 @@ jobs:
           args:
           - -exc
           - |
-            echo ((quay-password))
-            echo ((quay-username))
-            cp container/fedora/Dockerfile ../recombined/Dockerfile
-            cp container/fedora/pkg.sh.cuda ../recombined/pkg.sh
-            cp container/escalate.sh ../recombined/escalate.sh
-          dir: git-continuous-integration
+            cp ci/container/fedora/Dockerfile recombined/Dockerfile
+            cp ci/container/fedora/pkg.sh.cuda recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-fedora-cuda
       params:
@@ -181,7 +175,8 @@ jobs:
     build_logs_to_retain: 1
     plan:
     - aggregate:
-      - get: git-continuous-integration
+      - get: ci
+        resource: git-continuous-integration
         trigger: true
       - get: container
     - task: gen-container
@@ -189,7 +184,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: git-continuous-integration
+        - name: ci
         outputs:
         - name: recombined
         run:
@@ -197,12 +192,9 @@ jobs:
           args:
           - -exc
           - |
-            echo ((quay-password))
-            echo ((quay-username))
-            cp container/fedora/Dockerfile ../recombined/Dockerfile
-            cp container/fedora/pkg.sh.opencl ../recombined/pkg.sh
-            cp container/escalate.sh ../recombined/escalate.sh
-          dir: git-continuous-integration
+            cp ci/container/fedora/Dockerfile recombined/Dockerfile
+            cp ci/container/fedora/pkg.sh.opencl recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-fedora-opencl
       params:
@@ -216,7 +208,8 @@ jobs:
     build_logs_to_retain: 1
     plan:
     - aggregate:
-      - get: git-continuous-integration
+      - get: ci
+        resource: git-continuous-integration
         trigger: true
       - get: container
     - task: gen-container
@@ -224,7 +217,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: git-continuous-integration
+        - name: ci
         outputs:
         - name: recombined
         run:
@@ -232,12 +225,9 @@ jobs:
           args:
           - -exc
           - |
-            echo ((quay-password))
-            echo ((quay-username))
-            cp container/ubuntu/Dockerfile ../recombined/Dockerfile
-            cp container/ubuntu/pkg.sh.default ../recombined/pkg.sh
-            cp container/escalate.sh ../recombined/escalate.sh
-          dir: git-continuous-integration
+            cp ci/container/ubuntu/Dockerfile recombined/Dockerfile
+            cp ci/container/ubuntu/pkg.sh.default recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-ubuntu-default
       params:
@@ -249,7 +239,8 @@ jobs:
     build_logs_to_retain: 1
     plan:
     - aggregate:
-      - get: git-continuous-integration
+      - get: ci
+        resource: git-continuous-integration
         trigger: true
       - get: container
     - task: gen-container
@@ -257,7 +248,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: git-continuous-integration
+        - name: ci
         outputs:
         - name: recombined
         run:
@@ -265,12 +256,9 @@ jobs:
           args:
           - -exc
           - |
-            echo ((quay-password))
-            echo ((quay-username))
-            cp container/ubuntu/Dockerfile ../recombined/Dockerfile
-            cp container/ubuntu/pkg.sh.native ../recombined/pkg.sh
-            cp container/escalate.sh ../recombined/escalate.sh
-          dir: git-continuous-integration
+            cp ci/container/ubuntu/Dockerfile recombined/Dockerfile
+            cp ci/container/ubuntu/pkg.sh.native recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-ubuntu-native
       params:
@@ -282,7 +270,8 @@ jobs:
     build_logs_to_retain: 1
     plan:
     - aggregate:
-      - get: git-continuous-integration
+      - get: ci
+        resource: git-continuous-integration
         trigger: true
       - get: container
     - task: gen-container
@@ -290,7 +279,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: git-continuous-integration
+        - name: ci
         outputs:
         - name: recombined
         run:
@@ -298,12 +287,9 @@ jobs:
           args:
           - -exc
           - |
-            echo ((quay-password))
-            echo ((quay-username))
-            cp container/ubuntu/Dockerfile ../recombined/Dockerfile
-            cp container/ubuntu/pkg.sh.cuda ../recombined/pkg.sh
-            cp container/escalate.sh ../recombined/escalate.sh
-          dir: git-continuous-integration
+            cp ci/container/ubuntu/Dockerfile recombined/Dockerfile
+            cp ci/container/ubuntu/pkg.sh.cuda recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-ubuntu-cuda
       params:
@@ -315,7 +301,8 @@ jobs:
     build_logs_to_retain: 1
     plan:
     - aggregate:
-      - get: git-continuous-integration
+      - get: ci
+        resource: git-continuous-integration
         trigger: true
       - get: container
     - task: gen-container
@@ -323,7 +310,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: git-continuous-integration
+        - name: ci
         outputs:
         - name: recombined
         run:
@@ -331,12 +318,9 @@ jobs:
           args:
           - -exc
           - |
-            echo ((quay-password))
-            echo ((quay-username))
-            cp container/ubuntu/Dockerfile ../recombined/Dockerfile
-            cp container/ubuntu/pkg.sh.opencl ../recombined/pkg.sh
-            cp container/escalate.sh ../recombined/escalate.sh
-          dir: git-continuous-integration
+            cp ci/container/ubuntu/Dockerfile recombined/Dockerfile
+            cp ci/container/ubuntu/pkg.sh.opencl recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-ubuntu-opencl
       params:
