@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # https://github.com/concourse/concourse/blob/master/ci/scripts/baggageclaim#L13-L47
 
@@ -37,4 +37,4 @@ function permit_device_control() {
   echo a > ${cgroup_dir}${devices_subdir}/devices.allow || true
 }
 
-permit_device_control()
+permit_device_control
