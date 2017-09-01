@@ -79,7 +79,7 @@ jobs:
 
   - name: build-fedora-default
     serial_groups: [constructors]
-    build_logs_to_retain: 1
+    build_logs_to_retain: 2
     plan:
     - aggregate:
       - get: ci
@@ -110,7 +110,7 @@ jobs:
 
   - name: build-fedora-native
     serial_groups: [constructors]
-    build_logs_to_retain: 1
+    build_logs_to_retain: 2
     plan:
     - aggregate:
       - get: ci
@@ -141,7 +141,7 @@ jobs:
 
   - name: build-fedora-cuda
     serial_groups: [constructors]
-    build_logs_to_retain: 1
+    build_logs_to_retain: 2
     plan:
     - aggregate:
       - get: ci
@@ -172,7 +172,7 @@ jobs:
 
   - name: build-fedora-opencl
     serial_groups: [constructors]
-    build_logs_to_retain: 1
+    build_logs_to_retain: 2
     plan:
     - aggregate:
       - get: ci
@@ -205,7 +205,7 @@ jobs:
 
   - name: build-ubuntu-default
     serial_groups: [constructors]
-    build_logs_to_retain: 1
+    build_logs_to_retain: 2
     plan:
     - aggregate:
       - get: ci
@@ -236,7 +236,7 @@ jobs:
 
   - name: build-ubuntu-native
     serial_groups: [constructors]
-    build_logs_to_retain: 1
+    build_logs_to_retain: 2
     plan:
     - aggregate:
       - get: ci
@@ -267,7 +267,7 @@ jobs:
 
   - name: build-ubuntu-cuda
     serial_groups: [constructors]
-    build_logs_to_retain: 1
+    build_logs_to_retain: 2
     plan:
     - aggregate:
       - get: ci
@@ -298,7 +298,7 @@ jobs:
 
   - name: build-ubuntu-opencl
     serial_groups: [constructors]
-    build_logs_to_retain: 1
+    build_logs_to_retain: 2
     plan:
     - aggregate:
       - get: ci

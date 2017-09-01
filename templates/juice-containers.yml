@@ -12,7 +12,7 @@ jobs:
 {% for backend in backends %}
   - name: build-{{ os }}-{{ backend }}
     serial_groups: [constructors]
-    build_logs_to_retain: 1
+    build_logs_to_retain: 2
     plan:
     - aggregate:
       - get: ci
