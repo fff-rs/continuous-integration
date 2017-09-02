@@ -172,6 +172,25 @@ resources:
     password: ((quay-password))
 
 
+- name: container-pureos-default
+  type: docker-image
+  source:
+    repository: hub.docker.com/r/subversiveowl/pureos8-base
+
+- name: container-pureos-native
+  type: docker-image
+  source:
+    repository: hub.docker.com/r/subversiveowl/pureos8-base
+- name: container-pureos-cuda
+  type: docker-image
+  source:
+    repository: hub.docker.com/r/subversiveowl/pureos8-base
+    
+- name: container-pureos-opencl
+  type: docker-image
+  source:
+    repository: hub.docker.com/r/subversiveowl/pureos8-base
+    
 
 - name: container
   type: docker-image
@@ -1529,6 +1548,88 @@ jobs:
 
     - task: compile-ubuntu-opencl
       image: container-ubuntu-opencl
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: juice-examples
+        run:
+          path: cargo
+
+          args: ["test", "--no-default-features","--features=native,opencl"]
+
+          dir: juice-examples
+
+
+          
+    - task: compile-pureos-default
+      image: container-pureos-default
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: juice-examples
+        run:
+          path: cargo
+
+          args: ["test"]
+
+          dir: juice-examples
+
+    - task: compile-pureos-native
+      image: container-pureos-native
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: juice-examples
+        run:
+          path: cargo
+
+          args: ["test", "--no-default-features","--features=native,native"]
+
+          dir: juice-examples
+
+    - task: compile-pureos-cuda
+      image: container-pureos-cuda
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: juice-examples
+        run:
+          path: cargo
+
+          args: ["test", "--no-default-features","--features=native,cuda"]
+
+          dir: juice-examples
+
+    - task: compile-pureos-opencl
+      image: container-pureos-opencl
       config:
         platform: linux
         inputs:
