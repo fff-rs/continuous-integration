@@ -1,7 +1,7 @@
 FROM fedora:latest
 MAINTAINER Bernhard Schuster "bernhard@spearow.io"
 
-COPY escalate.sh /tmp/escalate.sh
+COPY escalate.sh /usr/local/bin/escalate
 COPY pkg.sh /tmp/pkg.sh
 
 RUN dnf update -y
@@ -20,4 +20,4 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
 ENV PATH=/root/.cargo/bin:$PATH
 ENV CMAKE_MAKE_PROGRAM=make
 
-RUN chmod +x /tmp/escalate.sh && /tmp/escalate.sh
+RUN chmod +x /usr/local/bin/escalate
