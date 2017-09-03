@@ -65,6 +65,36 @@ resources:
 
 
 
+- name: container-pureos-default
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-pureos-default
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-pureos-native
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-pureos-native
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-pureos-cuda
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-pureos-cuda
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-pureos-opencl
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-pureos-opencl
+    username: ((quay-username))
+    password: ((quay-password))
+
+
+
 - name: container
   type: docker-image
   source:
@@ -323,6 +353,132 @@ jobs:
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-ubuntu-opencl
+      params:
+        build: recombined
+        tag_as_latest: true
+
+
+
+  - name: build-pureos-default
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp ci/container/pureos/Dockerfile recombined/Dockerfile
+            cp ci/container/pureos/pkg.sh.default recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
+
+    - put: container-pureos-default
+      params:
+        build: recombined
+        tag_as_latest: true
+
+  - name: build-pureos-native
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp ci/container/pureos/Dockerfile recombined/Dockerfile
+            cp ci/container/pureos/pkg.sh.native recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
+
+    - put: container-pureos-native
+      params:
+        build: recombined
+        tag_as_latest: true
+
+  - name: build-pureos-cuda
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp ci/container/pureos/Dockerfile recombined/Dockerfile
+            cp ci/container/pureos/pkg.sh.cuda recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
+
+    - put: container-pureos-cuda
+      params:
+        build: recombined
+        tag_as_latest: true
+
+  - name: build-pureos-opencl
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp ci/container/pureos/Dockerfile recombined/Dockerfile
+            cp ci/container/pureos/pkg.sh.opencl recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
+
+    - put: container-pureos-opencl
       params:
         build: recombined
         tag_as_latest: true

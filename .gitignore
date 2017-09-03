@@ -3,3 +3,4 @@ cred*
 *~
 /target/
 **/*.rs.bk
+*~
