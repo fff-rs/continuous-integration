@@ -355,16 +355,16 @@ jobs:
     - aggregate:
       - get: coaster
         trigger: true
-{% for os in operatingsystems %}
-{% for backend in backends %}
-      - get: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+      - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
 {% endfor %}
 {% endfor %}
-{% for os in operatingsystems %}
-{% for backend in backends %}
-    - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+    - task: compile-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
       config:
         platform: linux
         inputs:
@@ -394,16 +394,16 @@ jobs:
         trigger: true
       - get: rust-blas
         trigger: true
-{% for os in operatingsystems %}
-{% for backend in backends %}
-      - get: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+      - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
 {% endfor %}
 {% endfor %}
-{% for os in operatingsystems %}
-{% for backend in backends %}
-    - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+    - task: compile-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
       config:
         platform: linux
         inputs:
@@ -441,16 +441,16 @@ jobs:
         trigger: true
       - get: coaster-nn
         trigger: true
-{% for os in operatingsystems %}
-{% for backend in backends %}
-      - get: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+      - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
 {% endfor %}
 {% endfor %}
-{% for os in operatingsystems %}
-{% for backend in backends %}
-    - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+    - task: compile-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
       config:
         platform: linux
         inputs:
@@ -490,17 +490,17 @@ jobs:
         passed: [test-coaster-nn]
       - get: greenglas
         trigger: true
-{% for os in operatingsystems %}
-{% for backend in backends %}
-      - get: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+      - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
 {% endfor %}
 {% endfor %}
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
-{% for os in operatingsystems %}
-{% for backend in backends %}
-    - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+    - task: compile-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
       config:
         platform: linux
         inputs:
@@ -539,16 +539,16 @@ jobs:
         passed: [test-coaster-nn]
       - get: juice
         trigger: true
-{% for os in operatingsystems %}
-{% for backend in backends %}
-      - get: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+      - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
 {% endfor %}
 {% endfor %}
-{% for os in operatingsystems %}
-{% for backend in backends %}
-    - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+    - task: compile-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
       config:
         platform: linux
         inputs:
@@ -591,16 +591,16 @@ jobs:
         passed: [test-juice]
       - get: juice-examples
         trigger: true
-{% for os in operatingsystems %}
-{% for backend in backends %}
-      - get: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+      - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
 {% endfor %}
 {% endfor %}
-{% for os in operatingsystems %}
-{% for backend in backends %}
-    - task: compile-{{ os }}-{{ backend }}
-      image: container-{{ os }}-{{ backend }}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+    - task: compile-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
       config:
         platform: linux
         inputs:

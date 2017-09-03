@@ -6,6 +6,8 @@ build = "build.rs"
 
 [dependencies]
 askama = { git = "https://github.com/djc/askama.git" }
+regex = "0.2"
+lazy_static = "0.2"
 
 [build-dependencies]
 askama = { git = "https://github.com/djc/askama.git" }
