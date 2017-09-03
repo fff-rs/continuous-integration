@@ -23,7 +23,7 @@ struct ContainerYml<'a> {
 
 fn main() {
     // TODO read this from a `matrix.yml` file using yml-rust
-    let operatingsystems = &vec!["fedora".to_string(),"ubuntu".to_string()];
+    let operatingsystems = &vec!["fedora".to_string(),"ubuntu".to_string(), "pureos".to_string()];
     let backends = &vec!["default".to_string(),"native".to_string(),"cuda".to_string(),"opencl".to_string()];
 
     let juice = JuiceYml {
