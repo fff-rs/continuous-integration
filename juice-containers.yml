@@ -5,6 +5,13 @@ resources:
     branch: master
     uri: https://github.com/spearow/continuous-integration.git
 
+- name: container-fedora-cuda
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-fedora-cuda
+    username: ((quay-username))
+    password: ((quay-password))
+
 - name: container-fedora-default
   type: docker-image
   source:
@@ -19,13 +26,6 @@ resources:
     username: ((quay-username))
     password: ((quay-password))
 
-- name: container-fedora-cuda
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-fedora-cuda
-    username: ((quay-username))
-    password: ((quay-password))
-
 - name: container-fedora-opencl
   type: docker-image
   source:
@@ -34,6 +34,13 @@ resources:
     password: ((quay-password))
 
 
+
+- name: container-ubuntu-cuda
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-ubuntu-cuda
+    username: ((quay-username))
+    password: ((quay-password))
 
 - name: container-ubuntu-default
   type: docker-image
@@ -49,13 +56,6 @@ resources:
     username: ((quay-username))
     password: ((quay-password))
 
-- name: container-ubuntu-cuda
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-ubuntu-cuda
-    username: ((quay-username))
-    password: ((quay-password))
-
 - name: container-ubuntu-opencl
   type: docker-image
   source:
@@ -64,6 +64,13 @@ resources:
     password: ((quay-password))
 
 
+
+- name: container-pureos-cuda
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-pureos-cuda
+    username: ((quay-username))
+    password: ((quay-password))
 
 - name: container-pureos-default
   type: docker-image
@@ -76,13 +83,6 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-pureos-native
-    username: ((quay-username))
-    password: ((quay-password))
-
-- name: container-pureos-cuda
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-pureos-cuda
     username: ((quay-username))
     password: ((quay-password))
 
@@ -106,6 +106,37 @@ resources:
 
 jobs:
 
+
+  - name: build-fedora-cuda
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp ci/container/fedora/Dockerfile recombined/Dockerfile
+            cp ci/container/fedora/pkg.sh.cuda recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
+
+    - put: container-fedora-cuda
+      params:
+        build: recombined
+        tag_as_latest: true
 
   - name: build-fedora-default
     serial_groups: [constructors]
@@ -169,37 +200,6 @@ jobs:
         build: recombined
         tag_as_latest: true
 
-  - name: build-fedora-cuda
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/fedora/Dockerfile recombined/Dockerfile
-            cp ci/container/fedora/pkg.sh.cuda recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-fedora-cuda
-      params:
-        build: recombined
-        tag_as_latest: true
-
   - name: build-fedora-opencl
     serial_groups: [constructors]
     build_logs_to_retain: 2
@@ -232,6 +232,37 @@ jobs:
         tag_as_latest: true
 
 
+
+  - name: build-ubuntu-cuda
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp ci/container/ubuntu/Dockerfile recombined/Dockerfile
+            cp ci/container/ubuntu/pkg.sh.cuda recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
+
+    - put: container-ubuntu-cuda
+      params:
+        build: recombined
+        tag_as_latest: true
 
   - name: build-ubuntu-default
     serial_groups: [constructors]
@@ -295,37 +326,6 @@ jobs:
         build: recombined
         tag_as_latest: true
 
-  - name: build-ubuntu-cuda
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/ubuntu/Dockerfile recombined/Dockerfile
-            cp ci/container/ubuntu/pkg.sh.cuda recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-ubuntu-cuda
-      params:
-        build: recombined
-        tag_as_latest: true
-
   - name: build-ubuntu-opencl
     serial_groups: [constructors]
     build_logs_to_retain: 2
@@ -358,6 +358,37 @@ jobs:
         tag_as_latest: true
 
 
+
+  - name: build-pureos-cuda
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+    - task: gen-container
+      image: container
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: recombined
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp ci/container/pureos/Dockerfile recombined/Dockerfile
+            cp ci/container/pureos/pkg.sh.cuda recombined/pkg.sh
+            cp ci/container/escalate.sh recombined/escalate.sh
+
+    - put: container-pureos-cuda
+      params:
+        build: recombined
+        tag_as_latest: true
 
   - name: build-pureos-default
     serial_groups: [constructors]
@@ -417,37 +448,6 @@ jobs:
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-pureos-native
-      params:
-        build: recombined
-        tag_as_latest: true
-
-  - name: build-pureos-cuda
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/pureos/Dockerfile recombined/Dockerfile
-            cp ci/container/pureos/pkg.sh.cuda recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-pureos-cuda
       params:
         build: recombined
         tag_as_latest: true
