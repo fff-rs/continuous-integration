@@ -129,8 +129,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/fedora/Dockerfile recombined/Dockerfile
-            cp ci/container/fedora/pkg.sh.cuda recombined/pkg.sh
+            cp ci/container/fedora/cuda/Dockerfile recombined/Dockerfile
+            cp ci/container/fedora/cuda/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-fedora-cuda
@@ -160,8 +160,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/fedora/Dockerfile recombined/Dockerfile
-            cp ci/container/fedora/pkg.sh.default recombined/pkg.sh
+            cp ci/container/fedora/default/Dockerfile recombined/Dockerfile
+            cp ci/container/fedora/default/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-fedora-default
@@ -191,8 +191,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/fedora/Dockerfile recombined/Dockerfile
-            cp ci/container/fedora/pkg.sh.native recombined/pkg.sh
+            cp ci/container/fedora/native/Dockerfile recombined/Dockerfile
+            cp ci/container/fedora/native/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-fedora-native
@@ -222,8 +222,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/fedora/Dockerfile recombined/Dockerfile
-            cp ci/container/fedora/pkg.sh.opencl recombined/pkg.sh
+            cp ci/container/fedora/opencl/Dockerfile recombined/Dockerfile
+            cp ci/container/fedora/opencl/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-fedora-opencl
@@ -255,8 +255,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/ubuntu/Dockerfile recombined/Dockerfile
-            cp ci/container/ubuntu/pkg.sh.cuda recombined/pkg.sh
+            cp ci/container/ubuntu/cuda/Dockerfile recombined/Dockerfile
+            cp ci/container/ubuntu/cuda/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-ubuntu-cuda
@@ -286,8 +286,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/ubuntu/Dockerfile recombined/Dockerfile
-            cp ci/container/ubuntu/pkg.sh.default recombined/pkg.sh
+            cp ci/container/ubuntu/default/Dockerfile recombined/Dockerfile
+            cp ci/container/ubuntu/default/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-ubuntu-default
@@ -317,8 +317,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/ubuntu/Dockerfile recombined/Dockerfile
-            cp ci/container/ubuntu/pkg.sh.native recombined/pkg.sh
+            cp ci/container/ubuntu/native/Dockerfile recombined/Dockerfile
+            cp ci/container/ubuntu/native/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-ubuntu-native
@@ -348,8 +348,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/ubuntu/Dockerfile recombined/Dockerfile
-            cp ci/container/ubuntu/pkg.sh.opencl recombined/pkg.sh
+            cp ci/container/ubuntu/opencl/Dockerfile recombined/Dockerfile
+            cp ci/container/ubuntu/opencl/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-ubuntu-opencl
@@ -381,8 +381,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/pureos/Dockerfile recombined/Dockerfile
-            cp ci/container/pureos/pkg.sh.cuda recombined/pkg.sh
+            cp ci/container/pureos/cuda/Dockerfile recombined/Dockerfile
+            cp ci/container/pureos/cuda/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-pureos-cuda
@@ -412,8 +412,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/pureos/Dockerfile recombined/Dockerfile
-            cp ci/container/pureos/pkg.sh.default recombined/pkg.sh
+            cp ci/container/pureos/default/Dockerfile recombined/Dockerfile
+            cp ci/container/pureos/default/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-pureos-default
@@ -443,8 +443,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/pureos/Dockerfile recombined/Dockerfile
-            cp ci/container/pureos/pkg.sh.native recombined/pkg.sh
+            cp ci/container/pureos/native/Dockerfile recombined/Dockerfile
+            cp ci/container/pureos/native/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-pureos-native
@@ -474,8 +474,8 @@ jobs:
           args:
           - -exc
           - |
-            cp ci/container/pureos/Dockerfile recombined/Dockerfile
-            cp ci/container/pureos/pkg.sh.opencl recombined/pkg.sh
+            cp ci/container/pureos/opencl/Dockerfile recombined/Dockerfile
+            cp ci/container/pureos/opencl/pkg.sh recombined/pkg.sh
             cp ci/container/escalate.sh recombined/escalate.sh
 
     - put: container-pureos-opencl

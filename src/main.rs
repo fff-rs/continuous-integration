@@ -22,18 +22,15 @@ use regex::Regex;
 
 use std::cmp::Ordering;
 
-
-
-
-fn get_pkg_helper_regex(text: &String) -> Option<String> {
-    lazy_static! {
-        static ref RE: Regex = Regex::new(r"^pkg\.sh\.(.*)$").unwrap();
-    }
-    for cap in RE.captures_iter(text) {
-        return Some(cap[1].to_string());
-    }
-    return None;
-}
+// fn get_pkg_helper_regex(text: &String) -> Option<String> {
+//     lazy_static! {
+//         static ref RE: Regex = Regex::new(r"^pkg\.sh\.(.*)$").unwrap();
+//     }
+//     for cap in RE.captures_iter(text) {
+//         return Some(cap[1].to_string());
+//     }
+//     return None;
+// }
 
 
 fn get_backends(directory: &Path) -> Vec<String> {
@@ -44,13 +41,12 @@ fn get_backends(directory: &Path) -> Vec<String> {
             let pathbuf: PathBuf = entry.path().into();
             pathbuf
         })
-        .filter(|entry| entry.is_file())
+        .filter(|entry| entry.is_dir())
         .filter_map(|entry| if let Some(x) = entry.file_name() {
             Some(String::from(x.to_string_lossy()))
         } else {
             None
         })
-        .filter_map(|entry| get_pkg_helper_regex(&entry))
         .collect()
 }
 
