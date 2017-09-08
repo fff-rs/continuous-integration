@@ -370,11 +370,15 @@ jobs:
         inputs:
         - name: coaster
         run:
-          path: cargo
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
 {% if backend == "default" %}
-          args: ["test"]
+            cargo test
 {% else %}
-          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+            cargo test --no-default-features --features=native,{{ backend }}
 {% endif %}
           dir: coaster
 {% endfor %}
@@ -404,6 +408,7 @@ jobs:
 {% for backend in testenv.backends %}
     - task: compile-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
+      privileged: true
       config:
         platform: linux
         inputs:
@@ -412,11 +417,15 @@ jobs:
         - name: coaster
         - name: coaster-blas
         run:
-          path: cargo
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
 {% if backend == "default" %}
-          args: ["test"]
+            cargo test
 {% else %}
-          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+            cargo test --no-default-features --features=native,{{ backend }}
 {% endif %}
           dir: coaster-blas
 {% endfor %}
@@ -461,11 +470,15 @@ jobs:
         - name: coaster-blas
         - name: coaster-nn
         run:
-          path: cargo
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
 {% if backend == "default" %}
-          args: ["test"]
+            cargo test
 {% else %}
-          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+            cargo test --no-default-features --features=native,{{ backend }}
 {% endif %}
           dir: coaster-nn
 {% endfor %}
@@ -510,11 +523,15 @@ jobs:
         - name: coaster
         - name: greenglas
         run:
-          path: cargo
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
 {% if backend == "default" %}
-          args: ["test"]
+            cargo test
 {% else %}
-          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+            cargo test --no-default-features --features=native,{{ backend }}
 {% endif %}
           dir: greenglas
 {% endfor %}
@@ -560,11 +577,15 @@ jobs:
         - name: coaster-nn
         - name: juice
         run:
-          path: cargo
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
 {% if backend == "default" %}
-          args: ["test"]
+            cargo test
 {% else %}
-          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+            cargo test --no-default-features --features=native,{{ backend }}
 {% endif %}
           dir: coaster-nn
 {% endfor %}
@@ -613,11 +634,15 @@ jobs:
         - name: juice
         - name: juice-examples
         run:
-          path: cargo
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
 {% if backend == "default" %}
-          args: ["test"]
+            cargo test
 {% else %}
-          args: ["test", "--no-default-features","--features=native,{{ backend }}"]
+            cargo test --no-default-features --features=native,{{ backend }}
 {% endif %}
           dir: juice-examples
 {% endfor %}
