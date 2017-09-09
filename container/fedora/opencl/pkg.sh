@@ -8,4 +8,6 @@ dnf install -y dnf-plugins-core \
 			capnproto capnproto-libs capnproto-devel \
 			compat-gcc-53 \
 			clinfo \
+			ocl-icd \ # OpenCL.so.1
+			ocl-icd-devel \ # OpenCL.so
 			nvidia-driver-cuda

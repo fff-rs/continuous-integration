@@ -16,6 +16,8 @@ dnf install -y dnf-plugins-core \
 			cuda-cudart \
 			cuda-cudart-devel \
 			clinfo \
+			ocl-icd \ # OpenCL.so.1
+			ocl-icd-devel \ # OpenCL.so
 			nvidia-driver-cuda
 
 # nvidia-driver-cuda contains the nvidia.icd
