@@ -10,4 +10,5 @@ dnf install -y dnf-plugins-core \
 			clinfo \
 			ocl-icd \ # OpenCL.so.1
 			ocl-icd-devel \ # OpenCL.so
-			nvidia-driver-cuda
+			nvidia-driver-cuda \ # contains nvidia.icd
+	&& dnf erase beignet # installed as weak dependency of ocl-icd
