@@ -35,36 +35,6 @@ resources:
 
 
 
-- name: container-ubuntu-cuda
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-ubuntu-cuda
-    username: ((quay-username))
-    password: ((quay-password))
-
-- name: container-ubuntu-default
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-ubuntu-default
-    username: ((quay-username))
-    password: ((quay-password))
-
-- name: container-ubuntu-native
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-ubuntu-native
-    username: ((quay-username))
-    password: ((quay-password))
-
-- name: container-ubuntu-opencl
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-ubuntu-opencl
-    username: ((quay-username))
-    password: ((quay-password))
-
-
-
 - name: container-pureos-cuda
   type: docker-image
   source:
@@ -95,6 +65,36 @@ resources:
 
 
 
+- name: container-ubuntu-cuda
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-ubuntu-cuda
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-ubuntu-default
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-ubuntu-default
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-ubuntu-native
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-ubuntu-native
+    username: ((quay-username))
+    password: ((quay-password))
+
+- name: container-ubuntu-opencl
+  type: docker-image
+  source:
+    repository: quay.io/spearow/machine-learning-container-ubuntu-opencl
+    username: ((quay-username))
+    password: ((quay-password))
+
+
+
 - name: container
   type: docker-image
   source:
@@ -116,26 +116,9 @@ jobs:
         resource: git-continuous-integration
         trigger: true
       - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/fedora/cuda/Dockerfile recombined/Dockerfile
-            cp ci/container/fedora/cuda/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-fedora-cuda
       params:
-        build: recombined
+        build: container
+        dockerfile: fedora/cuda/
         tag_as_latest: true
 
   - name: build-fedora-default
@@ -147,26 +130,9 @@ jobs:
         resource: git-continuous-integration
         trigger: true
       - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/fedora/default/Dockerfile recombined/Dockerfile
-            cp ci/container/fedora/default/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-fedora-default
       params:
-        build: recombined
+        build: container
+        dockerfile: fedora/default/
         tag_as_latest: true
 
   - name: build-fedora-native
@@ -178,26 +144,9 @@ jobs:
         resource: git-continuous-integration
         trigger: true
       - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/fedora/native/Dockerfile recombined/Dockerfile
-            cp ci/container/fedora/native/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-fedora-native
       params:
-        build: recombined
+        build: container
+        dockerfile: fedora/native/
         tag_as_latest: true
 
   - name: build-fedora-opencl
@@ -209,152 +158,9 @@ jobs:
         resource: git-continuous-integration
         trigger: true
       - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/fedora/opencl/Dockerfile recombined/Dockerfile
-            cp ci/container/fedora/opencl/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-fedora-opencl
       params:
-        build: recombined
-        tag_as_latest: true
-
-
-
-  - name: build-ubuntu-cuda
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/ubuntu/cuda/Dockerfile recombined/Dockerfile
-            cp ci/container/ubuntu/cuda/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-ubuntu-cuda
-      params:
-        build: recombined
-        tag_as_latest: true
-
-  - name: build-ubuntu-default
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/ubuntu/default/Dockerfile recombined/Dockerfile
-            cp ci/container/ubuntu/default/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-ubuntu-default
-      params:
-        build: recombined
-        tag_as_latest: true
-
-  - name: build-ubuntu-native
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/ubuntu/native/Dockerfile recombined/Dockerfile
-            cp ci/container/ubuntu/native/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-ubuntu-native
-      params:
-        build: recombined
-        tag_as_latest: true
-
-  - name: build-ubuntu-opencl
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/ubuntu/opencl/Dockerfile recombined/Dockerfile
-            cp ci/container/ubuntu/opencl/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-ubuntu-opencl
-      params:
-        build: recombined
+        build: container
+        dockerfile: fedora/opencl/
         tag_as_latest: true
 
 
@@ -368,26 +174,9 @@ jobs:
         resource: git-continuous-integration
         trigger: true
       - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/pureos/cuda/Dockerfile recombined/Dockerfile
-            cp ci/container/pureos/cuda/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-pureos-cuda
       params:
-        build: recombined
+        build: container
+        dockerfile: pureos/cuda/
         tag_as_latest: true
 
   - name: build-pureos-default
@@ -399,26 +188,9 @@ jobs:
         resource: git-continuous-integration
         trigger: true
       - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/pureos/default/Dockerfile recombined/Dockerfile
-            cp ci/container/pureos/default/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-pureos-default
       params:
-        build: recombined
+        build: container
+        dockerfile: pureos/default/
         tag_as_latest: true
 
   - name: build-pureos-native
@@ -430,26 +202,9 @@ jobs:
         resource: git-continuous-integration
         trigger: true
       - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/pureos/native/Dockerfile recombined/Dockerfile
-            cp ci/container/pureos/native/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-pureos-native
       params:
-        build: recombined
+        build: container
+        dockerfile: pureos/native/
         tag_as_latest: true
 
   - name: build-pureos-opencl
@@ -461,25 +216,66 @@ jobs:
         resource: git-continuous-integration
         trigger: true
       - get: container
-    - task: gen-container
-      image: container
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: recombined
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp ci/container/pureos/opencl/Dockerfile recombined/Dockerfile
-            cp ci/container/pureos/opencl/pkg.sh recombined/pkg.sh
-            cp ci/container/escalate.sh recombined/escalate.sh
-
-    - put: container-pureos-opencl
       params:
-        build: recombined
+        build: container
+        dockerfile: pureos/opencl/
+        tag_as_latest: true
+
+
+
+  - name: build-ubuntu-cuda
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+      params:
+        build: container
+        dockerfile: ubuntu/cuda/
+        tag_as_latest: true
+
+  - name: build-ubuntu-default
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+      params:
+        build: container
+        dockerfile: ubuntu/default/
+        tag_as_latest: true
+
+  - name: build-ubuntu-native
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+      params:
+        build: container
+        dockerfile: ubuntu/native/
+        tag_as_latest: true
+
+  - name: build-ubuntu-opencl
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - aggregate:
+      - get: ci
+        resource: git-continuous-integration
+        trigger: true
+      - get: container
+      params:
+        build: container
+        dockerfile: ubuntu/opencl/
         tag_as_latest: true
 
