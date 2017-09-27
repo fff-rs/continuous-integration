@@ -65,7 +65,7 @@ impl Ord for TestEnvType {
         match *self {
             TestEnvType::Linux(ref z) => {
                 match *other {
-                    _ | TestEnvType::Unknown => Ordering::Greater,
+                    _ => Ordering::Greater,
                     TestEnvType::Linux(ref x) => z.cmp(x),
                     TestEnvType::Darwin(_) => Ordering::Less,
                     TestEnvType::Windows(_) => Ordering::Less,
@@ -73,7 +73,7 @@ impl Ord for TestEnvType {
             }
             TestEnvType::Darwin(ref z) => {
                 match *other {
-                    _ | TestEnvType::Unknown => Ordering::Equal,
+                    _ => Ordering::Equal,
                     TestEnvType::Linux(_) => Ordering::Greater,
                     TestEnvType::Darwin(ref x) => z.cmp(x),
                     TestEnvType::Windows(_) => Ordering::Less,
@@ -81,15 +81,15 @@ impl Ord for TestEnvType {
             }
             TestEnvType::Windows(ref z) => {
                 match *other {
-                    _ | TestEnvType::Unknown => Ordering::Less,
+                    _ => Ordering::Less,
                     TestEnvType::Linux(_) => Ordering::Greater,
                     TestEnvType::Darwin(_) => Ordering::Greater,
                     TestEnvType::Windows(ref x) => z.cmp(x),
                 }
             }
-            _ | TestEnvType::Unknown => {
+            _ => {
                 match *other {
-                    _ | TestEnvType::Unknown => Ordering::Equal,
+                    _ => Ordering::Equal,
                     TestEnvType::Linux(_) => Ordering::Less,
                     TestEnvType::Windows(_) => Ordering::Less,
                     TestEnvType::Darwin(_) => Ordering::Less,
@@ -124,7 +124,7 @@ impl fmt::Display for TestEnvType {
             TestEnvType::Linux(ref x) => x,
             TestEnvType::Windows(ref x) => x,
             TestEnvType::Darwin(ref x) => x,
-            _ | TestEnvType::Unknown => &y,
+            _ => &y,
         };
         write!(f, "{}", echo)
     }
