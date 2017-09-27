@@ -19,8 +19,11 @@ dnf install -y dnf-plugins-core \
 			ocl-icd \
 			ocl-icd-devel \
 			nvidia-driver-cuda \
+			nvidia-driver-cuda \
 	&& dnf erase -y beignet
 # ocl-icd \ # OpenCL.so.1
 # ocl-icd-devel \ # OpenCL.so
 # nvidia-driver-cuda \ # contains nvidia.icd
 # beignet # installed as weak dependency of ocl-icd
+# nvidia-driver-cuda provides nvidia-smi, which is helpful for debugging
+

@@ -383,6 +383,7 @@ jobs:
           - -exc
           - |
             escalate
+            prepare
             {% if backend == "default" %}
             cargo test
             {% else %}
@@ -432,6 +433,7 @@ jobs:
           - -exc
           - |
             escalate
+            prepare
             {% if backend == "default" %}
             cargo test
             {% else %}
@@ -488,6 +490,7 @@ jobs:
           - -exc
           - |
             escalate
+            prepare
             {% if backend == "default" %}
             cargo test
             {% else %}
@@ -544,6 +547,7 @@ jobs:
           - -exc
           - |
             escalate
+            prepare
             {% if backend == "default" %}
             cargo test
             {% else %}
@@ -601,6 +605,7 @@ jobs:
           - -exc
           - |
             escalate
+            prepare
             {% if backend == "default" %}
             cargo test
             {% else %}
@@ -661,6 +666,7 @@ jobs:
           - -exc
           - |
             escalate
+            prepare
             {% if backend == "default" %}
             cargo test
             {% else %}

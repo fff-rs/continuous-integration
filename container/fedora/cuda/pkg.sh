@@ -14,5 +14,8 @@ dnf install -y dnf-plugins-core \
 			cuda-cublas \
 			cuda-cublas-devel \
 			cuda-cudart \
-			cuda-cudart-devel
+			cuda-cudart-devel \
+			nvidia-driver-cuda
+
+#nvidia-driver-cuda provides nvidia-smi, which is helpful for debugging
 
