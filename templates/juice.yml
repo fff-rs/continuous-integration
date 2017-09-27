@@ -119,6 +119,7 @@ jobs:
   - name: doc-coaster
     build_logs_to_retain: 2
     public: true
+    serial: true
     plan:
     - aggregate:
       - get: doc-coaster
@@ -158,6 +159,7 @@ jobs:
   - name: doc-coaster-nn
     build_logs_to_retain: 2
     public: true
+    serial: true
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -205,6 +207,7 @@ jobs:
   - name: doc-coaster-blas
     build_logs_to_retain: 2
     public: true
+    serial: true
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -252,6 +255,7 @@ jobs:
   - name: doc-greenglas
     build_logs_to_retain: 2
     public: true
+    serial: true
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -299,6 +303,7 @@ jobs:
   - name: doc-juice
     build_logs_to_retain: 2
     public: true
+    serial: true
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -351,6 +356,8 @@ jobs:
   - name: test-coaster
     build_logs_to_retain: 4
     public: true
+    serial: true
+    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: coaster
@@ -388,6 +395,8 @@ jobs:
   - name: test-coaster-blas
     build_logs_to_retain: 4
     public: true
+    serial: true
+    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cublas
@@ -436,6 +445,8 @@ jobs:
   - name: test-coaster-nn
     build_logs_to_retain: 4
     public: true
+    serial: true
+    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -489,6 +500,8 @@ jobs:
   - name: test-greenglas
     build_logs_to_retain: 4
     public: true
+    serial: true
+    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -543,6 +556,8 @@ jobs:
   - name: test-juice
     build_logs_to_retain: 4
     public: true
+    serial: true
+    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -598,6 +613,8 @@ jobs:
   - name: test-juice-examples
     build_logs_to_retain: 4
     public: true
+    serial: true
+    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
