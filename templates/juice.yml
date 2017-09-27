@@ -365,6 +365,7 @@ jobs:
 {% for backend in testenv.backends %}
     - task: compile-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
+      privileged: true
       config:
         platform: linux
         inputs:
@@ -375,11 +376,11 @@ jobs:
           - -exc
           - |
             escalate
-{% if backend == "default" %}
+            {% if backend == "default" %}
             cargo test
-{% else %}
+            {% else %}
             cargo test --no-default-features --features=native,{{ backend }}
-{% endif %}
+            {% endif %}
           dir: coaster
 {% endfor %}
 {% endfor %}
@@ -422,11 +423,11 @@ jobs:
           - -exc
           - |
             escalate
-{% if backend == "default" %}
+            {% if backend == "default" %}
             cargo test
-{% else %}
+            {% else %}
             cargo test --no-default-features --features=native,{{ backend }}
-{% endif %}
+            {% endif %}
           dir: coaster-blas
 {% endfor %}
 {% endfor %}
@@ -460,6 +461,7 @@ jobs:
 {% for backend in testenv.backends %}
     - task: compile-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
+      privileged: true
       config:
         platform: linux
         inputs:
@@ -475,11 +477,11 @@ jobs:
           - -exc
           - |
             escalate
-{% if backend == "default" %}
+            {% if backend == "default" %}
             cargo test
-{% else %}
+            {% else %}
             cargo test --no-default-features --features=native,{{ backend }}
-{% endif %}
+            {% endif %}
           dir: coaster-nn
 {% endfor %}
 {% endfor %}
@@ -514,6 +516,7 @@ jobs:
 {% for backend in testenv.backends %}
     - task: compile-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
+      privileged: true
       config:
         platform: linux
         inputs:
@@ -528,11 +531,11 @@ jobs:
           - -exc
           - |
             escalate
-{% if backend == "default" %}
+            {% if backend == "default" %}
             cargo test
-{% else %}
+            {% else %}
             cargo test --no-default-features --features=native,{{ backend }}
-{% endif %}
+            {% endif %}
           dir: greenglas
 {% endfor %}
 {% endfor %}
@@ -566,6 +569,7 @@ jobs:
 {% for backend in testenv.backends %}
     - task: compile-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
+      privileged: true
       config:
         platform: linux
         inputs:
@@ -582,11 +586,11 @@ jobs:
           - -exc
           - |
             escalate
-{% if backend == "default" %}
+            {% if backend == "default" %}
             cargo test
-{% else %}
+            {% else %}
             cargo test --no-default-features --features=native,{{ backend }}
-{% endif %}
+            {% endif %}
           dir: coaster-nn
 {% endfor %}
 {% endfor %}
@@ -622,6 +626,7 @@ jobs:
 {% for backend in testenv.backends %}
     - task: compile-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
+      privileged: true
       config:
         platform: linux
         inputs:
@@ -639,11 +644,11 @@ jobs:
           - -exc
           - |
             escalate
-{% if backend == "default" %}
+            {% if backend == "default" %}
             cargo test
-{% else %}
+            {% else %}
             cargo test --no-default-features --features=native,{{ backend }}
-{% endif %}
+            {% endif %}
           dir: juice-examples
 {% endfor %}
 {% endfor %}
