@@ -67,32 +67,32 @@ impl Ord for TestEnvType {
                 match *other {
                     _ | TestEnvType::Unknown => Ordering::Greater,
                     TestEnvType::Linux(ref x) => z.cmp(x),
-                    TestEnvType::Darwin(ref x) => Ordering::Less,
-                    TestEnvType::Windows(ref x) => Ordering::Less,
+                    TestEnvType::Darwin(_) => Ordering::Less,
+                    TestEnvType::Windows(_) => Ordering::Less,
                 }
             }
             TestEnvType::Darwin(ref z) => {
                 match *other {
                     _ | TestEnvType::Unknown => Ordering::Equal,
-                    TestEnvType::Linux(ref x) => Ordering::Greater,
+                    TestEnvType::Linux(_) => Ordering::Greater,
                     TestEnvType::Darwin(ref x) => z.cmp(x),
-                    TestEnvType::Windows(ref x) => Ordering::Less,
+                    TestEnvType::Windows(_) => Ordering::Less,
                 }
             }
             TestEnvType::Windows(ref z) => {
                 match *other {
                     _ | TestEnvType::Unknown => Ordering::Less,
-                    TestEnvType::Linux(ref x) => Ordering::Greater,
-                    TestEnvType::Darwin(ref x) => Ordering::Greater,
+                    TestEnvType::Linux(_) => Ordering::Greater,
+                    TestEnvType::Darwin(_) => Ordering::Greater,
                     TestEnvType::Windows(ref x) => z.cmp(x),
                 }
             }
             _ | TestEnvType::Unknown => {
                 match *other {
                     _ | TestEnvType::Unknown => Ordering::Equal,
-                    TestEnvType::Linux(ref x) => Ordering::Less,
-                    TestEnvType::Windows(ref x) => Ordering::Less,
-                    TestEnvType::Darwin(ref x) => Ordering::Less,
+                    TestEnvType::Linux(_) => Ordering::Less,
+                    TestEnvType::Windows(_) => Ordering::Less,
+                    TestEnvType::Darwin(_) => Ordering::Less,
                 }
             }
         }
