@@ -518,9 +518,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test --no-default-features --features=native,cuda
-            
+
+
+
           dir: coaster
 
     - task: compile-fedora-default
@@ -537,9 +540,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test
-            
+
+
+
           dir: coaster
 
     - task: compile-fedora-native
@@ -556,9 +562,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo test --no-default-features --features=native
+
+
+
           dir: coaster
 
     - task: compile-fedora-opencl
@@ -575,9 +584,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test --no-default-features --features=native,opencl
-            
+
+
+
           dir: coaster
 
 
@@ -596,9 +608,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,cuda
-            
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: coaster
 
     - task: compile-pureos-default
@@ -615,9 +630,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test
-            
+
+
+            cargo build
+
+
+
           dir: coaster
 
     - task: compile-pureos-native
@@ -634,9 +652,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: coaster
 
     - task: compile-pureos-opencl
@@ -653,9 +674,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,opencl
-            
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: coaster
 
 
@@ -674,9 +698,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,cuda
-            
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: coaster
 
     - task: compile-ubuntu-default
@@ -693,9 +720,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test
-            
+
+
+            cargo build
+
+
+
           dir: coaster
 
     - task: compile-ubuntu-native
@@ -712,9 +742,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: coaster
 
     - task: compile-ubuntu-opencl
@@ -731,9 +764,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,opencl
-            
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: coaster
 
 
@@ -815,10 +851,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
+            prepare
+
+
             cargo test --no-default-features --features=native,cuda
-            
+
+
+
           dir: coaster-blas
 
     - task: compile-fedora-default
@@ -837,10 +876,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
+            prepare
+
+
             cargo test
-            
+
+
+
           dir: coaster-blas
 
     - task: compile-fedora-native
@@ -859,10 +901,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
-            cargo test --no-default-features --features=native,native
-            
+            prepare
+
+
+            cargo test --no-default-features --features=native
+
+
+
           dir: coaster-blas
 
     - task: compile-fedora-opencl
@@ -881,10 +926,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
+            prepare
+
+
             cargo test --no-default-features --features=native,opencl
-            
+
+
+
           dir: coaster-blas
 
 
@@ -905,10 +953,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
-            cargo test --no-default-features --features=native,cuda
-            
+            prepare
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: coaster-blas
 
     - task: compile-pureos-default
@@ -927,10 +978,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
-            cargo test
-            
+            prepare
+
+
+            cargo build
+
+
+
           dir: coaster-blas
 
     - task: compile-pureos-native
@@ -949,10 +1003,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
-            cargo test --no-default-features --features=native,native
-            
+            prepare
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: coaster-blas
 
     - task: compile-pureos-opencl
@@ -971,10 +1028,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
-            cargo test --no-default-features --features=native,opencl
-            
+            prepare
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: coaster-blas
 
 
@@ -995,10 +1055,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
-            cargo test --no-default-features --features=native,cuda
-            
+            prepare
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: coaster-blas
 
     - task: compile-ubuntu-default
@@ -1017,10 +1080,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
-            cargo test
-            
+            prepare
+
+
+            cargo build
+
+
+
           dir: coaster-blas
 
     - task: compile-ubuntu-native
@@ -1039,10 +1105,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
-            cargo test --no-default-features --features=native,native
-            
+            prepare
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: coaster-blas
 
     - task: compile-ubuntu-opencl
@@ -1061,10 +1130,13 @@ jobs:
           - -exc
           - |
             escalate
-            prepare || true
-            
-            cargo test --no-default-features --features=native,opencl
-            
+            prepare
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: coaster-blas
 
 
@@ -1154,9 +1226,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test --no-default-features --features=native,cuda
-            
+
+
+
           dir: coaster-nn
 
     - task: compile-fedora-default
@@ -1178,9 +1253,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test
-            
+
+
+
           dir: coaster-nn
 
     - task: compile-fedora-native
@@ -1202,9 +1280,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo test --no-default-features --features=native
+
+
+
           dir: coaster-nn
 
     - task: compile-fedora-opencl
@@ -1226,9 +1307,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test --no-default-features --features=native,opencl
-            
+
+
+
           dir: coaster-nn
 
 
@@ -1252,9 +1336,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,cuda
-            
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: coaster-nn
 
     - task: compile-pureos-default
@@ -1276,9 +1363,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test
-            
+
+
+            cargo build
+
+
+
           dir: coaster-nn
 
     - task: compile-pureos-native
@@ -1300,9 +1390,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: coaster-nn
 
     - task: compile-pureos-opencl
@@ -1324,9 +1417,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,opencl
-            
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: coaster-nn
 
 
@@ -1350,9 +1446,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,cuda
-            
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: coaster-nn
 
     - task: compile-ubuntu-default
@@ -1374,9 +1473,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test
-            
+
+
+            cargo build
+
+
+
           dir: coaster-nn
 
     - task: compile-ubuntu-native
@@ -1398,9 +1500,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: coaster-nn
 
     - task: compile-ubuntu-opencl
@@ -1422,9 +1527,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,opencl
-            
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: coaster-nn
 
 
@@ -1514,9 +1622,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test --no-default-features --features=native,cuda
-            
+
+
+
           dir: greenglas
 
     - task: compile-fedora-default
@@ -1537,9 +1648,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test
-            
+
+
+
           dir: greenglas
 
     - task: compile-fedora-native
@@ -1560,9 +1674,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo test --no-default-features --features=native
+
+
+
           dir: greenglas
 
     - task: compile-fedora-opencl
@@ -1583,9 +1700,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test --no-default-features --features=native,opencl
-            
+
+
+
           dir: greenglas
 
 
@@ -1608,9 +1728,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,cuda
-            
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: greenglas
 
     - task: compile-pureos-default
@@ -1631,9 +1754,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test
-            
+
+
+            cargo build
+
+
+
           dir: greenglas
 
     - task: compile-pureos-native
@@ -1654,9 +1780,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: greenglas
 
     - task: compile-pureos-opencl
@@ -1677,9 +1806,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,opencl
-            
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: greenglas
 
 
@@ -1702,9 +1834,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,cuda
-            
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: greenglas
 
     - task: compile-ubuntu-default
@@ -1725,9 +1860,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test
-            
+
+
+            cargo build
+
+
+
           dir: greenglas
 
     - task: compile-ubuntu-native
@@ -1748,9 +1886,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: greenglas
 
     - task: compile-ubuntu-opencl
@@ -1771,9 +1912,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,opencl
-            
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: greenglas
 
 
@@ -1864,9 +2008,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test --no-default-features --features=native,cuda
-            
+
+
+
           dir: coaster-nn
 
     - task: compile-fedora-default
@@ -1889,9 +2036,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test
-            
+
+
+
           dir: coaster-nn
 
     - task: compile-fedora-native
@@ -1914,9 +2064,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo test --no-default-features --features=native
+
+
+
           dir: coaster-nn
 
     - task: compile-fedora-opencl
@@ -1939,9 +2092,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test --no-default-features --features=native,opencl
-            
+
+
+
           dir: coaster-nn
 
 
@@ -1966,9 +2122,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,cuda
-            
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: coaster-nn
 
     - task: compile-pureos-default
@@ -1991,9 +2150,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test
-            
+
+
+            cargo build
+
+
+
           dir: coaster-nn
 
     - task: compile-pureos-native
@@ -2016,9 +2178,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: coaster-nn
 
     - task: compile-pureos-opencl
@@ -2041,9 +2206,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,opencl
-            
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: coaster-nn
 
 
@@ -2068,9 +2236,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,cuda
-            
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: coaster-nn
 
     - task: compile-ubuntu-default
@@ -2093,9 +2264,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test
-            
+
+
+            cargo build
+
+
+
           dir: coaster-nn
 
     - task: compile-ubuntu-native
@@ -2118,9 +2292,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: coaster-nn
 
     - task: compile-ubuntu-opencl
@@ -2143,9 +2320,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,opencl
-            
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: coaster-nn
 
 
@@ -2239,9 +2419,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test --no-default-features --features=native,cuda
-            
+
+
+
           dir: juice-examples
 
     - task: compile-fedora-default
@@ -2265,9 +2448,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test
-            
+
+
+
           dir: juice-examples
 
     - task: compile-fedora-native
@@ -2291,9 +2477,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo test --no-default-features --features=native
+
+
+
           dir: juice-examples
 
     - task: compile-fedora-opencl
@@ -2317,9 +2506,12 @@ jobs:
           - |
             escalate
             prepare
-            
+
+
             cargo test --no-default-features --features=native,opencl
-            
+
+
+
           dir: juice-examples
 
 
@@ -2345,9 +2537,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,cuda
-            
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: juice-examples
 
     - task: compile-pureos-default
@@ -2371,9 +2566,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test
-            
+
+
+            cargo build
+
+
+
           dir: juice-examples
 
     - task: compile-pureos-native
@@ -2397,9 +2595,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: juice-examples
 
     - task: compile-pureos-opencl
@@ -2423,9 +2624,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,opencl
-            
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: juice-examples
 
 
@@ -2451,9 +2655,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,cuda
-            
+
+
+            cargo build --no-default-features --features=native,cuda
+
+
+
           dir: juice-examples
 
     - task: compile-ubuntu-default
@@ -2477,9 +2684,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test
-            
+
+
+            cargo build
+
+
+
           dir: juice-examples
 
     - task: compile-ubuntu-native
@@ -2503,9 +2713,12 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,native
-            
+
+
+            cargo build --no-default-features --features=native
+
+
+
           dir: juice-examples
 
     - task: compile-ubuntu-opencl
@@ -2529,8 +2742,11 @@ jobs:
           - |
             escalate
             prepare
-            
-            cargo test --no-default-features --features=native,opencl
-            
+
+
+            cargo build --no-default-features --features=native,opencl
+
+
+
           dir: juice-examples
 

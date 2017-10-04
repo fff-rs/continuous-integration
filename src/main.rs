@@ -32,8 +32,24 @@ use std::cmp::Ordering;
 //     return None;
 // }
 
+fn get_backend_execute_type(directory: &Path) -> BackendExecute {
+    if directory.is_dir() {
+        let entries = fs::read_dir(directory).unwrap();
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let path = entry.path();
+                if let Some(x) = path.file_name() {
+                    if x == "BUILD_ONLY" {
+                        return BackendExecute::Build;
+                    }
+                }
+            }
+        }
+    }
+    BackendExecute::Test
+}
 
-fn get_backends(directory: &Path) -> Vec<String> {
+fn get_backends(directory: &Path) -> Vec<Backend> {
     fs::read_dir(directory)
         .unwrap()
         .filter_map(|entry| entry.ok())
@@ -43,7 +59,11 @@ fn get_backends(directory: &Path) -> Vec<String> {
         })
         .filter(|entry| entry.is_dir())
         .filter_map(|entry| if let Some(x) = entry.file_name() {
-            Some(String::from(x.to_string_lossy()))
+
+            Some(
+                (String::from(x.to_string_lossy()),
+                    get_backend_execute_type(&entry)).into()
+                )
         } else {
             None
         })
@@ -130,10 +150,60 @@ impl fmt::Display for TestEnvType {
     }
 }
 
+
+#[derive(Debug,PartialEq,Eq,PartialOrd,Ord)]
+enum BackendExecute{
+    Build,
+    Test,
+}
+
+impl fmt::Display for BackendExecute {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Write strictly the first element into the supplied output
+        // stream: `f`. Returns `fmt::Result` which indicates whether the
+        // operation succeeded or failed. Note that `write!` uses syntax which
+        // is very similar to `println!`.
+        let echo = match *self {
+            BackendExecute::Build => "build",
+            BackendExecute::Test => "test",
+        };
+        write!(f, "{}", echo)
+    }
+}
+
+
+#[derive(Debug,PartialEq,Eq,PartialOrd,Ord)]
+struct Backend {
+    name : String,
+    execute : BackendExecute,
+}
+
+impl Backend {
+    /// required since askama has no idea how to compare enums I guess
+    pub fn is_build_only(&self) -> bool {
+        self.execute == BackendExecute::Build
+    }
+}
+
+impl fmt::Display for Backend {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", &self.name)
+    }
+}
+
+impl<T> From<(T, BackendExecute)> for Backend where T: Into<String> {
+    fn from(tuple: (T,BackendExecute)) -> Self {
+        Self {
+            name : tuple.0.into(),
+            execute: tuple.1,
+        }
+    }
+}
+
 #[derive(Debug)]
 struct TestEnv {
     name: TestEnvType,
-    backends: Vec<String>,
+    backends: Vec<Backend>,
 }
 
 
@@ -161,7 +231,7 @@ impl Eq for TestEnv {}
 
 impl TestEnv {
     /// TODO currently only Linux envs are supported by this idiotic implementation
-    pub fn new(name: String, backends: Vec<String>) -> Self {
+    pub fn new(name: String, backends: Vec<Backend>) -> Self {
         Self {
             name: TestEnvType::Linux(name),
             backends: backends,

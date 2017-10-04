@@ -1,0 +1,20 @@
+
+            escalate
+            prepare
+{% if backend.is_build_only() %}
+{% if backend.name == "default" %}
+            cargo build
+{% else if backend.name == "native" %}
+            cargo build --no-default-features --features=native
+{% else %}
+            cargo build --no-default-features --features=native,{{ backend.name }}
+{% endif %}
+{% else %}
+{% if backend.name == "default" %}
+            cargo test
+{% else if backend.name == "native" %}
+            cargo test --no-default-features --features=native
+{% else %}
+            cargo test --no-default-features --features=native,{{ backend.name }}
+{% endif %}
+{% endif %}

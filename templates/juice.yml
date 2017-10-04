@@ -382,13 +382,7 @@ jobs:
           args:
           - -exc
           - |
-            escalate
-            prepare
-            {% if backend == "default" %}
-            cargo test
-            {% else %}
-            cargo test --no-default-features --features=native,{{ backend }}
-            {% endif %}
+{% include "cargo.yml" %}
           dir: coaster
 {% endfor %}
 {% endfor %}
@@ -432,13 +426,7 @@ jobs:
           args:
           - -exc
           - |
-            escalate
-            prepare
-            {% if backend == "default" %}
-            cargo test
-            {% else %}
-            cargo test --no-default-features --features=native,{{ backend }}
-            {% endif %}
+{% include "cargo.yml" %}
           dir: coaster-blas
 {% endfor %}
 {% endfor %}
@@ -489,13 +477,7 @@ jobs:
           args:
           - -exc
           - |
-            escalate
-            prepare
-            {% if backend == "default" %}
-            cargo test
-            {% else %}
-            cargo test --no-default-features --features=native,{{ backend }}
-            {% endif %}
+{% include "cargo.yml" %}
           dir: coaster-nn
 {% endfor %}
 {% endfor %}
@@ -546,13 +528,7 @@ jobs:
           args:
           - -exc
           - |
-            escalate
-            prepare
-            {% if backend == "default" %}
-            cargo test
-            {% else %}
-            cargo test --no-default-features --features=native,{{ backend }}
-            {% endif %}
+{% include "cargo.yml" %}
           dir: greenglas
 {% endfor %}
 {% endfor %}
@@ -604,13 +580,7 @@ jobs:
           args:
           - -exc
           - |
-            escalate
-            prepare
-            {% if backend == "default" %}
-            cargo test
-            {% else %}
-            cargo test --no-default-features --features=native,{{ backend }}
-            {% endif %}
+{% include "cargo.yml" %}
           dir: coaster-nn
 {% endfor %}
 {% endfor %}
@@ -665,13 +635,7 @@ jobs:
           args:
           - -exc
           - |
-            escalate
-            prepare
-            {% if backend == "default" %}
-            cargo test
-            {% else %}
-            cargo test --no-default-features --features=native,{{ backend }}
-            {% endif %}
+{% include "cargo.yml" %}
           dir: juice-examples
 {% endfor %}
 {% endfor %}
