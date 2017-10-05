@@ -115,6 +115,38 @@ resources:
 
 {% include "container-resourses.yml" %}
 
+
+groups:
+- name: stack
+  jobs:
+  - test-coaster
+  - test-coaster-nn
+  - test-coaster-blas
+  - test-juice
+  - test-juice-examples
+  - test-greenglas
+  - test-rust-blas
+  - test-rust-cudnn
+  - test-rust-cublas
+- name: documentation
+  jobs:
+  - doc-coaster
+  - doc-coaster-nn
+  - doc-coaster-blas
+  - doc-greenglas
+  - doc-juice
+# - name: pullrequest
+#   jobs:
+#   - test-coaster
+#   - test-coaster-nn
+#   - test-coaster-blas
+#   - test-juice
+#   - test-juice-examples
+#   - test-greenglas
+#   - test-rust-blas
+#   - test-rust-cudnn
+#   - test-rust-cublas
+
 jobs:
   - name: doc-coaster
     build_logs_to_retain: 2
@@ -352,6 +384,134 @@ jobs:
             git add -A && git commit -m"doc/automatic: update" || true
     - put: doc-juice
       params: { repository: doc-juice-updated, force: true }
+
+  - name: test-rust-cudnn
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+        trigger: true
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+{% if backend.name == "cuda" %}
+      - get: container-{{ testenv.name }}-{{ backend }}
+        trigger: true
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+{% if backend.name == "cuda" %}
+    - task: compile-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd cudnn-sys
+            cargo b
+            cargo t
+            cd -
+            cd cudnn
+            cargo b
+            cargo t
+          dir: rust-cudnn
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+  - name: test-rust-cublas
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: rust-cublas
+        trigger: true
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+{% if backend.name == "cuda" %}
+      - get: container-{{ testenv.name }}-{{ backend }}
+        trigger: true
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+{% if backend.name == "cuda" %}
+    - task: compile-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cublas
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd cublas-sys
+            cargo b
+            cargo t
+            cd -
+            cd cublas
+            cargo b
+            cargo t
+          dir: rust-cublas
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+  - name: test-rust-blas
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: rust-blas
+        trigger: true
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+{% if backend.name == "native" %}
+      - get: container-{{ testenv.name }}-{{ backend }}
+        trigger: true
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+{% if backend.name == "native" %}
+    - task: compile-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cargo b
+            cargo t
+
+          dir: rust-blas
+{% endif %}
+{% endfor %}
+{% endfor %}
 
   - name: test-coaster
     build_logs_to_retain: 4
