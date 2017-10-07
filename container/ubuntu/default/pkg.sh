@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-apt-get -y --no-install-recommends console-data
+apt-get -y --no-install-recommends install console-data
 
 loadkeys us || echo "loadkeys failed {#?}"
 setxkbmap us || echo "setxkbmap failed {#?}"
