@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-loadkeys us || echo "loadkeys failed {#?}"
-setxkbmap us || echo "setxkbmap failed {#?}"
-
 apt-get -y --no-install-recommends install \
 	curl wget git \
 	capnproto \
@@ -14,7 +11,8 @@ apt-get -y --no-install-recommends install \
 	nvidia-opencl-icd-375 \
 	libcuda1-375 \
 	nvidia-libopencl1-375 \
-	nvidia-375-dev
+	nvidia-375-dev \
+	< 40
 
 dpkg -i /tmp/libcudnn7*.deb
 
