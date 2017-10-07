@@ -6,5 +6,4 @@ apt-get -y --no-install-recommends install \
 	pkg-config \
 	nvidia-opencl-icd-375 \
 	nvidia-libopencl1-375 \
-	nvidia-375-dev \
-	< 40
+	nvidia-375-dev
