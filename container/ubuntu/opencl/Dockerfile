@@ -1,6 +1,8 @@
 FROM ubuntu:latest
 MAINTAINER Bernhard Schuster "bernhard@spearow.io"
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update -y
 
 COPY ubuntu/opencl/pkg.sh /tmp/pkg.sh
