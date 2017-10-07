@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-echo "prepare is a nop"
+loadkeys us || echo "loadkeys failed {#?}"
+setxkbmap us || echo "setxkbmap failed {#?}"
