@@ -189,13 +189,6 @@ struct Backend {
     execute: BackendExecute,
 }
 
-impl Backend {
-    /// required since askama has no idea how to compare enums I guess
-    pub fn is_build_only(&self) -> bool {
-        self.execute == BackendExecute::Build
-    }
-}
-
 impl fmt::Display for Backend {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", &self.name)

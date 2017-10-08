@@ -1,7 +1,9 @@
 
+{% if backend.execute == BackendExecute::Test %}
             escalate
+{% endif %}
             prepare
-{% if backend.is_build_only() %}
+{% if backend.execute == BackendExecute::Build %}
 {% if backend.name == "default" %}
             cargo build
 {% else if backend.name == "native" %}
