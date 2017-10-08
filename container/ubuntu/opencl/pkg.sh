@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 apt-get -y --no-install-recommends install \
+	ca-certificates \
 	curl wget git \
 	capnproto \
 	pkg-config \
