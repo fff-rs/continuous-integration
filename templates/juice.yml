@@ -537,6 +537,8 @@ jobs:
         platform: linux
         inputs:
         - name: coaster
+        caches:
+        - path: target
         run:
           path: sh
           args:
@@ -581,6 +583,8 @@ jobs:
         - name: rust-cublas
         - name: coaster
         - name: coaster-blas
+        caches:
+        - path: target
         run:
           path: sh
           args:
@@ -632,6 +636,8 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
+        caches:
+        - path: target
         run:
           path: sh
           args:
@@ -683,6 +689,8 @@ jobs:
         - name: rust-cublas
         - name: coaster
         - name: greenglas
+        caches:
+        - path: target
         run:
           path: sh
           args:
@@ -735,6 +743,8 @@ jobs:
         - name: coaster-blas
         - name: coaster-nn
         - name: juice
+        caches:
+        - path: target
         run:
           path: sh
           args:
@@ -790,6 +800,8 @@ jobs:
         - name: coaster-nn
         - name: juice
         - name: juice-examples
+        caches:
+        - path: target
         run:
           path: sh
           args:
