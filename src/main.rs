@@ -9,6 +9,9 @@ use std::env;
 use std::fmt;
 
 #[macro_use]
+extern crate error_chain;
+
+#[macro_use]
 extern crate askama;
 
 use askama::Template;
@@ -22,6 +25,15 @@ use regex::Regex;
 
 use std::cmp::Ordering;
 
+
+error_chain! {
+    foreign_links {
+        Fmt(::std::fmt::Error);
+        Io(::std::io::Error) #[cfg(unix)];
+
+    }
+}
+
 // fn get_pkg_helper_regex(text: &String) -> Option<String> {
 //     lazy_static! {
 //         static ref RE: Regex = Regex::new(r"^pkg\.sh\.(.*)$").unwrap();
@@ -32,42 +44,41 @@ use std::cmp::Ordering;
 //     return None;
 // }
 
-fn get_backend_execute_type(directory: &Path) -> BackendExecute {
-    if directory.is_dir() {
-        let entries = fs::read_dir(directory).unwrap();
-        for entry in entries {
-            if let Ok(entry) = entry {
-                let path = entry.path();
-                if let Some(x) = path.file_name() {
-                    if x == "BUILD_ONLY" {
-                        return BackendExecute::Build;
-                    }
+fn get_backend_execute_type(directory: &Path) -> Result<BackendExecute> {
+    let entries = fs::read_dir(directory)?;
+    for entry in entries {
+        if let Ok(entry) = entry {
+            let path = entry.path();
+            if let Some(x) = path.file_name() {
+                if x == "BUILD_ONLY" {
+                    return Ok(BackendExecute::Build);
                 }
             }
         }
     }
-    BackendExecute::Test
+    Ok(BackendExecute::Test)
 }
 
-fn get_backends(directory: &Path) -> Vec<Backend> {
-    fs::read_dir(directory)
-        .unwrap()
-        .filter_map(|entry| entry.ok())
-        .map(|entry| {
-            let pathbuf: PathBuf = entry.path().into();
-            pathbuf
-        })
-        .filter(|entry| entry.is_dir())
-        .filter_map(|entry| if let Some(x) = entry.file_name() {
-
-            Some(
-                (String::from(x.to_string_lossy()),
-                    get_backend_execute_type(&entry)).into()
-                )
-        } else {
-            None
-        })
-        .collect()
+fn get_backends(directory: &Path) -> Result<Vec<Backend>> {
+    Ok(
+        fs::read_dir(directory)?
+            .filter_map(|entry| entry.ok())
+            .map(|entry| {
+                let pathbuf: PathBuf = entry.path().into();
+                pathbuf
+            })
+            .filter(|entry| entry.is_dir())
+            .filter_map(|entry| if let Some(name) = entry.file_name() {
+                let name = name.to_str().expect("invalid unicode");
+                get_backend_execute_type(&entry)
+                    .ok()
+                    .and_then(|xt| Some((name, xt).into()))
+                    .or(None)
+            } else {
+                None
+            })
+            .collect(),
+    )
 }
 
 
@@ -151,8 +162,8 @@ impl fmt::Display for TestEnvType {
 }
 
 
-#[derive(Debug,PartialEq,Eq,PartialOrd,Ord)]
-enum BackendExecute{
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+enum BackendExecute {
     Build,
     Test,
 }
@@ -172,10 +183,10 @@ impl fmt::Display for BackendExecute {
 }
 
 
-#[derive(Debug,PartialEq,Eq,PartialOrd,Ord)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 struct Backend {
-    name : String,
-    execute : BackendExecute,
+    name: String,
+    execute: BackendExecute,
 }
 
 impl Backend {
@@ -191,10 +202,13 @@ impl fmt::Display for Backend {
     }
 }
 
-impl<T> From<(T, BackendExecute)> for Backend where T: Into<String> {
-    fn from(tuple: (T,BackendExecute)) -> Self {
+impl<T> From<(T, BackendExecute)> for Backend
+where
+    T: Into<String>,
+{
+    fn from(tuple: (T, BackendExecute)) -> Self {
         Self {
-            name : tuple.0.into(),
+            name: tuple.0.into(),
             execute: tuple.1,
         }
     }
@@ -263,7 +277,7 @@ struct ContainerYml<'a> {
 
 
 
-fn main() {
+fn run() -> Result<()> {
     let cwd: PathBuf = env::current_dir().unwrap_or(PathBuf::from("HOME").join("spearow").join(
         "continuous-integration",
     ));
@@ -276,8 +290,7 @@ fn main() {
 
 
 
-    let mut testenvs: Vec<TestEnv> = fs::read_dir(base)
-        .unwrap()
+    let mut testenvs: Vec<TestEnv> = fs::read_dir(base)?
         .filter_map(|entry| entry.ok())
         .filter(|entry| entry.path().is_dir())
         .map(|entry| {
@@ -286,9 +299,12 @@ fn main() {
         })
         .filter_map(|entry| if let Some(x) = entry.file_name() {
 
-            let mut backends = get_backends(&entry);
-            backends.sort();
-            Some(TestEnv::new(String::from(x.to_string_lossy()), backends))
+            if let Ok(mut backends) = get_backends(&entry) {
+                backends.sort();
+                Some(TestEnv::new(String::from(x.to_string_lossy()), backends))
+            } else {
+                None
+            }
         } else {
             None
         })
@@ -307,19 +323,32 @@ fn main() {
         .write(true)
         .create(true)
         .truncate(true)
-        .open("juice.yml")
-        .unwrap();
-    f_juice
-        .write_all(juice.render().unwrap().as_str().as_bytes())
-        .unwrap();
+        .open("juice.yml")?;
+    f_juice.write_all(
+        juice.render().unwrap().as_str().as_bytes(),
+    )?;
 
     let mut f_containers = OpenOptions::new()
         .write(true)
         .create(true)
         .truncate(true)
-        .open("juice-containers.yml")
-        .unwrap();
-    f_containers
-        .write_all(containers.render().unwrap().as_str().as_bytes())
-        .unwrap();
+        .open("juice-containers.yml")?;
+    f_containers.write_all(
+        containers.render().unwrap().as_str().as_bytes(),
+    )?;
+    Ok(())
+}
+
+
+fn main() {
+    if let Err(ref e) = run() {
+        use std::io::Write;
+        use error_chain::ChainedError;
+
+        let stderr = &mut ::std::io::stderr();
+        let errmsg = "Error writing to stderr";
+
+        writeln!(stderr, "{}", e.display_chain()).expect(errmsg);
+        ::std::process::exit(1);
+    }
 }
