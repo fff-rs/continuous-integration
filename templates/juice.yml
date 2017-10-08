@@ -405,7 +405,7 @@ jobs:
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
 {% if backend.name == "cuda" %}
-    - task: compile-{{ testenv.name }}-{{ backend }}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
       config:
@@ -449,7 +449,7 @@ jobs:
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
 {% if backend.name == "cuda" %}
-    - task: compile-{{ testenv.name }}-{{ backend }}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
       config:
@@ -493,7 +493,7 @@ jobs:
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
 {% if backend.name == "native" %}
-    - task: compile-{{ testenv.name }}-{{ backend }}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
       config:
@@ -530,7 +530,7 @@ jobs:
 {% endfor %}
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
-    - task: compile-{{ testenv.name }}-{{ backend }}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
       config:
@@ -573,7 +573,7 @@ jobs:
 {% endfor %}
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
-    - task: compile-{{ testenv.name }}-{{ backend }}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
       config:
@@ -624,7 +624,7 @@ jobs:
 {% endfor %}
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
-    - task: compile-{{ testenv.name }}-{{ backend }}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
       config:
@@ -678,7 +678,7 @@ jobs:
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
-    - task: compile-{{ testenv.name }}-{{ backend }}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
       config:
@@ -730,7 +730,7 @@ jobs:
 {% endfor %}
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
-    - task: compile-{{ testenv.name }}-{{ backend }}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
       config:
@@ -786,7 +786,7 @@ jobs:
 {% endfor %}
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
-    - task: compile-{{ testenv.name }}-{{ backend }}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
       config:
