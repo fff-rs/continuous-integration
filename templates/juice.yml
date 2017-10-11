@@ -417,6 +417,10 @@ jobs:
           args:
           - -exc
           - |
+{% if backend.execute == BackendExecute::Test %}
+            escalate
+{% endif %}
+            prepare
             cd cudnn-sys
             cargo b
             cargo t
@@ -461,6 +465,10 @@ jobs:
           args:
           - -exc
           - |
+{% if backend.execute == BackendExecute::Test %}
+            escalate
+{% endif %}
+            prepare
             cd cublas-sys
             cargo b
             cargo t
@@ -505,6 +513,7 @@ jobs:
           args:
           - -exc
           - |
+            prepare
             cargo b
             cargo t
 
