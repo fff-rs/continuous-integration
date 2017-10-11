@@ -113,7 +113,7 @@ resources:
     branch: master
     uri: https://github.com/spearow/rust-blas.git
 
-{% include "container-resourses.yml" %}
+{%- include "container-resourses.yml" -%}
 
 
 groups:
@@ -394,17 +394,17 @@ jobs:
     - aggregate:
       - get: rust-cudnn
         trigger: true
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
-{% if backend.name == "cuda" %}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
+{%- if backend.name == "cuda" -%}
       - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
-{% endif %}
-{% endfor %}
-{% endfor %}
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
-{% if backend.name == "cuda" %}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
+{%- if backend.name == "cuda" -%}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -417,9 +417,9 @@ jobs:
           args:
           - -exc
           - |
-{% if backend.execute == BackendExecute::Test %}
+{%- if backend.execute == BackendExecute::Test -%}
             escalate
-{% endif %}
+{%- endif -%}
             prepare
             cd cudnn-sys
             cargo b
@@ -429,9 +429,9 @@ jobs:
             cargo b
             cargo t
           dir: rust-cudnn
-{% endif %}
-{% endfor %}
-{% endfor %}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
 
   - name: test-rust-cublas
     build_logs_to_retain: 4
@@ -442,17 +442,17 @@ jobs:
     - aggregate:
       - get: rust-cublas
         trigger: true
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
-{% if backend.name == "cuda" %}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
+{%- if backend.name == "cuda" -%}
       - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
-{% endif %}
-{% endfor %}
-{% endfor %}
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
-{% if backend.name == "cuda" %}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
+{%- if backend.name == "cuda" -%}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -465,9 +465,9 @@ jobs:
           args:
           - -exc
           - |
-{% if backend.execute == BackendExecute::Test %}
+{%- if backend.execute == BackendExecute::Test -%}
             escalate
-{% endif %}
+{%- endif -%}
             prepare
             cd cublas-sys
             cargo b
@@ -477,9 +477,9 @@ jobs:
             cargo b
             cargo t
           dir: rust-cublas
-{% endif %}
-{% endfor %}
-{% endfor %}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
 
   - name: test-rust-blas
     build_logs_to_retain: 4
@@ -490,17 +490,17 @@ jobs:
     - aggregate:
       - get: rust-blas
         trigger: true
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
-{% if backend.name == "native" %}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
+{%- if backend.name == "native" -%}
       - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
-{% endif %}
-{% endfor %}
-{% endfor %}
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
-{% if backend.name == "native" %}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
+{%- if backend.name == "native" -%}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -518,9 +518,9 @@ jobs:
             cargo t
 
           dir: rust-blas
-{% endif %}
-{% endfor %}
-{% endfor %}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
 
   - name: test-coaster
     build_logs_to_retain: 4
@@ -531,14 +531,14 @@ jobs:
     - aggregate:
       - get: coaster
         trigger: true
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
       - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
-{% endfor %}
-{% endfor %}
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- endfor -%}
+{%- endfor -%}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -553,10 +553,10 @@ jobs:
           args:
           - -exc
           - |
-{% include "cargo.yml" %}
+{%- include "cargo.yml" -%}
           dir: coaster
-{% endfor %}
-{% endfor %}
+{%- endfor -%}
+{%- endfor -%}
 
   - name: test-coaster-blas
     build_logs_to_retain: 4
@@ -574,14 +574,14 @@ jobs:
         trigger: true
       - get: rust-blas
         trigger: true
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
       - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
-{% endfor %}
-{% endfor %}
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- endfor -%}
+{%- endfor -%}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -599,10 +599,10 @@ jobs:
           args:
           - -exc
           - |
-{% include "cargo.yml" %}
+{%- include "cargo.yml" -%}
           dir: coaster-blas
-{% endfor %}
-{% endfor %}
+{%- endfor -%}
+{%- endfor -%}
 
 
   - name: test-coaster-nn
@@ -625,14 +625,14 @@ jobs:
         trigger: true
       - get: coaster-nn
         trigger: true
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
       - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
-{% endfor %}
-{% endfor %}
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- endfor -%}
+{%- endfor -%}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -652,10 +652,10 @@ jobs:
           args:
           - -exc
           - |
-{% include "cargo.yml" %}
+{%- include "cargo.yml" -%}
           dir: coaster-nn
-{% endfor %}
-{% endfor %}
+{%- endfor -%}
+{%- endfor -%}
 
   - name: test-greenglas
     build_logs_to_retain: 4
@@ -678,15 +678,15 @@ jobs:
         passed: [test-coaster-nn]
       - get: greenglas
         trigger: true
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
       - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
-{% endfor %}
-{% endfor %}
+{%- endfor -%}
+{%- endfor -%}
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -705,10 +705,10 @@ jobs:
           args:
           - -exc
           - |
-{% include "cargo.yml" %}
+{%- include "cargo.yml" -%}
           dir: greenglas
-{% endfor %}
-{% endfor %}
+{%- endfor -%}
+{%- endfor -%}
 
   - name: test-juice
     build_logs_to_retain: 4
@@ -731,14 +731,14 @@ jobs:
         passed: [test-coaster-nn]
       - get: juice
         trigger: true
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
       - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
-{% endfor %}
-{% endfor %}
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- endfor -%}
+{%- endfor -%}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -759,10 +759,10 @@ jobs:
           args:
           - -exc
           - |
-{% include "cargo.yml" %}
+{%- include "cargo.yml" -%}
           dir: coaster-nn
-{% endfor %}
-{% endfor %}
+{%- endfor -%}
+{%- endfor -%}
 
   - name: test-juice-examples
     build_logs_to_retain: 4
@@ -787,14 +787,14 @@ jobs:
         passed: [test-juice]
       - get: juice-examples
         trigger: true
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
       - get: container-{{ testenv.name }}-{{ backend }}
         trigger: true
-{% endfor %}
-{% endfor %}
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
+{%- endfor -%}
+{%- endfor -%}
+{%- for testenv in testenvs -%}
+{%- for backend in testenv.backends -%}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -816,7 +816,7 @@ jobs:
           args:
           - -exc
           - |
-{% include "cargo.yml" %}
+{%- include "cargo.yml" -%}
           dir: juice-examples
-{% endfor %}
-{% endfor %}
+{%- endfor -%}
+{%- endfor -%}
