@@ -12,7 +12,8 @@ apt-get -y --no-install-recommends install \
 	nvidia-opencl-icd-375 \
 	libcuda1-375 \
 	nvidia-libopencl1-375 \
-	nvidia-375-dev
+	nvidia-375-dev \
+	ocl-icd-opencl-dev
 
 dpkg -i /tmp/libcudnn7*.deb
 

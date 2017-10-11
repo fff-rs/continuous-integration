@@ -5,6 +5,8 @@ apt-get -y --no-install-recommends install \
 	curl wget git \
 	capnproto \
 	pkg-config \
+	libopenblas-{dev,base} \
 	nvidia-opencl-icd-375 \
 	nvidia-libopencl1-375 \
-	nvidia-375-dev
+	nvidia-375-dev \
+	ocl-icd-opencl-dev
