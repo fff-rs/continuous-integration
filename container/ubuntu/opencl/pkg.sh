@@ -8,6 +8,6 @@ apt-get -y --no-install-recommends install \
 	libopenblas-{dev,base} \
 	nvidia-opencl-icd-375 \
 	nvidia-libopencl1-375 \
+	nvidia-opencl-dev \
 	nvidia-375-dev \
-	ocl-icd-libopencl1 \
-	ocl-icd-opencl-dev
+	libssl-dev

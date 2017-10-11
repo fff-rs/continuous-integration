@@ -5,4 +5,5 @@ apt-get -y install \
 	curl wget git \
 	capnproto \
 	pkg-config \
-	libopenblas-{dev,base}
+	libopenblas-{dev,base} \
+	libssl-dev
