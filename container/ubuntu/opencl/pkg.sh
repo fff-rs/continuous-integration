@@ -7,7 +7,7 @@ apt-get -y --no-install-recommends install \
 	pkg-config \
 	libopenblas-{dev,base} \
 	nvidia-opencl-icd-375 \
-	nvidia-libopencl1-375 \
-	nvidia-opencl-dev \
+	ocl-icd-opencl-dev \
+	ocl-icd-libopencl1 \
 	nvidia-375-dev \
 	libssl-dev
