@@ -164,7 +164,12 @@ resources:
   source:
     repository: quay.io/spearow/machine-learning-container
     username: ((quay-username))
-    password: ((quay-password))groups:
+    password: ((quay-password))
+
+
+
+
+groups:
 - name: stack
   jobs:
   - test-coaster
@@ -441,8 +446,31 @@ jobs:
     plan:
     - aggregate:
       - get: rust-cudnn
-        trigger: true- get: container-fedora-cuda
-        trigger: true- task: test-fedora-cuda
+        trigger: true
+
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    - task: test-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -453,7 +481,9 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalateprepare
+          - |
+            escalate
+            prepare
             cd cudnn-sys
             cargo b
             cargo t
@@ -461,7 +491,24 @@ jobs:
             cd cudnn
             cargo b
             cargo t
-          dir: rust-cudnn- name: test-rust-cublas
+          dir: rust-cudnn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  - name: test-rust-cublas
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -469,8 +516,31 @@ jobs:
     plan:
     - aggregate:
       - get: rust-cublas
-        trigger: true- get: container-fedora-cuda
-        trigger: true- task: test-fedora-cuda
+        trigger: true
+
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    - task: test-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -481,7 +551,9 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalateprepare
+          - |
+            escalate
+            prepare
             cd cublas-sys
             cargo b
             cargo t
@@ -489,7 +561,24 @@ jobs:
             cd cublas
             cargo b
             cargo t
-          dir: rust-cublas- name: test-rust-blas
+          dir: rust-cublas
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  - name: test-rust-blas
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -497,9 +586,38 @@ jobs:
     plan:
     - aggregate:
       - get: rust-blas
-        trigger: true- get: container-fedora-native
-        trigger: true- get: container-ubuntu-native
-        trigger: true- task: test-fedora-native
+        trigger: true
+
+
+
+
+
+
+
+      - get: container-fedora-native
+        trigger: true
+
+
+
+
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+
+
+
+
+
+
+
+
+
+
+
+    - task: test-fedora-native
       image: container-fedora-native
       privileged: true
       config:
@@ -515,7 +633,15 @@ jobs:
             cargo b
             cargo t
 
-          dir: rust-blas- task: build-ubuntu-native
+          dir: rust-blas
+
+
+
+
+
+
+
+    - task: build-ubuntu-native
       image: container-ubuntu-native
       privileged: true
       config:
@@ -531,7 +657,14 @@ jobs:
             cargo b
             cargo t
 
-          dir: rust-blas- name: test-coaster
+          dir: rust-blas
+
+
+
+
+
+
+  - name: test-coaster
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -539,13 +672,33 @@ jobs:
     plan:
     - aggregate:
       - get: coaster
-        trigger: true- get: container-fedora-cuda
-        trigger: true- get: container-fedora-default
-        trigger: true- get: container-fedora-native
-        trigger: true- get: container-fedora-opencl
-        trigger: true- get: container-ubuntu-native
-        trigger: true- get: container-ubuntu-opencl
-        trigger: true- task: test-fedora-cuda
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+
+
+    - task: test-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -558,7 +711,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,cudadir: coaster- task: test-fedora-default
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: coaster
+
+    - task: test-fedora-default
       image: container-fedora-default
       privileged: true
       config:
@@ -571,7 +731,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo testdir: coaster- task: test-fedora-native
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: coaster
+
+    - task: test-fedora-native
       image: container-fedora-native
       privileged: true
       config:
@@ -584,7 +751,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=nativedir: coaster- task: test-fedora-opencl
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: coaster
+
+    - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
       config:
@@ -597,7 +771,16 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,opencldir: coaster- task: build-ubuntu-native
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: coaster
+
+
+
+    - task: build-ubuntu-native
       image: container-ubuntu-native
       privileged: true
       config:
@@ -610,7 +793,13 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=nativedir: coaster- task: build-ubuntu-opencl
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: coaster
+
+    - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
       config:
@@ -623,7 +812,15 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=native,opencldir: coaster- name: test-coaster-blas
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: coaster
+
+
+
+  - name: test-coaster-blas
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -638,13 +835,33 @@ jobs:
       - get: coaster-blas
         trigger: true
       - get: rust-blas
-        trigger: true- get: container-fedora-cuda
-        trigger: true- get: container-fedora-default
-        trigger: true- get: container-fedora-native
-        trigger: true- get: container-fedora-opencl
-        trigger: true- get: container-ubuntu-native
-        trigger: true- get: container-ubuntu-opencl
-        trigger: true- task: test-fedora-cuda
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+
+
+    - task: test-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -660,7 +877,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,cudadir: coaster-blas- task: test-fedora-default
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: coaster-blas
+
+    - task: test-fedora-default
       image: container-fedora-default
       privileged: true
       config:
@@ -676,7 +900,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo testdir: coaster-blas- task: test-fedora-native
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: coaster-blas
+
+    - task: test-fedora-native
       image: container-fedora-native
       privileged: true
       config:
@@ -692,7 +923,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=nativedir: coaster-blas- task: test-fedora-opencl
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: coaster-blas
+
+    - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
       config:
@@ -708,7 +946,16 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,opencldir: coaster-blas- task: build-ubuntu-native
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: coaster-blas
+
+
+
+    - task: build-ubuntu-native
       image: container-ubuntu-native
       privileged: true
       config:
@@ -724,7 +971,13 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=nativedir: coaster-blas- task: build-ubuntu-opencl
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: coaster-blas
+
+    - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
       config:
@@ -740,7 +993,16 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=native,opencldir: coaster-blas- name: test-coaster-nn
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: coaster-blas
+
+
+
+
+  - name: test-coaster-nn
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -759,13 +1021,33 @@ jobs:
       - get: coaster-blas
         trigger: true
       - get: coaster-nn
-        trigger: true- get: container-fedora-cuda
-        trigger: true- get: container-fedora-default
-        trigger: true- get: container-fedora-native
-        trigger: true- get: container-fedora-opencl
-        trigger: true- get: container-ubuntu-native
-        trigger: true- get: container-ubuntu-opencl
-        trigger: true- task: test-fedora-cuda
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+
+
+    - task: test-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -783,7 +1065,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,cudadir: coaster-nn- task: test-fedora-default
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: coaster-nn
+
+    - task: test-fedora-default
       image: container-fedora-default
       privileged: true
       config:
@@ -801,7 +1090,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo testdir: coaster-nn- task: test-fedora-native
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: coaster-nn
+
+    - task: test-fedora-native
       image: container-fedora-native
       privileged: true
       config:
@@ -819,7 +1115,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=nativedir: coaster-nn- task: test-fedora-opencl
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: coaster-nn
+
+    - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
       config:
@@ -837,7 +1140,16 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,opencldir: coaster-nn- task: build-ubuntu-native
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: coaster-nn
+
+
+
+    - task: build-ubuntu-native
       image: container-ubuntu-native
       privileged: true
       config:
@@ -855,7 +1167,13 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=nativedir: coaster-nn- task: build-ubuntu-opencl
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: coaster-nn
+
+    - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
       config:
@@ -873,7 +1191,15 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=native,opencldir: coaster-nn- name: test-greenglas
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: coaster-nn
+
+
+
+  - name: test-greenglas
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -893,13 +1219,34 @@ jobs:
         trigger: true
         passed: [test-coaster-nn]
       - get: greenglas
-        trigger: true- get: container-fedora-cuda
-        trigger: true- get: container-fedora-default
-        trigger: true- get: container-fedora-native
-        trigger: true- get: container-fedora-opencl
-        trigger: true- get: container-ubuntu-native
-        trigger: true- get: container-ubuntu-opencl
-        trigger: truepassed: [test-coaster, test-coaster-nn, test-coaster-blas]- task: test-fedora-cuda
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+        passed: [test-coaster, test-coaster-nn, test-coaster-blas]
+
+
+    - task: test-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -916,7 +1263,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,cudadir: greenglas- task: test-fedora-default
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: greenglas
+
+    - task: test-fedora-default
       image: container-fedora-default
       privileged: true
       config:
@@ -933,7 +1287,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo testdir: greenglas- task: test-fedora-native
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: greenglas
+
+    - task: test-fedora-native
       image: container-fedora-native
       privileged: true
       config:
@@ -950,7 +1311,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=nativedir: greenglas- task: test-fedora-opencl
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: greenglas
+
+    - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
       config:
@@ -967,7 +1335,16 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,opencldir: greenglas- task: build-ubuntu-native
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: greenglas
+
+
+
+    - task: build-ubuntu-native
       image: container-ubuntu-native
       privileged: true
       config:
@@ -984,7 +1361,13 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=nativedir: greenglas- task: build-ubuntu-opencl
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: greenglas
+
+    - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
       config:
@@ -1001,7 +1384,15 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=native,opencldir: greenglas- name: test-juice
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: greenglas
+
+
+
+  - name: test-juice
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -1021,13 +1412,33 @@ jobs:
         trigger: true
         passed: [test-coaster-nn]
       - get: juice
-        trigger: true- get: container-fedora-cuda
-        trigger: true- get: container-fedora-default
-        trigger: true- get: container-fedora-native
-        trigger: true- get: container-fedora-opencl
-        trigger: true- get: container-ubuntu-native
-        trigger: true- get: container-ubuntu-opencl
-        trigger: true- task: test-fedora-cuda
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+
+
+    - task: test-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -1046,7 +1457,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,cudadir: coaster-nn- task: test-fedora-default
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: coaster-nn
+
+    - task: test-fedora-default
       image: container-fedora-default
       privileged: true
       config:
@@ -1065,7 +1483,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo testdir: coaster-nn- task: test-fedora-native
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: coaster-nn
+
+    - task: test-fedora-native
       image: container-fedora-native
       privileged: true
       config:
@@ -1084,7 +1509,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=nativedir: coaster-nn- task: test-fedora-opencl
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: coaster-nn
+
+    - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
       config:
@@ -1103,7 +1535,16 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,opencldir: coaster-nn- task: build-ubuntu-native
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: coaster-nn
+
+
+
+    - task: build-ubuntu-native
       image: container-ubuntu-native
       privileged: true
       config:
@@ -1122,7 +1563,13 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=nativedir: coaster-nn- task: build-ubuntu-opencl
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: coaster-nn
+
+    - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
       config:
@@ -1141,7 +1588,15 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=native,opencldir: coaster-nn- name: test-juice-examples
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: coaster-nn
+
+
+
+  - name: test-juice-examples
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -1163,13 +1618,33 @@ jobs:
         trigger: true
         passed: [test-juice]
       - get: juice-examples
-        trigger: true- get: container-fedora-cuda
-        trigger: true- get: container-fedora-default
-        trigger: true- get: container-fedora-native
-        trigger: true- get: container-fedora-opencl
-        trigger: true- get: container-ubuntu-native
-        trigger: true- get: container-ubuntu-opencl
-        trigger: true- task: test-fedora-cuda
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+
+
+    - task: test-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -1189,7 +1664,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,cudadir: juice-examples- task: test-fedora-default
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: juice-examples
+
+    - task: test-fedora-default
       image: container-fedora-default
       privileged: true
       config:
@@ -1209,7 +1691,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo testdir: juice-examples- task: test-fedora-native
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: juice-examples
+
+    - task: test-fedora-native
       image: container-fedora-native
       privileged: true
       config:
@@ -1229,7 +1718,14 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=nativedir: juice-examples- task: test-fedora-opencl
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: juice-examples
+
+    - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
       config:
@@ -1249,7 +1745,16 @@ jobs:
           path: sh
           args:
           - -exc
-          - |escalatepreparecargo test --no-default-features --features=native,opencldir: juice-examples- task: build-ubuntu-native
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: juice-examples
+
+
+
+    - task: build-ubuntu-native
       image: container-ubuntu-native
       privileged: true
       config:
@@ -1269,7 +1774,13 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=nativedir: juice-examples- task: build-ubuntu-opencl
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: juice-examples
+
+    - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
       config:
@@ -1289,4 +1800,9 @@ jobs:
           path: sh
           args:
           - -exc
-          - |preparecargo build --no-default-features --features=native,opencldir: juice-examples
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: juice-examples
+

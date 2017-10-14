@@ -1,21 +1,21 @@
-{%- if backend.execute == BackendExecute::Test -%}
+{%- if backend.execute == BackendExecute::Test %}
             escalate
-{%- endif -%}
+{%- endif %}
             prepare
 {%- if backend.execute == BackendExecute::Build -%}
-{%- if backend.name == "default" -%}
+{%- if backend.name == "default" %}
             cargo build
-{%- else if backend.name == "native" -%}
+{%- else if backend.name == "native" %}
             cargo build --no-default-features --features=native
-{%- else -%}
+{%- else %}
             cargo build --no-default-features --features=native,{{ backend.name }}
-{%- endif -%}
+{%- endif %}
 {%- else -%}
-{%- if backend.name == "default" -%}
+{%- if backend.name == "default" %}
             cargo test
-{%- else if backend.name == "native" -%}
+{%- else if backend.name == "native" %}
             cargo test --no-default-features --features=native
-{%- else -%}
+{%- else %}
             cargo test --no-default-features --features=native,{{ backend.name }}
-{%- endif -%}
+{%- endif %}
 {%- endif -%}
