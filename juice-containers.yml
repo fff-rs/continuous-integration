@@ -5,6 +5,7 @@ resources:
     branch: master
     uri: https://github.com/spearow/continuous-integration.git
 
+
 - name: container-fedora-cuda
   type: docker-image
   source:

@@ -5,7 +5,7 @@ resources:
     branch: master
     uri: https://github.com/spearow/continuous-integration.git
 
-{% include "container-resourses.yml" %}
+{% include "container-resources.yml" %}
 
 jobs:
 {% for testenv in testenvs %}

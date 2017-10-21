@@ -1,3 +1,9 @@
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
 resources:
 - name: juice-examples
   type: git
@@ -11,35 +17,11 @@ resources:
     branch: master
     uri: https://github.com/spearow/juice.git
 
-- name: doc-juice
-  type: git
-  source:
-    branch: gh-pages
-    uri: git@github.com:spearow/juice.git
-    private_key: ((ssh-key))
-    git_config:
-    - name: user.email
-      value: sirmergealot@spearow.io
-    - name: user.name
-      value: "Sir Mergealot"
-
 - name: coaster-nn
   type: git
   source:
     branch: master
     uri: https://github.com/spearow/coaster-nn.git
-
-- name: doc-coaster-nn
-  type: git
-  source:
-    branch: gh-pages
-    uri: git@github.com:spearow/coaster-nn.git
-    private_key: ((ssh-key))
-    git_config:
-    - name: user.email
-      value: sirmergealot@spearow.io
-    - name: user.name
-      value: "Sir Mergealot"
 
 - name: coaster-blas
   type: git
@@ -47,53 +29,17 @@ resources:
     branch: master
     uri: https://github.com/spearow/coaster-blas.git
 
-- name: doc-coaster-blas
-  type: git
-  source:
-    branch: gh-pages
-    uri: git@github.com:spearow/coaster-blas.git
-    private_key: ((ssh-key))
-    git_config:
-    - name: user.email
-      value: sirmergealot@spearow.io
-    - name: user.name
-      value: "Sir Mergealot"
-
 - name: coaster
   type: git
   source:
     branch: master
     uri: https://github.com/spearow/coaster.git
 
-- name: doc-coaster
-  type: git
-  source:
-    branch: gh-pages
-    uri: git@github.com:spearow/coaster.git
-    private_key: ((ssh-key))
-    git_config:
-    - name: user.email
-      value: sirmergealot@spearow.io
-    - name: user.name
-      value: "Sir Mergealot"
-
 - name: greenglas
   type: git
   source:
     branch: master
     uri: https://github.com/spearow/greenglas.git
-
-- name: doc-greenglas
-  type: git
-  source:
-    branch: gh-pages
-    uri: git@github.com:spearow/greenglas.git
-    private_key: ((ssh-key))
-    git_config:
-    - name: user.email
-      value: sirmergealot@spearow.io
-    - name: user.name
-      value: "Sir Mergealot"
 
 - name: rust-cudnn
   type: git
@@ -112,6 +58,120 @@ resources:
   source:
     branch: master
     uri: https://github.com/spearow/rust-blas.git
+- name: doc-juice
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/juice.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: doc-coaster-nn
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster-nn.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: doc-coaster-blas
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster-blas.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: doc-coaster
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: doc-greenglas
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/greenglas.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+- name: pr-greenglas
+  type: pull-request
+  source:
+    repo: spearow/greenglas
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-coaster-nn
+  type: pull-request
+  source:
+    repo: spearow/coaster-nn
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-juice-examples
+  type: pull-request
+  source:
+    repo: spearow/juice-examples
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-juice
+  type: pull-request
+  source:
+    repo: spearow/juice
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-coaster-blas
+  type: pull-request
+  source:
+    repo: spearow/coaster-blas
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-coaster
+  type: pull-request
+  source:
+    repo: spearow/coaster
+    access_token: ((sirmergealot-github-token))
+
+
+- name: pr-rust-cudnn
+  type: pull-request
+  source:
+    repo: spearow/rust-cudnn
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-rust-cublas
+  type: pull-request
+  source:
+    repo: spearow/rust-cublas
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-rust-blas
+  type: pull-request
+  source:
+    repo: spearow/rust-blas
+    access_token: ((sirmergealot-github-token))
+
 
 - name: container-fedora-cuda
   type: docker-image
@@ -167,8 +227,6 @@ resources:
     password: ((quay-password))
 
 
-
-
 groups:
 - name: stack
   jobs:
@@ -188,17 +246,17 @@ groups:
   - doc-coaster-blas
   - doc-greenglas
   - doc-juice
-# - name: pullrequest
-#   jobs:
-#   - test-coaster
-#   - test-coaster-nn
-#   - test-coaster-blas
-#   - test-juice
-#   - test-juice-examples
-#   - test-greenglas
-#   - test-rust-blas
-#   - test-rust-cudnn
-#   - test-rust-cublas
+- name: pull-request
+  jobs:
+  - pr-test-coaster
+  - pr-test-coaster-nn
+  - pr-test-coaster-blas
+  - pr-test-juice
+  - pr-test-juice-examples
+  - pr-test-greenglas
+  - pr-test-rust-blas
+  - pr-test-rust-cudnn
+  - pr-test-rust-cublas
 
 jobs:
   - name: doc-coaster
@@ -438,14 +496,17 @@ jobs:
     - put: doc-juice
       params: { repository: doc-juice-updated, force: true }
 
-  - name: test-rust-cudnn
+
+
+
+  - name:  test-rust-cudnn
     build_logs_to_retain: 4
     public: true
     serial: true
     serial_groups: [gpu-access]
     plan:
     - aggregate:
-      - get: rust-cudnn
+      - get:  rust-cudnn
         trigger: true
 
 
@@ -476,7 +537,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: rust-cudnn
+        - name:  rust-cudnn
         run:
           path: sh
           args:
@@ -491,7 +552,7 @@ jobs:
             cd cudnn
             cargo b
             cargo t
-          dir: rust-cudnn
+          dir:  rust-cudnn
 
 
 
@@ -508,14 +569,14 @@ jobs:
 
 
 
-  - name: test-rust-cublas
+  - name:  test-rust-cublas
     build_logs_to_retain: 4
     public: true
     serial: true
     serial_groups: [gpu-access]
     plan:
     - aggregate:
-      - get: rust-cublas
+      - get:  rust-cublas
         trigger: true
 
 
@@ -546,7 +607,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: rust-cublas
+        - name:  rust-cublas
         run:
           path: sh
           args:
@@ -561,7 +622,7 @@ jobs:
             cd cublas
             cargo b
             cargo t
-          dir: rust-cublas
+          dir:  rust-cublas
 
 
 
@@ -578,14 +639,14 @@ jobs:
 
 
 
-  - name: test-rust-blas
+  - name:  test-rust-blas
     build_logs_to_retain: 4
     public: true
     serial: true
     serial_groups: [gpu-access]
     plan:
     - aggregate:
-      - get: rust-blas
+      - get:  rust-blas
         trigger: true
 
 
@@ -623,7 +684,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: rust-blas
+        - name:  rust-blas
         run:
           path: sh
           args:
@@ -633,7 +694,7 @@ jobs:
             cargo b
             cargo t
 
-          dir: rust-blas
+          dir:  rust-blas
 
 
 
@@ -647,7 +708,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: rust-blas
+        - name:  rust-blas
         run:
           path: sh
           args:
@@ -657,21 +718,21 @@ jobs:
             cargo b
             cargo t
 
-          dir: rust-blas
+          dir:  rust-blas
 
 
 
 
 
 
-  - name: test-coaster
+  - name:  test-coaster
     build_logs_to_retain: 4
     public: true
     serial: true
     serial_groups: [gpu-access]
     plan:
     - aggregate:
-      - get: coaster
+      - get:  coaster
         trigger: true
 
 
@@ -704,7 +765,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: coaster
+        - name:  coaster
         caches:
         - path: target
         run:
@@ -716,7 +777,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,cuda
 
-          dir: coaster
+          dir:  coaster
 
     - task: test-fedora-default
       image: container-fedora-default
@@ -724,7 +785,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: coaster
+        - name:  coaster
         caches:
         - path: target
         run:
@@ -736,7 +797,7 @@ jobs:
             prepare
             cargo test
 
-          dir: coaster
+          dir:  coaster
 
     - task: test-fedora-native
       image: container-fedora-native
@@ -744,7 +805,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: coaster
+        - name:  coaster
         caches:
         - path: target
         run:
@@ -756,7 +817,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native
 
-          dir: coaster
+          dir:  coaster
 
     - task: test-fedora-opencl
       image: container-fedora-opencl
@@ -764,7 +825,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: coaster
+        - name:  coaster
         caches:
         - path: target
         run:
@@ -776,7 +837,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,opencl
 
-          dir: coaster
+          dir:  coaster
 
 
 
@@ -786,7 +847,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: coaster
+        - name:  coaster
         caches:
         - path: target
         run:
@@ -797,7 +858,7 @@ jobs:
             prepare
             cargo build --no-default-features --features=native
 
-          dir: coaster
+          dir:  coaster
 
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
@@ -805,7 +866,7 @@ jobs:
       config:
         platform: linux
         inputs:
-        - name: coaster
+        - name:  coaster
         caches:
         - path: target
         run:
@@ -816,11 +877,11 @@ jobs:
             prepare
             cargo build --no-default-features --features=native,opencl
 
-          dir: coaster
+          dir:  coaster
 
 
 
-  - name: test-coaster-blas
+  - name:  test-coaster-blas
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -832,7 +893,7 @@ jobs:
       - get: coaster
         trigger: true
         passed: [test-coaster]
-      - get: coaster-blas
+      - get:  coaster-blas
         trigger: true
       - get: rust-blas
         trigger: true
@@ -882,7 +943,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,cuda
 
-          dir: coaster-blas
+          dir:  coaster-blas
 
     - task: test-fedora-default
       image: container-fedora-default
@@ -905,7 +966,7 @@ jobs:
             prepare
             cargo test
 
-          dir: coaster-blas
+          dir:  coaster-blas
 
     - task: test-fedora-native
       image: container-fedora-native
@@ -928,7 +989,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native
 
-          dir: coaster-blas
+          dir:  coaster-blas
 
     - task: test-fedora-opencl
       image: container-fedora-opencl
@@ -951,7 +1012,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,opencl
 
-          dir: coaster-blas
+          dir:  coaster-blas
 
 
 
@@ -975,7 +1036,7 @@ jobs:
             prepare
             cargo build --no-default-features --features=native
 
-          dir: coaster-blas
+          dir:  coaster-blas
 
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
@@ -997,12 +1058,12 @@ jobs:
             prepare
             cargo build --no-default-features --features=native,opencl
 
-          dir: coaster-blas
+          dir:  coaster-blas
 
 
 
 
-  - name: test-coaster-nn
+  - name:  test-coaster-nn
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -1020,7 +1081,7 @@ jobs:
         trigger: true
       - get: coaster-blas
         trigger: true
-      - get: coaster-nn
+      - get:  coaster-nn
         trigger: true
 
 
@@ -1058,7 +1119,7 @@ jobs:
         - name: rust-cublas
         - name: coaster
         - name: coaster-blas
-        - name: coaster-nn
+        - name:  coaster-nn
         caches:
         - path: target
         run:
@@ -1070,7 +1131,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,cuda
 
-          dir: coaster-nn
+          dir:  coaster-nn
 
     - task: test-fedora-default
       image: container-fedora-default
@@ -1083,7 +1144,7 @@ jobs:
         - name: rust-cublas
         - name: coaster
         - name: coaster-blas
-        - name: coaster-nn
+        - name:  coaster-nn
         caches:
         - path: target
         run:
@@ -1095,7 +1156,7 @@ jobs:
             prepare
             cargo test
 
-          dir: coaster-nn
+          dir:  coaster-nn
 
     - task: test-fedora-native
       image: container-fedora-native
@@ -1108,7 +1169,7 @@ jobs:
         - name: rust-cublas
         - name: coaster
         - name: coaster-blas
-        - name: coaster-nn
+        - name:  coaster-nn
         caches:
         - path: target
         run:
@@ -1120,7 +1181,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native
 
-          dir: coaster-nn
+          dir:  coaster-nn
 
     - task: test-fedora-opencl
       image: container-fedora-opencl
@@ -1133,7 +1194,7 @@ jobs:
         - name: rust-cublas
         - name: coaster
         - name: coaster-blas
-        - name: coaster-nn
+        - name:  coaster-nn
         caches:
         - path: target
         run:
@@ -1145,7 +1206,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,opencl
 
-          dir: coaster-nn
+          dir:  coaster-nn
 
 
 
@@ -1160,7 +1221,7 @@ jobs:
         - name: rust-cublas
         - name: coaster
         - name: coaster-blas
-        - name: coaster-nn
+        - name:  coaster-nn
         caches:
         - path: target
         run:
@@ -1171,7 +1232,7 @@ jobs:
             prepare
             cargo build --no-default-features --features=native
 
-          dir: coaster-nn
+          dir:  coaster-nn
 
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
@@ -1184,7 +1245,7 @@ jobs:
         - name: rust-cublas
         - name: coaster
         - name: coaster-blas
-        - name: coaster-nn
+        - name:  coaster-nn
         caches:
         - path: target
         run:
@@ -1195,11 +1256,11 @@ jobs:
             prepare
             cargo build --no-default-features --features=native,opencl
 
-          dir: coaster-nn
+          dir:  coaster-nn
 
 
 
-  - name: test-greenglas
+  - name:  test-greenglas
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -1218,7 +1279,7 @@ jobs:
       - get: coaster-nn
         trigger: true
         passed: [test-coaster-nn]
-      - get: greenglas
+      - get:  greenglas
         trigger: true
 
 
@@ -1268,7 +1329,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,cuda
 
-          dir: greenglas
+          dir:  greenglas
 
     - task: test-fedora-default
       image: container-fedora-default
@@ -1292,7 +1353,7 @@ jobs:
             prepare
             cargo test
 
-          dir: greenglas
+          dir:  greenglas
 
     - task: test-fedora-native
       image: container-fedora-native
@@ -1316,7 +1377,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native
 
-          dir: greenglas
+          dir:  greenglas
 
     - task: test-fedora-opencl
       image: container-fedora-opencl
@@ -1340,7 +1401,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,opencl
 
-          dir: greenglas
+          dir:  greenglas
 
 
 
@@ -1365,7 +1426,7 @@ jobs:
             prepare
             cargo build --no-default-features --features=native
 
-          dir: greenglas
+          dir:  greenglas
 
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
@@ -1388,11 +1449,11 @@ jobs:
             prepare
             cargo build --no-default-features --features=native,opencl
 
-          dir: greenglas
+          dir:  greenglas
 
 
 
-  - name: test-juice
+  - name:  test-juice
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -1411,7 +1472,7 @@ jobs:
       - get: coaster-nn
         trigger: true
         passed: [test-coaster-nn]
-      - get: juice
+      - get:  juice
         trigger: true
 
 
@@ -1450,7 +1511,7 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: juice
+        - name:  juice
         caches:
         - path: target
         run:
@@ -1462,7 +1523,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,cuda
 
-          dir: coaster-nn
+          dir:  coaster-juice
 
     - task: test-fedora-default
       image: container-fedora-default
@@ -1476,7 +1537,7 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: juice
+        - name:  juice
         caches:
         - path: target
         run:
@@ -1488,7 +1549,7 @@ jobs:
             prepare
             cargo test
 
-          dir: coaster-nn
+          dir:  coaster-juice
 
     - task: test-fedora-native
       image: container-fedora-native
@@ -1502,7 +1563,7 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: juice
+        - name:  juice
         caches:
         - path: target
         run:
@@ -1514,7 +1575,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native
 
-          dir: coaster-nn
+          dir:  coaster-juice
 
     - task: test-fedora-opencl
       image: container-fedora-opencl
@@ -1528,7 +1589,7 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: juice
+        - name:  juice
         caches:
         - path: target
         run:
@@ -1540,7 +1601,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,opencl
 
-          dir: coaster-nn
+          dir:  coaster-juice
 
 
 
@@ -1556,7 +1617,7 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: juice
+        - name:  juice
         caches:
         - path: target
         run:
@@ -1567,7 +1628,7 @@ jobs:
             prepare
             cargo build --no-default-features --features=native
 
-          dir: coaster-nn
+          dir:  coaster-juice
 
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
@@ -1581,7 +1642,7 @@ jobs:
         - name: coaster
         - name: coaster-blas
         - name: coaster-nn
-        - name: juice
+        - name:  juice
         caches:
         - path: target
         run:
@@ -1592,11 +1653,11 @@ jobs:
             prepare
             cargo build --no-default-features --features=native,opencl
 
-          dir: coaster-nn
+          dir:  coaster-juice
 
 
 
-  - name: test-juice-examples
+  - name:  test-juice-examples
     build_logs_to_retain: 4
     public: true
     serial: true
@@ -1617,7 +1678,7 @@ jobs:
       - get: juice
         trigger: true
         passed: [test-juice]
-      - get: juice-examples
+      - get:  juice-examples
         trigger: true
 
 
@@ -1657,7 +1718,7 @@ jobs:
         - name: coaster-blas
         - name: coaster-nn
         - name: juice
-        - name: juice-examples
+        - name:  juice-examples
         caches:
         - path: target
         run:
@@ -1669,7 +1730,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,cuda
 
-          dir: juice-examples
+          dir:  juice-examples
 
     - task: test-fedora-default
       image: container-fedora-default
@@ -1684,7 +1745,7 @@ jobs:
         - name: coaster-blas
         - name: coaster-nn
         - name: juice
-        - name: juice-examples
+        - name:  juice-examples
         caches:
         - path: target
         run:
@@ -1696,7 +1757,7 @@ jobs:
             prepare
             cargo test
 
-          dir: juice-examples
+          dir:  juice-examples
 
     - task: test-fedora-native
       image: container-fedora-native
@@ -1711,7 +1772,7 @@ jobs:
         - name: coaster-blas
         - name: coaster-nn
         - name: juice
-        - name: juice-examples
+        - name:  juice-examples
         caches:
         - path: target
         run:
@@ -1723,7 +1784,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native
 
-          dir: juice-examples
+          dir:  juice-examples
 
     - task: test-fedora-opencl
       image: container-fedora-opencl
@@ -1738,7 +1799,7 @@ jobs:
         - name: coaster-blas
         - name: coaster-nn
         - name: juice
-        - name: juice-examples
+        - name:  juice-examples
         caches:
         - path: target
         run:
@@ -1750,7 +1811,7 @@ jobs:
             prepare
             cargo test --no-default-features --features=native,opencl
 
-          dir: juice-examples
+          dir:  juice-examples
 
 
 
@@ -1767,7 +1828,7 @@ jobs:
         - name: coaster-blas
         - name: coaster-nn
         - name: juice
-        - name: juice-examples
+        - name:  juice-examples
         caches:
         - path: target
         run:
@@ -1778,7 +1839,7 @@ jobs:
             prepare
             cargo build --no-default-features --features=native
 
-          dir: juice-examples
+          dir:  juice-examples
 
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
@@ -1793,7 +1854,7 @@ jobs:
         - name: coaster-blas
         - name: coaster-nn
         - name: juice
-        - name: juice-examples
+        - name:  juice-examples
         caches:
         - path: target
         run:
@@ -1804,5 +1865,1379 @@ jobs:
             prepare
             cargo build --no-default-features --features=native,opencl
 
-          dir: juice-examples
+          dir:  juice-examples
 
+
+#################################
+
+
+  - name: pr-test-rust-cudnn
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: pr-rust-cudnn
+        trigger: true
+
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    - task: test-fedora-cuda
+      image: container-fedora-cuda
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: pr-rust-cudnn
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cd cudnn-sys
+            cargo b
+            cargo t
+            cd -
+            cd cudnn
+            cargo b
+            cargo t
+          dir: pr-rust-cudnn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  - name: pr-test-rust-cublas
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: pr-rust-cublas
+        trigger: true
+
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    - task: test-fedora-cuda
+      image: container-fedora-cuda
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: pr-rust-cublas
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cd cublas-sys
+            cargo b
+            cargo t
+            cd -
+            cd cublas
+            cargo b
+            cargo t
+          dir: pr-rust-cublas
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  - name: pr-test-rust-blas
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: pr-rust-blas
+        trigger: true
+
+
+
+
+
+
+
+      - get: container-fedora-native
+        trigger: true
+
+
+
+
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+
+
+
+
+
+
+
+
+
+
+
+    - task: test-fedora-native
+      image: container-fedora-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: pr-rust-blas
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo b
+            cargo t
+
+          dir: pr-rust-blas
+
+
+
+
+
+
+
+    - task: build-ubuntu-native
+      image: container-ubuntu-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: pr-rust-blas
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo b
+            cargo t
+
+          dir: pr-rust-blas
+
+
+
+
+
+
+  - name: pr-test-coaster
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: pr-coaster
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+
+
+    - task: test-fedora-cuda
+      image: container-fedora-cuda
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: pr-coaster
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: pr-coaster
+
+    - task: test-fedora-default
+      image: container-fedora-default
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: pr-coaster
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: pr-coaster
+
+    - task: test-fedora-native
+      image: container-fedora-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: pr-coaster
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: pr-coaster
+
+    - task: test-fedora-opencl
+      image: container-fedora-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: pr-coaster
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: pr-coaster
+
+
+
+    - task: build-ubuntu-native
+      image: container-ubuntu-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: pr-coaster
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: pr-coaster
+
+    - task: build-ubuntu-opencl
+      image: container-ubuntu-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: pr-coaster
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: pr-coaster
+
+
+
+  - name: pr-test-coaster-blas
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: rust-cublas
+        trigger: true
+      - get: coaster
+        trigger: true
+        passed: [test-coaster]
+      - get: pr-coaster-blas
+        trigger: true
+      - get: rust-blas
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+
+
+    - task: test-fedora-cuda
+      image: container-fedora-cuda
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: pr-coaster-blas
+
+    - task: test-fedora-default
+      image: container-fedora-default
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: pr-coaster-blas
+
+    - task: test-fedora-native
+      image: container-fedora-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: pr-coaster-blas
+
+    - task: test-fedora-opencl
+      image: container-fedora-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: pr-coaster-blas
+
+
+
+    - task: build-ubuntu-native
+      image: container-ubuntu-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: pr-coaster-blas
+
+    - task: build-ubuntu-opencl
+      image: container-ubuntu-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: pr-coaster-blas
+
+
+
+
+  - name: pr-test-coaster-nn
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+        trigger: true
+      - get: rust-blas
+        trigger: true
+      - get: rust-cublas
+        trigger: true
+      - get: coaster
+        passed: [test-coaster]
+        trigger: true
+      - get: coaster-blas
+        trigger: true
+      - get: pr-coaster-nn
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+
+
+    - task: test-fedora-cuda
+      image: container-fedora-cuda
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: pr-coaster-nn
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: pr-coaster-nn
+
+    - task: test-fedora-default
+      image: container-fedora-default
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: pr-coaster-nn
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: pr-coaster-nn
+
+    - task: test-fedora-native
+      image: container-fedora-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: pr-coaster-nn
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: pr-coaster-nn
+
+    - task: test-fedora-opencl
+      image: container-fedora-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: pr-coaster-nn
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: pr-coaster-nn
+
+
+
+    - task: build-ubuntu-native
+      image: container-ubuntu-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: pr-coaster-nn
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: pr-coaster-nn
+
+    - task: build-ubuntu-opencl
+      image: container-ubuntu-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: pr-coaster-nn
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: pr-coaster-nn
+
+
+
+  - name: pr-test-greenglas
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+        trigger: true
+        passed: [test-coaster]
+      - get: coaster-blas
+        trigger: true
+        passed: [test-coaster-blas]
+      - get: coaster-nn
+        trigger: true
+        passed: [test-coaster-nn]
+      - get: pr-greenglas
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+        passed: [test-coaster, test-coaster-nn, test-coaster-blas]
+
+
+    - task: test-fedora-cuda
+      image: container-fedora-cuda
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: pr-greenglas
+
+    - task: test-fedora-default
+      image: container-fedora-default
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: pr-greenglas
+
+    - task: test-fedora-native
+      image: container-fedora-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: pr-greenglas
+
+    - task: test-fedora-opencl
+      image: container-fedora-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: pr-greenglas
+
+
+
+    - task: build-ubuntu-native
+      image: container-ubuntu-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: pr-greenglas
+
+    - task: build-ubuntu-opencl
+      image: container-ubuntu-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: pr-greenglas
+
+
+
+  - name: pr-test-juice
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster
+        trigger: true
+        passed: [test-coaster]
+      - get: coaster-blas
+        trigger: true
+        passed: [test-coaster-blas]
+      - get: coaster-nn
+        trigger: true
+        passed: [test-coaster-nn]
+      - get: pr-juice
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+
+
+    - task: test-fedora-cuda
+      image: container-fedora-cuda
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: pr-juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: pr-coaster-juice
+
+    - task: test-fedora-default
+      image: container-fedora-default
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: pr-juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: pr-coaster-juice
+
+    - task: test-fedora-native
+      image: container-fedora-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: pr-juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: pr-coaster-juice
+
+    - task: test-fedora-opencl
+      image: container-fedora-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: pr-juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: pr-coaster-juice
+
+
+
+    - task: build-ubuntu-native
+      image: container-ubuntu-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: pr-juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: pr-coaster-juice
+
+    - task: build-ubuntu-opencl
+      image: container-ubuntu-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: pr-juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: pr-coaster-juice
+
+
+
+  - name: pr-test-juice-examples
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    serial_groups: [gpu-access]
+    plan:
+    - aggregate:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: coaster-blas
+      - get: coaster-nn
+      - get: coaster
+        trigger: true
+        passed: [test-coaster]
+      - get: greenglas
+        trigger: true
+        passed: [test-greenglas]
+      - get: juice
+        trigger: true
+        passed: [test-juice]
+      - get: pr-juice-examples
+        trigger: true
+
+
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+
+      - get: container-ubuntu-native
+        trigger: true
+
+      - get: container-ubuntu-opencl
+        trigger: true
+
+
+
+
+    - task: test-fedora-cuda
+      image: container-fedora-cuda
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: pr-juice-examples
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,cuda
+
+          dir: pr-juice-examples
+
+    - task: test-fedora-default
+      image: container-fedora-default
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: pr-juice-examples
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test
+
+          dir: pr-juice-examples
+
+    - task: test-fedora-native
+      image: container-fedora-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: pr-juice-examples
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native
+
+          dir: pr-juice-examples
+
+    - task: test-fedora-opencl
+      image: container-fedora-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: pr-juice-examples
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            escalate
+            prepare
+            cargo test --no-default-features --features=native,opencl
+
+          dir: pr-juice-examples
+
+
+
+    - task: build-ubuntu-native
+      image: container-ubuntu-native
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: pr-juice-examples
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native
+
+          dir: pr-juice-examples
+
+    - task: build-ubuntu-opencl
+      image: container-ubuntu-opencl
+      privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: coaster
+        - name: coaster-blas
+        - name: coaster-nn
+        - name: juice
+        - name: pr-juice-examples
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo build --no-default-features --features=native,opencl
+
+          dir: pr-juice-examples
+
+
+#################################

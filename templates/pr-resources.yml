@@ -1,0 +1,56 @@
+
+- name: pr-greenglas
+  type: pull-request
+  source:
+    repo: spearow/greenglas
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-coaster-nn
+  type: pull-request
+  source:
+    repo: spearow/coaster-nn
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-juice-examples
+  type: pull-request
+  source:
+    repo: spearow/juice-examples
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-juice
+  type: pull-request
+  source:
+    repo: spearow/juice
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-coaster-blas
+  type: pull-request
+  source:
+    repo: spearow/coaster-blas
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-coaster
+  type: pull-request
+  source:
+    repo: spearow/coaster
+    access_token: ((sirmergealot-github-token))
+
+
+- name: pr-rust-cudnn
+  type: pull-request
+  source:
+    repo: spearow/rust-cudnn
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-rust-cublas
+  type: pull-request
+  source:
+    repo: spearow/rust-cublas
+    access_token: ((sirmergealot-github-token))
+
+- name: pr-rust-blas
+  type: pull-request
+  source:
+    repo: spearow/rust-blas
+    access_token: ((sirmergealot-github-token))
+

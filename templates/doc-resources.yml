@@ -1,0 +1,63 @@
+
+- name: doc-juice
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/juice.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: doc-coaster-nn
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster-nn.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: doc-coaster-blas
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster-blas.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: doc-coaster
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/coaster.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: doc-greenglas
+  type: git
+  source:
+    branch: gh-pages
+    uri: git@github.com:spearow/greenglas.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+
+
