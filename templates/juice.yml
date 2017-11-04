@@ -345,7 +345,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: {{ which }}rust-cudnn
@@ -394,7 +393,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: {{ which }}rust-cublas
@@ -443,7 +441,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: {{ which }}rust-blas
@@ -484,7 +481,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: {{ which }}coaster
@@ -521,7 +517,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cublas
@@ -569,7 +564,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -622,7 +616,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -676,7 +669,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -731,7 +723,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn

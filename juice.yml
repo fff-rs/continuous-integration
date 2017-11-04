@@ -175,6 +175,7 @@ resources:
 
 - name: container-fedora-cuda
   type: docker-image
+  tags: [cuda, nv-compute-cap-3.5]
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-cuda
     username: ((quay-username))
@@ -182,6 +183,7 @@ resources:
 
 - name: container-fedora-default
   type: docker-image
+  tags: [cuda, nv-compute-cap-3.5, opencl]
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-default
     username: ((quay-username))
@@ -196,6 +198,7 @@ resources:
 
 - name: container-fedora-opencl
   type: docker-image
+  tags: [opencl]
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-opencl
     username: ((quay-username))
@@ -212,6 +215,7 @@ resources:
 
 - name: container-ubuntu-opencl
   type: docker-image
+  tags: [opencl]
   source:
     repository: quay.io/spearow/machine-learning-container-ubuntu-opencl
     username: ((quay-username))
@@ -503,7 +507,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -574,7 +577,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cublas
@@ -645,7 +647,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-blas
@@ -731,7 +732,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: coaster
@@ -897,7 +897,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cublas
@@ -1089,7 +1088,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -1296,7 +1294,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -1499,7 +1496,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -1713,7 +1709,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -1937,7 +1932,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: pr-rust-cudnn
@@ -2008,7 +2002,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: pr-rust-cublas
@@ -2079,7 +2072,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: pr-rust-blas
@@ -2165,7 +2157,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: pr-coaster
@@ -2331,7 +2322,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cublas
@@ -2523,7 +2513,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -2730,7 +2719,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -2933,7 +2921,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
@@ -3147,7 +3134,6 @@ jobs:
     build_logs_to_retain: 4
     public: true
     serial: true
-    serial_groups: [gpu-access]
     plan:
     - aggregate:
       - get: rust-cudnn
