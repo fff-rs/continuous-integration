@@ -360,7 +360,7 @@ jobs:
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
 {% if backend.name == "cuda" %}
-      tags: [cuda, nv-compute-cap-3.5]
+{% include "tags.yml" %}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -408,7 +408,7 @@ jobs:
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
 {% if backend.name == "cuda" %}
-      tags: [cuda, nv-compute-cap-3.5]
+{% include "tags.yml" %}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true
@@ -456,6 +456,7 @@ jobs:
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
 {% if backend.name == "native" %}
+{% include "tags.yml" %}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       privileged: true

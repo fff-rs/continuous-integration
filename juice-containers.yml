@@ -8,7 +8,6 @@ resources:
 
 - name: container-fedora-cuda
   type: docker-image
-  tags: [cuda, nv-compute-cap-3.5]
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-cuda
     username: ((quay-username))
@@ -16,7 +15,6 @@ resources:
 
 - name: container-fedora-default
   type: docker-image
-  tags: [cuda, nv-compute-cap-3.5, opencl]
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-default
     username: ((quay-username))
@@ -31,7 +29,6 @@ resources:
 
 - name: container-fedora-opencl
   type: docker-image
-  tags: [opencl]
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-opencl
     username: ((quay-username))
@@ -48,7 +45,6 @@ resources:
 
 - name: container-ubuntu-opencl
   type: docker-image
-  tags: [opencl]
   source:
     repository: quay.io/spearow/machine-learning-container-ubuntu-opencl
     username: ((quay-username))
