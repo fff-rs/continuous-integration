@@ -219,10 +219,12 @@ resources:
 
 
 
-- name: container
+
+
+- name: container-doc
   type: docker-image
   source:
-    repository: quay.io/spearow/machine-learning-container
+    repository: quay.io/spearow/doc-gen-container
     username: ((quay-username))
     password: ((quay-password))
 
@@ -269,10 +271,10 @@ jobs:
       - get: coaster
         trigger: true
         passed: [test-coaster]
-      - get: container
+      - get: container-doc
         trigger: true
     - task: gen-doc
-      image: container
+      image: container-doc
       config:
         platform: linux
         inputs:
@@ -313,10 +315,10 @@ jobs:
       - get: coaster-nn
         trigger: true
         passed: [test-coaster-nn]
-      - get: container
+      - get: container-doc
         trigger: true
     - task: gen-doc
-      image: container
+      image: container-doc
       config:
         platform: linux
         inputs:
@@ -361,10 +363,10 @@ jobs:
       - get: coaster-blas
         trigger: true
         passed: [test-coaster-blas]
-      - get: container
+      - get: container-doc
         trigger: true
     - task: gen-doc
-      image: container
+      image: container-doc
       config:
         platform: linux
         inputs:
@@ -409,10 +411,10 @@ jobs:
       - get: greenglas
         trigger: true
         passed: [test-greenglas]
-      - get: container
+      - get: container-doc
         trigger: true
     - task: gen-doc
-      image: container
+      image: container-doc
       config:
         platform: linux
         inputs:
@@ -460,10 +462,10 @@ jobs:
       - get: juice
         trigger: true
         passed: [test-juice]
-      - get: container
+      - get: container-doc
         trigger: true
     - task: gen-doc
-      image: container
+      image: container-doc
       config:
         platform: linux
         inputs:
@@ -485,9 +487,15 @@ jobs:
             cd juice
             cargo doc --no-deps
             cd -
+
+            cd doc
+            mdbook build
+            cd -
+
             git clone doc-juice doc-juice-updated
             rm -rf doc-juice-updated/*
             cp -rf juice/target/doc/* doc-juice-updated/
+            cp -rf juice/book doc-juice-updated/book
             cd doc-juice-updated
             echo "<meta http-equiv=refresh content=0;url=juice/index.html>" > index.html
             git config --global user.email "sirmergealot@spearow.io"

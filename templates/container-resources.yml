@@ -10,10 +10,10 @@
 {% endfor %}
 {% endfor %}
 
-- name: container
+- name: container-doc
   type: docker-image
   source:
-    repository: quay.io/spearow/machine-learning-container
+    repository: quay.io/spearow/doc-gen-container
     username: ((quay-username))
     password: ((quay-password))
 
