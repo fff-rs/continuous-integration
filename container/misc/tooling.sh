@@ -7,7 +7,7 @@ curl -L ${url} | tar xvz
 cd -
 
 cd /tmp
-url='https://github.com/zyedidia/micro/releases/download/nightly/micro-1.3.4-72-linux64.tar.gz'
+url='https://github.com/zyedidia/micro/releases/download/v1.3.4/micro-1.3.4-linux64.tar.gz'
 curl -L ${url} | tar xvz
 cp -vf ./micro-*/micro /usr/local/bin/
 cd -
