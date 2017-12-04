@@ -6,7 +6,6 @@ dnf install -y dnf-plugins-core \
 			openblas-static openblas-openmp openblas-devel \
 			openssl-static openssl-libs openssl-devel \
 			capnproto capnproto-libs capnproto-devel \
-			compat-gcc-53 \
 			cuda-cudnn \
 			cuda-cudnn-devel \
 			cuda \
