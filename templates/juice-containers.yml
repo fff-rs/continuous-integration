@@ -1,5 +1,5 @@
 resources:
-- name: git-continuous-integration
+- name: git-ci
   type: git
   source:
     branch: master
@@ -8,20 +8,49 @@ resources:
 {% include "container-resources.yml" %}
 
 jobs:
+  - name: build-misc
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - get: ci
+      resource: git-ci
+      trigger: true
+    - put: container-doc
+      params:
+        build: ci/container
+        dockerfile: misc
+        tag_as_latest: true
+
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
   - name: build-{{ testenv.name }}-{{ backend }}
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
+    - get: ci
+      resource: git-ci
+      trigger: true
+    - get: container-doc
+      resource: container-doc
+    - task: gen-doc
+      image: container-doc
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/{{ testenv.name }} ./copycat/
+            cp -rfv ci/container/{{ testenv.name }}/{{ backend }}/Dockerfile ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
+    - put: container-{{ testenv.name }}-{{ backend }}
       params:
-        build: container
-        dockerfile: {{ testenv.name }}/{{ backend }}/
+        build: copycat
         tag_as_latest: true
 {% endfor %}
 {% endfor %}

@@ -1,5 +1,5 @@
 resources:
-- name: git-continuous-integration
+- name: git-ci
   type: git
   source:
     branch: master
@@ -64,62 +64,139 @@ resources:
 
 
 jobs:
+  - name: build-misc
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - get: ci
+      resource: git-ci
+      trigger: true
+    - put: container-doc
+      params:
+        build: ci/container
+        dockerfile: misc
+        tag_as_latest: true
+
 
 
   - name: build-fedora-cuda
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
+    - get: ci
+      resource: git-ci
+      trigger: true
+    - get: container-doc
+      resource: container-doc
+    - task: gen-doc
+      image: container-doc
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/fedora ./copycat/
+            cp -rfv ci/container/fedora/cuda/Dockerfile ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
+    - put: container-fedora-cuda
       params:
-        build: container
-        dockerfile: fedora/cuda/
+        build: copycat
         tag_as_latest: true
 
   - name: build-fedora-default
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
+    - get: ci
+      resource: git-ci
+      trigger: true
+    - get: container-doc
+      resource: container-doc
+    - task: gen-doc
+      image: container-doc
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/fedora ./copycat/
+            cp -rfv ci/container/fedora/default/Dockerfile ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
+    - put: container-fedora-default
       params:
-        build: container
-        dockerfile: fedora/default/
+        build: copycat
         tag_as_latest: true
 
   - name: build-fedora-native
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
+    - get: ci
+      resource: git-ci
+      trigger: true
+    - get: container-doc
+      resource: container-doc
+    - task: gen-doc
+      image: container-doc
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/fedora ./copycat/
+            cp -rfv ci/container/fedora/native/Dockerfile ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
+    - put: container-fedora-native
       params:
-        build: container
-        dockerfile: fedora/native/
+        build: copycat
         tag_as_latest: true
 
   - name: build-fedora-opencl
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
+    - get: ci
+      resource: git-ci
+      trigger: true
+    - get: container-doc
+      resource: container-doc
+    - task: gen-doc
+      image: container-doc
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/fedora ./copycat/
+            cp -rfv ci/container/fedora/opencl/Dockerfile ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
+    - put: container-fedora-opencl
       params:
-        build: container
-        dockerfile: fedora/opencl/
+        build: copycat
         tag_as_latest: true
 
 
@@ -128,27 +205,61 @@ jobs:
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
+    - get: ci
+      resource: git-ci
+      trigger: true
+    - get: container-doc
+      resource: container-doc
+    - task: gen-doc
+      image: container-doc
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/ubuntu ./copycat/
+            cp -rfv ci/container/ubuntu/native/Dockerfile ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
+    - put: container-ubuntu-native
       params:
-        build: container
-        dockerfile: ubuntu/native/
+        build: copycat
         tag_as_latest: true
 
   - name: build-ubuntu-opencl
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
-    - aggregate:
-      - get: ci
-        resource: git-continuous-integration
-        trigger: true
-      - get: container
+    - get: ci
+      resource: git-ci
+      trigger: true
+    - get: container-doc
+      resource: container-doc
+    - task: gen-doc
+      image: container-doc
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/ubuntu ./copycat/
+            cp -rfv ci/container/ubuntu/opencl/Dockerfile ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
+    - put: container-ubuntu-opencl
       params:
-        build: container
-        dockerfile: ubuntu/opencl/
+        build: copycat
         tag_as_latest: true
+
+
 

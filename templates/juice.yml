@@ -301,7 +301,7 @@ jobs:
       - get: doc-juice
       - get: juice
         trigger: true
-        passed: [test-juice]
+        #passed: [test-juice]
       - get: container-doc
         trigger: true
     - task: gen-doc
@@ -326,16 +326,14 @@ jobs:
           - |
             cd juice
             cargo doc --no-deps
-            cd -
-
             cd doc
             mdbook build
-            cd -
+            cd ../..
 
             git clone doc-juice doc-juice-updated
             rm -rf doc-juice-updated/*
             cp -rf juice/target/doc/* doc-juice-updated/
-            cp -rf juice/book doc-juice-updated/book
+            cp -rf juice/doc/book doc-juice-updated/book
             cd doc-juice-updated
             echo "<meta http-equiv=refresh content=0;url=juice/index.html>" > index.html
             git config --global user.email "sirmergealot@spearow.io"

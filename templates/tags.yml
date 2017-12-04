@@ -1,10 +1,10 @@
 {%- if backend.name == "native" %}
 {%- else if backend.name == "cuda" %}
-      tags: [cuda, nv-compute-cap-3.5]
+#      tags: [cuda, nv-compute-cap-3.5]
 {%- else if backend.name == "opencl" %}
-      tags: [opencl]
+#      tags: [opencl]
 {%- else if backend.name == "default" %}
-      tags: [cuda, nv-compute-cap-3.5, opencl]
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
 {%- endif %}
 
 
