@@ -61,6 +61,11 @@ resources:
     username: ((quay-username))
     password: ((quay-password))
 
+- name: container-fedora
+  type: docker-image
+  source:
+    repository: fedora
+
 
 
 jobs:
@@ -71,10 +76,26 @@ jobs:
     - get: ci
       resource: git-ci
       trigger: true
+    - get: container-fedora
+      resource: container-fedora
+    - task: gen-doc
+      image: container-fedora
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/misc/* ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
     - put: container-doc
       params:
-        build: ci/container
-        dockerfile: misc
+        build: copycat
         tag_as_latest: true
 
 

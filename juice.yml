@@ -228,6 +228,11 @@ resources:
     username: ((quay-username))
     password: ((quay-password))
 
+- name: container-fedora
+  type: docker-image
+  source:
+    repository: fedora
+
 
 groups:
 - name: stack
