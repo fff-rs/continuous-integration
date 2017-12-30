@@ -3,7 +3,7 @@ MAINTAINER Bernhard Schuster "bernhard@spearow.io"
 
 #RUN dnf update -y
 
-COPY fedora/default/pkg.sh /tmp/pkg.sh
+COPY misc/pkg.sh /tmp/pkg.sh
 
 RUN chmod +x /tmp/pkg.sh && \
 	/tmp/pkg.sh && \
