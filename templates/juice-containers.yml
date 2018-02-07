@@ -15,10 +15,14 @@ jobs:
     - get: ci
       resource: git-ci
       trigger: true
-    - get: container-fedora
+    - get: container
       resource: container-fedora
-    - task: gen-doc
-      image: container-fedora
+
+    - get: fedora-preload
+      params: { save: true }
+
+    - task: gen-misc
+      image: container
       config:
         platform: linux
         inputs:
@@ -30,12 +34,16 @@ jobs:
           args:
           - -exc
           - |
-            cp -rfv ci/container/misc/* ./copycat/
+            cp -rfv ci/container/misc/Dockerfile ./copycat/
+            cp -rfv ci/container/misc ./copycat/
             cp -rfv ci/container/*.sh ./copycat/
-    - put: container-doc
+
+    - put: container-misc
       params:
+        load_base: fedora-preload
         build: copycat
         tag_as_latest: true
+
 
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
@@ -46,10 +54,22 @@ jobs:
     - get: ci
       resource: git-ci
       trigger: true
-    - get: container-doc
-      resource: container-doc
-    - task: gen-doc
-      image: container-doc
+
+    - get: container
+      resource: container-misc
+
+{% if testenv.name.as_str() == "fedora" %}
+    - get: fedora-preload
+      params: { save: true }
+
+{% else if testenv.name.as_str() == "ubuntu" %}
+    - get: ubuntu-preload
+      params: { save: true }
+
+{% endif %}
+
+    - task: composition
+      image: container
       config:
         platform: linux
         inputs:
@@ -64,9 +84,16 @@ jobs:
             cp -rfv ci/container/{{ testenv.name }} ./copycat/
             cp -rfv ci/container/{{ testenv.name }}/{{ backend }}/Dockerfile ./copycat/
             cp -rfv ci/container/*.sh ./copycat/
+
     - put: container-{{ testenv.name }}-{{ backend }}
       params:
+{% if testenv.name.as_str() == "fedora" %}
+        load_base: fedora-preload
+{% else if testenv.name.as_str() == "ubuntu" %}
+        load_base: ubuntu-preload
+{% endif %}
         build: copycat
         tag_as_latest: true
+
 {% endfor %}
 {% endfor %}

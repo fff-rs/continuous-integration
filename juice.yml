@@ -179,6 +179,8 @@ resources:
     repository: quay.io/spearow/machine-learning-container-fedora-cuda
     username: ((quay-username))
     password: ((quay-password))
+    max_concurrent_downloads: 2
+    max_concurrent_uploads: 2
 
 - name: container-fedora-default
   type: docker-image
@@ -186,6 +188,8 @@ resources:
     repository: quay.io/spearow/machine-learning-container-fedora-default
     username: ((quay-username))
     password: ((quay-password))
+    max_concurrent_downloads: 2
+    max_concurrent_uploads: 2
 
 - name: container-fedora-native
   type: docker-image
@@ -193,6 +197,8 @@ resources:
     repository: quay.io/spearow/machine-learning-container-fedora-native
     username: ((quay-username))
     password: ((quay-password))
+    max_concurrent_downloads: 2
+    max_concurrent_uploads: 2
 
 - name: container-fedora-opencl
   type: docker-image
@@ -200,6 +206,8 @@ resources:
     repository: quay.io/spearow/machine-learning-container-fedora-opencl
     username: ((quay-username))
     password: ((quay-password))
+    max_concurrent_downloads: 2
+    max_concurrent_uploads: 2
 
 
 
@@ -209,6 +217,8 @@ resources:
     repository: quay.io/spearow/machine-learning-container-ubuntu-native
     username: ((quay-username))
     password: ((quay-password))
+    max_concurrent_downloads: 2
+    max_concurrent_uploads: 2
 
 - name: container-ubuntu-opencl
   type: docker-image
@@ -216,22 +226,42 @@ resources:
     repository: quay.io/spearow/machine-learning-container-ubuntu-opencl
     username: ((quay-username))
     password: ((quay-password))
+    max_concurrent_downloads: 2
+    max_concurrent_uploads: 2
 
 
 
 
 
-- name: container-doc
+- name: container-misc
   type: docker-image
   source:
     repository: quay.io/spearow/doc-gen-container
     username: ((quay-username))
     password: ((quay-password))
+    max_concurrent_downloads: 2
+    max_concurrent_uploads: 2
 
 - name: container-fedora
   type: docker-image
   source:
     repository: fedora
+    max_concurrent_downloads: 1
+    max_concurrent_uploads: 1
+
+- name: fedora-preload
+  type: docker-image
+  source:
+    repository: fedora
+    max_concurrent_downloads: 2
+    max_concurrent_uploads: 1
+
+- name: ubuntu-preload
+  type: docker-image
+  source:
+    repository: ubuntu
+    max_concurrent_downloads: 2
+    max_concurrent_uploads: 1
 
 
 groups:
@@ -276,10 +306,10 @@ jobs:
       - get: coaster
         trigger: true
         passed: [test-coaster]
-      - get: container-doc
+      - get: container-misc
         trigger: true
     - task: gen-doc
-      image: container-doc
+      image: container-misc
       config:
         platform: linux
         inputs:
@@ -320,10 +350,10 @@ jobs:
       - get: coaster-nn
         trigger: true
         passed: [test-coaster-nn]
-      - get: container-doc
+      - get: container-misc
         trigger: true
     - task: gen-doc
-      image: container-doc
+      image: container-misc
       config:
         platform: linux
         inputs:
@@ -368,10 +398,10 @@ jobs:
       - get: coaster-blas
         trigger: true
         passed: [test-coaster-blas]
-      - get: container-doc
+      - get: container-misc
         trigger: true
     - task: gen-doc
-      image: container-doc
+      image: container-misc
       config:
         platform: linux
         inputs:
@@ -416,10 +446,10 @@ jobs:
       - get: greenglas
         trigger: true
         passed: [test-greenglas]
-      - get: container-doc
+      - get: container-misc
         trigger: true
     - task: gen-doc
-      image: container-doc
+      image: container-misc
       config:
         platform: linux
         inputs:
@@ -467,10 +497,10 @@ jobs:
       - get: juice
         trigger: true
         #passed: [test-juice]
-      - get: container-doc
+      - get: container-misc
         trigger: true
     - task: gen-doc
-      image: container-doc
+      image: container-misc
       config:
         platform: linux
         inputs:

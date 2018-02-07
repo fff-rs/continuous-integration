@@ -111,10 +111,10 @@ jobs:
       - get: coaster
         trigger: true
         passed: [test-coaster]
-      - get: container-doc
+      - get: container-misc
         trigger: true
     - task: gen-doc
-      image: container-doc
+      image: container-misc
       config:
         platform: linux
         inputs:
@@ -155,10 +155,10 @@ jobs:
       - get: coaster-nn
         trigger: true
         passed: [test-coaster-nn]
-      - get: container-doc
+      - get: container-misc
         trigger: true
     - task: gen-doc
-      image: container-doc
+      image: container-misc
       config:
         platform: linux
         inputs:
@@ -203,10 +203,10 @@ jobs:
       - get: coaster-blas
         trigger: true
         passed: [test-coaster-blas]
-      - get: container-doc
+      - get: container-misc
         trigger: true
     - task: gen-doc
-      image: container-doc
+      image: container-misc
       config:
         platform: linux
         inputs:
@@ -251,10 +251,10 @@ jobs:
       - get: greenglas
         trigger: true
         passed: [test-greenglas]
-      - get: container-doc
+      - get: container-misc
         trigger: true
     - task: gen-doc
-      image: container-doc
+      image: container-misc
       config:
         platform: linux
         inputs:
@@ -302,10 +302,10 @@ jobs:
       - get: juice
         trigger: true
         #passed: [test-juice]
-      - get: container-doc
+      - get: container-misc
         trigger: true
     - task: gen-doc
-      image: container-doc
+      image: container-misc
       config:
         platform: linux
         inputs:

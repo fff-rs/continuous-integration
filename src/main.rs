@@ -91,6 +91,19 @@ enum TestEnvType {
     Unknown,
 }
 
+
+impl TestEnvType {
+    pub fn as_str(&self) -> String {
+        let y = String::from("Unknown");
+        match *self {
+            TestEnvType::Linux(ref x) => x,
+            TestEnvType::Windows(ref x) => x,
+            TestEnvType::Darwin(ref x) => x,
+            _ => &y,
+        }.clone()
+    }
+}
+
 impl Ord for TestEnvType {
     fn cmp(&self, other: &Self) -> Ordering {
         match *self {
@@ -150,14 +163,7 @@ impl fmt::Display for TestEnvType {
         // stream: `f`. Returns `fmt::Result` which indicates whether the
         // operation succeeded or failed. Note that `write!` uses syntax which
         // is very similar to `println!`.
-        let y = String::from("Unknown");
-        let echo = match *self {
-            TestEnvType::Linux(ref x) => x,
-            TestEnvType::Windows(ref x) => x,
-            TestEnvType::Darwin(ref x) => x,
-            _ => &y,
-        };
-        write!(f, "{}", echo)
+        write!(f, "{}", self.as_str())
     }
 }
 
