@@ -12,5 +12,7 @@ curl -L ${url} | tar -Uxvz
 cp -vf ./micro-*/micro /usr/local/bin/
 cd -
 
+cargo install fd exa
+
 chmod +x /usr/local/bin/*
 cd ..
