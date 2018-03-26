@@ -21,24 +21,3 @@
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
-- name: container-fedora
-  type: docker-image
-  source:
-    repository: fedora
-    max_concurrent_downloads: 1
-    max_concurrent_uploads: 1
-
-- name: fedora-preload
-  type: docker-image
-  source:
-    repository: fedora
-    max_concurrent_downloads: 2
-    max_concurrent_uploads: 1
-
-- name: ubuntu-preload
-  type: docker-image
-  source:
-    repository: ubuntu
-    max_concurrent_downloads: 2
-    max_concurrent_uploads: 1
-

@@ -6,6 +6,7 @@ resources:
     uri: https://github.com/spearow/continuous-integration.git
 
 {% include "container-resources.yml" %}
+{% include "container-resources-preload.yml" %}
 
 jobs:
   - name: build-misc

@@ -1,0 +1,21 @@
+
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))

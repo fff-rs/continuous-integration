@@ -513,6 +513,7 @@ jobs:
           args:
           - -exc
           - |
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
           dir: {{ which }}coaster
 {% endfor %}
@@ -612,6 +613,7 @@ jobs:
           args:
           - -exc
           - |
+{% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
           dir: {{ which }}coaster-nn
 {% endfor %}
@@ -665,6 +667,7 @@ jobs:
           args:
           - -exc
           - |
+{% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
           dir: {{ which }}greenglas
 {% endfor %}
@@ -719,6 +722,7 @@ jobs:
           args:
           - -exc
           - |
+{% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
           dir: {{ which }}juice
 {% endfor %}
@@ -776,6 +780,7 @@ jobs:
           args:
           - -exc
           - |
+{% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
           dir: {{ which }}juice-examples
 {% endfor %}
