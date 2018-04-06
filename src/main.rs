@@ -296,11 +296,16 @@ fn run() -> Result<()> {
             let pathbuf: PathBuf = entry.path().into();
             pathbuf
         })
-        .filter_map(|entry| if let Some(x) = entry.file_name() {
+        .filter_map(|entry| if let Some(filename) = entry.file_name() {
 
             if let Ok(mut backends) = get_backends(&entry) {
-                backends.sort();
-                Some(TestEnv::new(String::from(x.to_string_lossy()), backends))
+                if backends.len() > 0 {
+                    backends.sort();
+                    let filename = String::from(filename.to_string_lossy());
+                    Some(TestEnv::new(filename, backends))
+                } else {
+                    None
+                }
             } else {
                 None
             }

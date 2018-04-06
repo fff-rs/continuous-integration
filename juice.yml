@@ -231,8 +231,6 @@ resources:
 
 
 
-
-
 - name: container-misc
   type: docker-image
   source:
@@ -241,27 +239,6 @@ resources:
     password: ((quay-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
-
-- name: container-fedora
-  type: docker-image
-  source:
-    repository: fedora
-    max_concurrent_downloads: 1
-    max_concurrent_uploads: 1
-
-- name: fedora-preload
-  type: docker-image
-  source:
-    repository: fedora
-    max_concurrent_downloads: 2
-    max_concurrent_uploads: 1
-
-- name: ubuntu-preload
-  type: docker-image
-  source:
-    repository: ubuntu
-    max_concurrent_downloads: 2
-    max_concurrent_uploads: 1
 
 
 groups:
@@ -571,8 +548,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -613,8 +588,6 @@ jobs:
 
 
 
-
-
   - name: test-rust-cublas
     build_logs_to_retain: 4
     public: true
@@ -628,8 +601,6 @@ jobs:
 
       - get: container-fedora-cuda
         trigger: true
-
-
 
 
 
@@ -688,8 +659,6 @@ jobs:
 
 
 
-
-
   - name: test-rust-blas
     build_logs_to_retain: 4
     public: true
@@ -729,8 +698,6 @@ jobs:
 
 
 
-
-
     - task: test-fedora-native
       image: container-fedora-native
       privileged: true
@@ -773,8 +740,6 @@ jobs:
             cargo t
 
           dir: rust-blas
-
-
 
 
 
@@ -814,8 +779,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -832,6 +795,27 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,cuda
@@ -854,6 +838,27 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test
@@ -875,6 +880,27 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native
@@ -897,6 +923,27 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
@@ -920,6 +967,27 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native
 
@@ -941,12 +1009,31 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native,opencl
 
           dir: coaster
-
-
 
 
 
@@ -990,8 +1077,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -1139,8 +1224,6 @@ jobs:
             cargo build --no-default-features --features=native,opencl
 
           dir: coaster-blas
-
-
 
 
 
@@ -1189,8 +1272,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -1212,10 +1293,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,cuda
-
           dir: coaster-nn
 
 #      tags: [cuda, nv-compute-cap-3.5, opencl]
@@ -1239,10 +1340,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test
-
           dir: coaster-nn
 
 
@@ -1265,10 +1386,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: coaster-nn
 
 #      tags: [opencl]
@@ -1292,10 +1433,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: coaster-nn
 
 
@@ -1320,9 +1481,29 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native
-
           dir: coaster-nn
 
 #      tags: [opencl]
@@ -1346,12 +1527,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: coaster-nn
-
-
 
 
 
@@ -1398,8 +1597,6 @@ jobs:
         trigger: true
 
 
-
-
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
 
 
@@ -1423,10 +1620,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,cuda
-
           dir: greenglas
 
 #      tags: [cuda, nv-compute-cap-3.5, opencl]
@@ -1449,10 +1666,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test
-
           dir: greenglas
 
 
@@ -1474,10 +1711,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: greenglas
 
 #      tags: [opencl]
@@ -1500,10 +1757,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: greenglas
 
 
@@ -1527,9 +1804,29 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native
-
           dir: greenglas
 
 #      tags: [opencl]
@@ -1552,12 +1849,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: greenglas
-
-
 
 
 
@@ -1606,8 +1921,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -1630,10 +1943,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,cuda
-
           dir: juice
 
 #      tags: [cuda, nv-compute-cap-3.5, opencl]
@@ -1658,10 +1991,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test
-
           dir: juice
 
 
@@ -1685,10 +2038,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: juice
 
 #      tags: [opencl]
@@ -1713,10 +2086,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: juice
 
 
@@ -1742,9 +2135,29 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native
-
           dir: juice
 
 #      tags: [opencl]
@@ -1769,12 +2182,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: juice
-
-
 
 
 
@@ -1825,8 +2256,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -1850,10 +2279,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,cuda
-
           dir: juice-examples
 
 #      tags: [cuda, nv-compute-cap-3.5, opencl]
@@ -1879,10 +2328,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test
-
           dir: juice-examples
 
 
@@ -1907,10 +2376,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: juice-examples
 
 #      tags: [opencl]
@@ -1936,10 +2425,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: juice-examples
 
 
@@ -1966,9 +2475,29 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native
-
           dir: juice-examples
 
 #      tags: [opencl]
@@ -1994,12 +2523,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: juice-examples
-
-
 
 
 #################################
@@ -2018,8 +2565,6 @@ jobs:
 
       - get: container-fedora-cuda
         trigger: true
-
-
 
 
 
@@ -2078,8 +2623,6 @@ jobs:
 
 
 
-
-
   - name: pr-test-rust-cublas
     build_logs_to_retain: 4
     public: true
@@ -2093,8 +2636,6 @@ jobs:
 
       - get: container-fedora-cuda
         trigger: true
-
-
 
 
 
@@ -2153,8 +2694,6 @@ jobs:
 
 
 
-
-
   - name: pr-test-rust-blas
     build_logs_to_retain: 4
     public: true
@@ -2194,8 +2733,6 @@ jobs:
 
 
 
-
-
     - task: test-fedora-native
       image: container-fedora-native
       privileged: true
@@ -2238,8 +2775,6 @@ jobs:
             cargo t
 
           dir: pr-rust-blas
-
-
 
 
 
@@ -2279,8 +2814,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -2297,6 +2830,27 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,cuda
@@ -2319,6 +2873,27 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test
@@ -2340,6 +2915,27 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native
@@ -2362,6 +2958,27 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
@@ -2385,6 +3002,27 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native
 
@@ -2406,12 +3044,31 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native,opencl
 
           dir: pr-coaster
-
-
 
 
 
@@ -2455,8 +3112,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -2604,8 +3259,6 @@ jobs:
             cargo build --no-default-features --features=native,opencl
 
           dir: pr-coaster-blas
-
-
 
 
 
@@ -2654,8 +3307,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -2677,10 +3328,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,cuda
-
           dir: pr-coaster-nn
 
 #      tags: [cuda, nv-compute-cap-3.5, opencl]
@@ -2704,10 +3375,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test
-
           dir: pr-coaster-nn
 
 
@@ -2730,10 +3421,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: pr-coaster-nn
 
 #      tags: [opencl]
@@ -2757,10 +3468,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: pr-coaster-nn
 
 
@@ -2785,9 +3516,29 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native
-
           dir: pr-coaster-nn
 
 #      tags: [opencl]
@@ -2811,12 +3562,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: pr-coaster-nn
-
-
 
 
 
@@ -2863,8 +3632,6 @@ jobs:
         trigger: true
 
 
-
-
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
 
 
@@ -2888,10 +3655,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,cuda
-
           dir: pr-greenglas
 
 #      tags: [cuda, nv-compute-cap-3.5, opencl]
@@ -2914,10 +3701,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test
-
           dir: pr-greenglas
 
 
@@ -2939,10 +3746,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: pr-greenglas
 
 #      tags: [opencl]
@@ -2965,10 +3792,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: pr-greenglas
 
 
@@ -2992,9 +3839,29 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native
-
           dir: pr-greenglas
 
 #      tags: [opencl]
@@ -3017,12 +3884,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: pr-greenglas
-
-
 
 
 
@@ -3071,8 +3956,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -3095,10 +3978,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,cuda
-
           dir: pr-juice
 
 #      tags: [cuda, nv-compute-cap-3.5, opencl]
@@ -3123,10 +4026,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test
-
           dir: pr-juice
 
 
@@ -3150,10 +4073,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: pr-juice
 
 #      tags: [opencl]
@@ -3178,10 +4121,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: pr-juice
 
 
@@ -3207,9 +4170,29 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native
-
           dir: pr-juice
 
 #      tags: [opencl]
@@ -3234,12 +4217,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: pr-juice
-
-
 
 
 
@@ -3290,8 +4291,6 @@ jobs:
 
 
 
-
-
 #      tags: [cuda, nv-compute-cap-3.5]
 
     - task: test-fedora-cuda
@@ -3315,10 +4314,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,cuda
-
           dir: pr-juice-examples
 
 #      tags: [cuda, nv-compute-cap-3.5, opencl]
@@ -3344,10 +4363,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test
-
           dir: pr-juice-examples
 
 
@@ -3372,10 +4411,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: pr-juice-examples
 
 #      tags: [opencl]
@@ -3401,10 +4460,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: pr-juice-examples
 
 
@@ -3431,9 +4510,29 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native
-
           dir: pr-juice-examples
 
 #      tags: [opencl]
@@ -3459,12 +4558,30 @@ jobs:
           args:
           - -exc
           - |
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: pr-juice-examples
-
-
 
 
 #################################

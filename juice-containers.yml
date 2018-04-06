@@ -64,8 +64,6 @@ resources:
 
 
 
-
-
 - name: container-misc
   type: docker-image
   source:
@@ -74,6 +72,7 @@ resources:
     password: ((quay-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
+
 
 - name: container-fedora
   type: docker-image
@@ -95,7 +94,6 @@ resources:
     repository: ubuntu
     max_concurrent_downloads: 2
     max_concurrent_uploads: 1
-
 
 
 jobs:
@@ -396,7 +394,5 @@ jobs:
 
         build: copycat
         tag_as_latest: true
-
-
 
 
