@@ -1,21 +1,24 @@
 FROM fedora:latest
 MAINTAINER Bernhard Schuster "bernhard@spearow.io"
 
-COPY pkg.sh /tmp/pkg.sh
-
-RUN chmod +x /tmp/pkg.sh && \
-	/tmp/pkg.sh && \
+RUN dnf update -y && \
+	dnf install -y \
+		"https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
+		"https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" && \
+	dnf install -y curl clang make cmake git \
+		openssl-static openssl-libs openssl-devel \
+		capnproto capnproto-libs capnproto-devel \
+		micro \
+		exa ripgrep \
+	dnf copr -y enable drahnr/zshxt \
+	dnf install -y zshxt \
 	dnf clean all
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
 
 RUN cargo install fd-find
-RUN cargo install exa
+
+RUN git config --global core.editor micro
 
 ENV PATH=/root/.cargo/bin:$PATH
 ENV CMAKE_MAKE_PROGRAM=make
-
-COPY escalate.sh /usr/local/bin/escalate
-COPY prepare.sh /usr/local/bin/prepare
-
-RUN chmod +x /usr/local/bin/*
