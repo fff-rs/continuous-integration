@@ -10,8 +10,9 @@ RUN dnf update -y && \
 		capnproto capnproto-libs capnproto-devel \
 		micro \
 		exa ripgrep \
-	dnf copr -y enable drahnr/zshxt \
-	dnf install -y zshxt \
+		dnf-plugins-core && \
+	dnf copr -y enable drahnr/zshxt && \
+	dnf install -y zshxt && \
 	dnf clean all
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
