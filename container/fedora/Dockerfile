@@ -17,9 +17,10 @@ RUN dnf update -y && \
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
 
+ENV PATH=/root/.cargo/bin:$PATH
+
 RUN cargo install fd-find
 
 RUN git config --global core.editor micro
 
-ENV PATH=/root/.cargo/bin:$PATH
 ENV CMAKE_MAKE_PROGRAM=make
