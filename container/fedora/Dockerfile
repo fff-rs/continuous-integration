@@ -11,8 +11,6 @@ RUN dnf update -y && \
 		micro \
 		exa ripgrep \
 		dnf-plugins-core && \
-	dnf copr -y enable drahnr/zshxt && \
-	dnf install -y zshxt && \
 	dnf clean all
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
