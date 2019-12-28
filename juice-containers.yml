@@ -45,26 +45,6 @@ resources:
 
 
 
-- name: container-ubuntu-native
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-ubuntu-native
-    username: ((quay-spearow-username))
-    password: ((quay-spearow-password))
-    max_concurrent_downloads: 2
-    max_concurrent_uploads: 2
-
-- name: container-ubuntu-opencl
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-ubuntu-opencl
-    username: ((quay-spearow-username))
-    password: ((quay-spearow-password))
-    max_concurrent_downloads: 2
-    max_concurrent_uploads: 2
-
-
-
 - name: container-misc
   type: docker-image
   source:
@@ -78,15 +58,6 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-base
-    username: ((quay-spearow-username))
-    password: ((quay-spearow-password))
-    max_concurrent_downloads: 2
-    max_concurrent_uploads: 2
-
-- name: container-ubuntu-base
-  type: docker-image
-  source:
-    repository: quay.io/spearow/machine-learning-container-ubuntu-base
     username: ((quay-spearow-username))
     password: ((quay-spearow-password))
     max_concurrent_downloads: 2
@@ -305,112 +276,6 @@ jobs:
     - put: container-fedora-opencl
       params:
         load_base: container-fedora-base
-        build: copycat
-        tag_as_latest: true
-
-
-
-  - name: create-oci-ubuntu-base
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - get: ci
-      resource: git-ci
-      trigger: true
-
-    - get: container-fedora-base
-
-    - task: composition
-      image: container-fedora-base
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: copycat
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp -rfv ci/container/ubuntu ./copycat/
-            cp -rfv ci/container/ubuntu/Dockerfile ./copycat/
-            cp -rfv ci/container/*.sh ./copycat/
-
-    - put: container-ubuntu-base
-      params:
-        build: copycat
-        tag_as_latest: true
-
-
-  - name: create-oci-ubuntu-native
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - get: ci
-      resource: git-ci
-      trigger: true
-
-    - get: container-ubuntu-base
-      passed: [create-oci-ubuntu-base]
-      params: { save: true }
-
-    - task: composition
-      image: container-ubuntu-base
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: copycat
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp -rfv ci/container/ubuntu ./copycat/
-            cp -rfv ci/container/ubuntu/native/Dockerfile ./copycat/
-            cp -rfv ci/container/*.sh ./copycat/
-
-    - put: container-ubuntu-native
-      params:
-        load_base: container-ubuntu-base
-        build: copycat
-        tag_as_latest: true
-
-
-  - name: create-oci-ubuntu-opencl
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - get: ci
-      resource: git-ci
-      trigger: true
-
-    - get: container-ubuntu-base
-      passed: [create-oci-ubuntu-base]
-      params: { save: true }
-
-    - task: composition
-      image: container-ubuntu-base
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: copycat
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp -rfv ci/container/ubuntu ./copycat/
-            cp -rfv ci/container/ubuntu/opencl/Dockerfile ./copycat/
-            cp -rfv ci/container/*.sh ./copycat/
-
-    - put: container-ubuntu-opencl
-      params:
-        load_base: container-ubuntu-base
         build: copycat
         tag_as_latest: true
 
