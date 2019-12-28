@@ -263,13 +263,13 @@ impl Default for TestEnv {
 
 
 #[derive(Template)]
-#[template(path = "juice.yml")]
+#[template(path = "juice.yml", escape = "none" )]
 struct JuiceYml<'a> {
     testenvs: &'a Vec<TestEnv>,
 }
 
 #[derive(Template)]
-#[template(path = "juice-containers.yml")]
+#[template(path = "juice-containers.yml", escape = "none")]
 struct ContainerYml<'a> {
     testenvs: &'a Vec<TestEnv>,
 }
