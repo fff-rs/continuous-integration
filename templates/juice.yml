@@ -5,41 +5,17 @@ resource_types:
     repository: jtarchie/pr
 
 resources:
-- name: juice-examples
+- name: sccache
   type: git
   source:
     branch: master
-    uri: https://github.com/spearow/juice-examples.git
+    uri: https://github.com/drahnr/sccache.git
 
 - name: juice
   type: git
   source:
     branch: master
     uri: https://github.com/spearow/juice.git
-
-- name: coaster-nn
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/coaster-nn.git
-
-- name: coaster-blas
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/coaster-blas.git
-
-- name: coaster
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/coaster.git
-
-- name: greenglas
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/greenglas.git
 
 - name: rust-cudnn
   type: git
@@ -72,21 +48,12 @@ resources:
 groups:
 - name: stack
   jobs:
-  - test-coaster
-  - test-coaster-nn
-  - test-coaster-blas
   - test-juice
-  - test-juice-examples
-  - test-greenglas
   - test-rust-blas
   - test-rust-cudnn
   - test-rust-cublas
 - name: documentation
   jobs:
-  - doc-coaster
-  - doc-coaster-nn
-  - doc-coaster-blas
-  - doc-greenglas
   - doc-juice
 - name: pull-request
   jobs:
@@ -94,11 +61,6 @@ groups:
   - pr-test-coaster-nn
   - pr-test-coaster-blas
   - pr-test-juice
-  - pr-test-juice-examples
-  - pr-test-greenglas
-  - pr-test-rust-blas
-  - pr-test-rust-cudnn
-  - pr-test-rust-cublas
 
 jobs:
   - name: doc-coaster
@@ -150,9 +112,8 @@ jobs:
       - get: rust-cudnn
       - get: rust-blas
       - get: rust-cublas
-      - get: coaster
+      - get: juice
       - get: doc-coaster-nn
-      - get: coaster-nn
         trigger: true
         passed: [test-coaster-nn]
       - get: container-misc
@@ -165,8 +126,7 @@ jobs:
         - name: rust-blas
         - name: rust-cudnn
         - name: rust-cublas
-        - name: coaster
-        - name: coaster-nn
+        - name: juice
         - name: doc-coaster-nn
         outputs:
         - name: doc-coaster-nn-updated

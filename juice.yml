@@ -5,41 +5,17 @@ resource_types:
     repository: jtarchie/pr
 
 resources:
-- name: juice-examples
+- name: sccache
   type: git
   source:
     branch: master
-    uri: https://github.com/spearow/juice-examples.git
+    uri: https://github.com/drahnr/sccache.git
 
 - name: juice
   type: git
   source:
     branch: master
     uri: https://github.com/spearow/juice.git
-
-- name: coaster-nn
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/coaster-nn.git
-
-- name: coaster-blas
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/coaster-blas.git
-
-- name: coaster
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/coaster.git
-
-- name: greenglas
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/greenglas.git
 
 - name: rust-cudnn
   type: git
@@ -116,43 +92,11 @@ resources:
     - name: user.email
       value: sirmergealot@spearow.io
     - name: user.name
-      value: "Sir Mergealot"
-- name: pr-greenglas
-  type: pull-request
-  source:
-    repo: spearow/greenglas
-    access_token: ((sirmergealot-github-token))
-
-- name: pr-coaster-nn
-  type: pull-request
-  source:
-    repo: spearow/coaster-nn
-    access_token: ((sirmergealot-github-token))
-
-- name: pr-juice-examples
-  type: pull-request
-  source:
-    repo: spearow/juice-examples
-    access_token: ((sirmergealot-github-token))
-
-- name: pr-juice
+      value: "Sir Mergealot"- name: pr-juice
   type: pull-request
   source:
     repo: spearow/juice
     access_token: ((sirmergealot-github-token))
-
-- name: pr-coaster-blas
-  type: pull-request
-  source:
-    repo: spearow/coaster-blas
-    access_token: ((sirmergealot-github-token))
-
-- name: pr-coaster
-  type: pull-request
-  source:
-    repo: spearow/coaster
-    access_token: ((sirmergealot-github-token))
-
 
 - name: pr-rust-cudnn
   type: pull-request
@@ -172,13 +116,12 @@ resources:
     repo: spearow/rust-blas
     access_token: ((sirmergealot-github-token))
 
-
 - name: container-fedora-cuda
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-cuda
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -186,8 +129,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-default
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -195,8 +138,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-native
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -204,8 +147,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-opencl
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -215,8 +158,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-ubuntu-native
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -224,8 +167,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-ubuntu-opencl
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -235,8 +178,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/doc-gen-container
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -244,21 +187,12 @@ resources:
 groups:
 - name: stack
   jobs:
-  - test-coaster
-  - test-coaster-nn
-  - test-coaster-blas
   - test-juice
-  - test-juice-examples
-  - test-greenglas
   - test-rust-blas
   - test-rust-cudnn
   - test-rust-cublas
 - name: documentation
   jobs:
-  - doc-coaster
-  - doc-coaster-nn
-  - doc-coaster-blas
-  - doc-greenglas
   - doc-juice
 - name: pull-request
   jobs:
@@ -266,11 +200,6 @@ groups:
   - pr-test-coaster-nn
   - pr-test-coaster-blas
   - pr-test-juice
-  - pr-test-juice-examples
-  - pr-test-greenglas
-  - pr-test-rust-blas
-  - pr-test-rust-cudnn
-  - pr-test-rust-cublas
 
 jobs:
   - name: doc-coaster
@@ -322,9 +251,8 @@ jobs:
       - get: rust-cudnn
       - get: rust-blas
       - get: rust-cublas
-      - get: coaster
+      - get: juice
       - get: doc-coaster-nn
-      - get: coaster-nn
         trigger: true
         passed: [test-coaster-nn]
       - get: container-misc
@@ -337,8 +265,7 @@ jobs:
         - name: rust-blas
         - name: rust-cudnn
         - name: rust-cublas
-        - name: coaster
-        - name: coaster-nn
+        - name: juice
         - name: doc-coaster-nn
         outputs:
         - name: doc-coaster-nn-updated
@@ -548,9 +475,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -562,7 +489,6 @@ jobs:
           args:
           - -exc
           - |
-            escalate
             prepare
             cd cudnn-sys
             cargo b
@@ -619,9 +545,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -633,7 +559,6 @@ jobs:
           args:
           - -exc
           - |
-            escalate
             prepare
             cd cublas-sys
             cargo b
@@ -779,9 +704,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -795,6 +720,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -816,14 +742,12 @@ jobs:
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
 
-            escalate
             prepare
-            cargo test --no-default-features --features=native,cuda
-
+            cargo build --no-default-features --features=native,cuda
           dir: coaster
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -838,6 +762,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -862,7 +787,6 @@ jobs:
             escalate
             prepare
             cargo test
-
           dir: coaster
 
 
@@ -880,6 +804,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -904,11 +829,10 @@ jobs:
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: coaster
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -923,6 +847,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -947,7 +872,6 @@ jobs:
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: coaster
 
 
@@ -967,6 +891,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -990,11 +915,10 @@ jobs:
 
             prepare
             cargo build --no-default-features --features=native
-
           dir: coaster
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -1009,6 +933,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1032,7 +957,6 @@ jobs:
 
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: coaster
 
 
@@ -1077,9 +1001,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -1096,14 +1020,13 @@ jobs:
           args:
           - -exc
           - |
-            escalate
-            prepare
-            cargo test --no-default-features --features=native,cuda
 
+            prepare
+            cargo build --no-default-features --features=native,cuda
           dir: coaster-blas
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -1121,10 +1044,10 @@ jobs:
           args:
           - -exc
           - |
+
             escalate
             prepare
             cargo test
-
           dir: coaster-blas
 
 
@@ -1145,14 +1068,14 @@ jobs:
           args:
           - -exc
           - |
+
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: coaster-blas
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -1170,10 +1093,10 @@ jobs:
           args:
           - -exc
           - |
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: coaster-blas
 
 
@@ -1196,13 +1119,13 @@ jobs:
           args:
           - -exc
           - |
+
             prepare
             cargo build --no-default-features --features=native
-
           dir: coaster-blas
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -1220,9 +1143,9 @@ jobs:
           args:
           - -exc
           - |
+
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: coaster-blas
 
 
@@ -1272,9 +1195,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -1293,6 +1216,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1313,14 +1237,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
-            escalate
             prepare
-            cargo test --no-default-features --features=native,cuda
+            cargo build --no-default-features --features=native,cuda
           dir: coaster-nn
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -1340,6 +1262,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1360,7 +1283,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test
@@ -1386,6 +1308,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1406,14 +1329,13 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native
           dir: coaster-nn
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -1433,6 +1355,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1453,7 +1376,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
@@ -1481,6 +1403,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1501,13 +1424,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native
           dir: coaster-nn
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -1527,6 +1449,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1547,7 +1470,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native,opencl
           dir: coaster-nn
@@ -1600,9 +1522,9 @@ jobs:
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -1620,6 +1542,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1640,14 +1563,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
-            escalate
             prepare
-            cargo test --no-default-features --features=native,cuda
+            cargo build --no-default-features --features=native,cuda
           dir: greenglas
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -1666,6 +1587,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1686,7 +1608,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test
@@ -1711,6 +1632,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1731,14 +1653,13 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native
           dir: greenglas
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -1757,6 +1678,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1777,7 +1699,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
@@ -1804,6 +1725,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1824,13 +1746,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native
           dir: greenglas
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -1849,6 +1770,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1869,7 +1791,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native,opencl
           dir: greenglas
@@ -1921,9 +1842,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -1943,6 +1864,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -1963,14 +1885,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
-            escalate
             prepare
-            cargo test --no-default-features --features=native,cuda
+            cargo build --no-default-features --features=native,cuda
           dir: juice
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -1991,6 +1911,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2011,7 +1932,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test
@@ -2038,6 +1958,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2058,14 +1979,13 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native
           dir: juice
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -2086,6 +2006,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2106,7 +2027,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
@@ -2135,6 +2055,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2155,13 +2076,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native
           dir: juice
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -2182,6 +2102,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2202,7 +2123,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native,opencl
           dir: juice
@@ -2256,9 +2176,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -2279,6 +2199,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2299,14 +2220,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
-            escalate
             prepare
-            cargo test --no-default-features --features=native,cuda
+            cargo build --no-default-features --features=native,cuda
           dir: juice-examples
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -2328,6 +2247,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2348,7 +2268,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test
@@ -2376,6 +2295,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2396,14 +2316,13 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native
           dir: juice-examples
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -2425,6 +2344,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2445,7 +2365,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
@@ -2475,6 +2394,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2495,13 +2415,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native
           dir: juice-examples
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -2523,6 +2442,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2543,7 +2463,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native,opencl
           dir: juice-examples
@@ -2583,9 +2502,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -2597,7 +2516,6 @@ jobs:
           args:
           - -exc
           - |
-            escalate
             prepare
             cd cudnn-sys
             cargo b
@@ -2654,9 +2572,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -2668,7 +2586,6 @@ jobs:
           args:
           - -exc
           - |
-            escalate
             prepare
             cd cublas-sys
             cargo b
@@ -2814,9 +2731,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -2830,6 +2747,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2851,14 +2769,12 @@ jobs:
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
 
-            escalate
             prepare
-            cargo test --no-default-features --features=native,cuda
-
+            cargo build --no-default-features --features=native,cuda
           dir: pr-coaster
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -2873,6 +2789,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2897,7 +2814,6 @@ jobs:
             escalate
             prepare
             cargo test
-
           dir: pr-coaster
 
 
@@ -2915,6 +2831,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2939,11 +2856,10 @@ jobs:
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: pr-coaster
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -2958,6 +2874,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -2982,7 +2899,6 @@ jobs:
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: pr-coaster
 
 
@@ -3002,6 +2918,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3025,11 +2942,10 @@ jobs:
 
             prepare
             cargo build --no-default-features --features=native
-
           dir: pr-coaster
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -3044,6 +2960,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3067,7 +2984,6 @@ jobs:
 
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: pr-coaster
 
 
@@ -3112,9 +3028,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -3131,14 +3047,13 @@ jobs:
           args:
           - -exc
           - |
-            escalate
-            prepare
-            cargo test --no-default-features --features=native,cuda
 
+            prepare
+            cargo build --no-default-features --features=native,cuda
           dir: pr-coaster-blas
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -3156,10 +3071,10 @@ jobs:
           args:
           - -exc
           - |
+
             escalate
             prepare
             cargo test
-
           dir: pr-coaster-blas
 
 
@@ -3180,14 +3095,14 @@ jobs:
           args:
           - -exc
           - |
+
             escalate
             prepare
             cargo test --no-default-features --features=native
-
           dir: pr-coaster-blas
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -3205,10 +3120,10 @@ jobs:
           args:
           - -exc
           - |
+
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
-
           dir: pr-coaster-blas
 
 
@@ -3231,13 +3146,13 @@ jobs:
           args:
           - -exc
           - |
+
             prepare
             cargo build --no-default-features --features=native
-
           dir: pr-coaster-blas
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -3255,9 +3170,9 @@ jobs:
           args:
           - -exc
           - |
+
             prepare
             cargo build --no-default-features --features=native,opencl
-
           dir: pr-coaster-blas
 
 
@@ -3307,9 +3222,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -3328,6 +3243,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3348,14 +3264,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
-            escalate
             prepare
-            cargo test --no-default-features --features=native,cuda
+            cargo build --no-default-features --features=native,cuda
           dir: pr-coaster-nn
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -3375,6 +3289,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3395,7 +3310,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test
@@ -3421,6 +3335,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3441,14 +3356,13 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native
           dir: pr-coaster-nn
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -3468,6 +3382,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3488,7 +3403,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
@@ -3516,6 +3430,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3536,13 +3451,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native
           dir: pr-coaster-nn
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -3562,6 +3476,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3582,7 +3497,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native,opencl
           dir: pr-coaster-nn
@@ -3635,9 +3549,9 @@ jobs:
         passed: [test-coaster, test-coaster-nn, test-coaster-blas]
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -3655,6 +3569,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3675,14 +3590,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
-            escalate
             prepare
-            cargo test --no-default-features --features=native,cuda
+            cargo build --no-default-features --features=native,cuda
           dir: pr-greenglas
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -3701,6 +3614,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3721,7 +3635,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test
@@ -3746,6 +3659,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3766,14 +3680,13 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native
           dir: pr-greenglas
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -3792,6 +3705,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3812,7 +3726,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
@@ -3839,6 +3752,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3859,13 +3773,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native
           dir: pr-greenglas
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -3884,6 +3797,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3904,7 +3818,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native,opencl
           dir: pr-greenglas
@@ -3956,9 +3869,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -3978,6 +3891,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -3998,14 +3912,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
-            escalate
             prepare
-            cargo test --no-default-features --features=native,cuda
+            cargo build --no-default-features --features=native,cuda
           dir: pr-juice
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -4026,6 +3938,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4046,7 +3959,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test
@@ -4073,6 +3985,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4093,14 +4006,13 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native
           dir: pr-juice
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -4121,6 +4033,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4141,7 +4054,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
@@ -4170,6 +4082,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4190,13 +4103,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native
           dir: pr-juice
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -4217,6 +4129,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4237,7 +4150,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native,opencl
           dir: pr-juice
@@ -4291,9 +4203,9 @@ jobs:
 
 
 
-#      tags: [cuda, nv-compute-cap-3.5]
 
-    - task: test-fedora-cuda
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
       image: container-fedora-cuda
       privileged: true
       config:
@@ -4314,6 +4226,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4334,14 +4247,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
-            escalate
             prepare
-            cargo test --no-default-features --features=native,cuda
+            cargo build --no-default-features --features=native,cuda
           dir: pr-juice-examples
 
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
 
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
       privileged: true
@@ -4363,6 +4274,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4383,7 +4295,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test
@@ -4411,6 +4322,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4431,14 +4343,13 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native
           dir: pr-juice-examples
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
       privileged: true
@@ -4460,6 +4371,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4480,7 +4392,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             escalate
             prepare
             cargo test --no-default-features --features=native,opencl
@@ -4510,6 +4421,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4530,13 +4442,12 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native
           dir: pr-juice-examples
 
-#      tags: [opencl]
 
+#      tags: [opencl]
     - task: build-ubuntu-opencl
       image: container-ubuntu-opencl
       privileged: true
@@ -4558,6 +4469,7 @@ jobs:
           args:
           - -exc
           - |
+
             function toml_path_array {  
                 local pre="[\""
                 local post="\"]"
@@ -4578,7 +4490,6 @@ jobs:
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
-
             prepare
             cargo build --no-default-features --features=native,opencl
           dir: pr-juice-examples

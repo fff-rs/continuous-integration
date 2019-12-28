@@ -6,12 +6,13 @@ resources:
     uri: https://github.com/spearow/continuous-integration.git
 
 
+
 - name: container-fedora-cuda
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-cuda
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -19,8 +20,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-default
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -28,8 +29,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-native
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -37,8 +38,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-fedora-opencl
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -48,8 +49,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-ubuntu-native
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -57,8 +58,8 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-ubuntu-opencl
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
@@ -68,32 +69,28 @@ resources:
   type: docker-image
   source:
     repository: quay.io/spearow/doc-gen-container
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
-
-- name: container-fedora
+- name: container-fedora-base
   type: docker-image
   source:
-    repository: fedora
-    max_concurrent_downloads: 1
-    max_concurrent_uploads: 1
-
-- name: fedora-preload
-  type: docker-image
-  source:
-    repository: fedora
+    repository: quay.io/spearow/machine-learning-container-fedora-base
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
-    max_concurrent_uploads: 1
+    max_concurrent_uploads: 2
 
-- name: ubuntu-preload
+- name: container-ubuntu-base
   type: docker-image
   source:
-    repository: ubuntu
+    repository: quay.io/spearow/machine-learning-container-ubuntu-base
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
-    max_concurrent_uploads: 1
+    max_concurrent_uploads: 2
 
 
 jobs:
@@ -105,9 +102,9 @@ jobs:
       resource: git-ci
       trigger: true
     - get: container
-      resource: container-fedora
+      resource: container-misc
 
-    - get: fedora-preload
+    - get: container-fedora-base
       params: { save: true }
 
     - task: gen-misc
@@ -129,14 +126,13 @@ jobs:
 
     - put: container-misc
       params:
-        load_base: fedora-preload
+        load_base: container-fedora-base
         build: copycat
         tag_as_latest: true
 
 
 
-
-  - name: build-fedora-cuda
+  - name: create-oci-fedora-base
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
@@ -144,17 +140,45 @@ jobs:
       resource: git-ci
       trigger: true
 
-    - get: container
-      resource: container-misc
-
-
-    - get: fedora-preload
-      params: { save: true }
-
-
+    - get: container-fedora-base
 
     - task: composition
-      image: container
+      image: container-fedora-base
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/fedora ./copycat/
+            cp -rfv ci/container/fedora/Dockerfile ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
+
+    - put: container-fedora-base
+      params:
+        build: copycat
+        tag_as_latest: true
+
+
+  - name: create-oci-fedora-cuda
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - get: ci
+      resource: git-ci
+      trigger: true
+
+    - get: container-fedora-base
+      passed: [create-oci-fedora-base]
+      params: { save: true }
+
+    - task: composition
+      image: container-fedora-base
       config:
         platform: linux
         inputs:
@@ -172,14 +196,12 @@ jobs:
 
     - put: container-fedora-cuda
       params:
-
-        load_base: fedora-preload
-
+        load_base: container-fedora-base
         build: copycat
         tag_as_latest: true
 
 
-  - name: build-fedora-default
+  - name: create-oci-fedora-default
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
@@ -187,17 +209,12 @@ jobs:
       resource: git-ci
       trigger: true
 
-    - get: container
-      resource: container-misc
-
-
-    - get: fedora-preload
+    - get: container-fedora-base
+      passed: [create-oci-fedora-base]
       params: { save: true }
 
-
-
     - task: composition
-      image: container
+      image: container-fedora-base
       config:
         platform: linux
         inputs:
@@ -215,14 +232,12 @@ jobs:
 
     - put: container-fedora-default
       params:
-
-        load_base: fedora-preload
-
+        load_base: container-fedora-base
         build: copycat
         tag_as_latest: true
 
 
-  - name: build-fedora-native
+  - name: create-oci-fedora-native
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
@@ -230,17 +245,12 @@ jobs:
       resource: git-ci
       trigger: true
 
-    - get: container
-      resource: container-misc
-
-
-    - get: fedora-preload
+    - get: container-fedora-base
+      passed: [create-oci-fedora-base]
       params: { save: true }
 
-
-
     - task: composition
-      image: container
+      image: container-fedora-base
       config:
         platform: linux
         inputs:
@@ -258,14 +268,12 @@ jobs:
 
     - put: container-fedora-native
       params:
-
-        load_base: fedora-preload
-
+        load_base: container-fedora-base
         build: copycat
         tag_as_latest: true
 
 
-  - name: build-fedora-opencl
+  - name: create-oci-fedora-opencl
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
@@ -273,17 +281,12 @@ jobs:
       resource: git-ci
       trigger: true
 
-    - get: container
-      resource: container-misc
-
-
-    - get: fedora-preload
+    - get: container-fedora-base
+      passed: [create-oci-fedora-base]
       params: { save: true }
 
-
-
     - task: composition
-      image: container
+      image: container-fedora-base
       config:
         platform: linux
         inputs:
@@ -301,16 +304,13 @@ jobs:
 
     - put: container-fedora-opencl
       params:
-
-        load_base: fedora-preload
-
+        load_base: container-fedora-base
         build: copycat
         tag_as_latest: true
 
 
 
-
-  - name: build-ubuntu-native
+  - name: create-oci-ubuntu-base
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
@@ -318,17 +318,45 @@ jobs:
       resource: git-ci
       trigger: true
 
-    - get: container
-      resource: container-misc
-
-
-    - get: ubuntu-preload
-      params: { save: true }
-
-
+    - get: container-fedora-base
 
     - task: composition
-      image: container
+      image: container-fedora-base
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/ubuntu ./copycat/
+            cp -rfv ci/container/ubuntu/Dockerfile ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
+
+    - put: container-ubuntu-base
+      params:
+        build: copycat
+        tag_as_latest: true
+
+
+  - name: create-oci-ubuntu-native
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - get: ci
+      resource: git-ci
+      trigger: true
+
+    - get: container-ubuntu-base
+      passed: [create-oci-ubuntu-base]
+      params: { save: true }
+
+    - task: composition
+      image: container-ubuntu-base
       config:
         platform: linux
         inputs:
@@ -346,14 +374,12 @@ jobs:
 
     - put: container-ubuntu-native
       params:
-
-        load_base: ubuntu-preload
-
+        load_base: container-ubuntu-base
         build: copycat
         tag_as_latest: true
 
 
-  - name: build-ubuntu-opencl
+  - name: create-oci-ubuntu-opencl
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
@@ -361,17 +387,12 @@ jobs:
       resource: git-ci
       trigger: true
 
-    - get: container
-      resource: container-misc
-
-
-    - get: ubuntu-preload
+    - get: container-ubuntu-base
+      passed: [create-oci-ubuntu-base]
       params: { save: true }
 
-
-
     - task: composition
-      image: container
+      image: container-ubuntu-base
       config:
         platform: linux
         inputs:
@@ -389,9 +410,7 @@ jobs:
 
     - put: container-ubuntu-opencl
       params:
-
-        load_base: ubuntu-preload
-
+        load_base: container-ubuntu-base
         build: copycat
         tag_as_latest: true
 

@@ -17,9 +17,9 @@ jobs:
       resource: git-ci
       trigger: true
     - get: container
-      resource: container-fedora
+      resource: container-misc
 
-    - get: fedora-preload
+    - get: container-fedora-base
       params: { save: true }
 
     - task: gen-misc
@@ -41,14 +41,13 @@ jobs:
 
     - put: container-misc
       params:
-        load_base: fedora-preload
+        load_base: container-fedora-base
         build: copycat
         tag_as_latest: true
 
 
 {% for testenv in testenvs %}
-{% for backend in testenv.backends %}
-  - name: build-{{ testenv.name }}-{{ backend }}
+  - name: create-oci-{{ testenv.name }}-base
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
@@ -56,21 +55,45 @@ jobs:
       resource: git-ci
       trigger: true
 
-    - get: container
-      resource: container-misc
-
-{% if testenv.name.as_str() == "fedora" %}
-    - get: fedora-preload
-      params: { save: true }
-
-{% else if testenv.name.as_str() == "ubuntu" %}
-    - get: ubuntu-preload
-      params: { save: true }
-
-{% endif %}
+    - get: container-fedora-base
 
     - task: composition
-      image: container
+      image: container-fedora-base
+      config:
+        platform: linux
+        inputs:
+        - name: ci
+        outputs:
+        - name: copycat
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cp -rfv ci/container/{{ testenv.name }} ./copycat/
+            cp -rfv ci/container/{{ testenv.name }}/Dockerfile ./copycat/
+            cp -rfv ci/container/*.sh ./copycat/
+
+    - put: container-{{ testenv.name }}-base
+      params:
+        build: copycat
+        tag_as_latest: true
+
+{% for backend in testenv.backends %}
+  - name: create-oci-{{ testenv.name }}-{{ backend }}
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    plan:
+    - get: ci
+      resource: git-ci
+      trigger: true
+
+    - get: container-{{ testenv.name }}-base
+      passed: [create-oci-{{ testenv.name }}-base]
+      params: { save: true }
+
+    - task: composition
+      image: container-{{ testenv.name }}-base
       config:
         platform: linux
         inputs:
@@ -88,11 +111,7 @@ jobs:
 
     - put: container-{{ testenv.name }}-{{ backend }}
       params:
-{% if testenv.name.as_str() == "fedora" %}
-        load_base: fedora-preload
-{% else if testenv.name.as_str() == "ubuntu" %}
-        load_base: ubuntu-preload
-{% endif %}
+        load_base: container-{{ testenv.name }}-base
         build: copycat
         tag_as_latest: true
 

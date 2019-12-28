@@ -1,12 +1,11 @@
-
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
 - name: container-{{ testenv.name }}-{{ backend }}
   type: docker-image
   source:
     repository: quay.io/spearow/machine-learning-container-{{ testenv.name }}-{{ backend }}
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 {% endfor %}
@@ -16,8 +15,8 @@
   type: docker-image
   source:
     repository: quay.io/spearow/doc-gen-container
-    username: ((quay-username))
-    password: ((quay-password))
+    username: ((quay-spearow-username))
+    password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
