@@ -1,24 +1,31 @@
 - name: pr-juice
   type: pull-request
+  check_every: 10m
   source:
-    repo: spearow/juice
+    repository: spearow/juice
     access_token: ((sirmergealot-github-token))
+#    required_review_approvals: 1
 
 - name: pr-rust-cudnn
   type: pull-request
+  check_every: 10m
   source:
-    repo: spearow/rust-cudnn
+    repository: spearow/rust-cudnn
     access_token: ((sirmergealot-github-token))
+#    required_review_approvals: 1
 
 - name: pr-rust-cublas
   type: pull-request
+  check_every: 10m
   source:
-    repo: spearow/rust-cublas
+    repository: spearow/rust-cublas
     access_token: ((sirmergealot-github-token))
+#    required_review_approvals: 1
 
 - name: pr-rust-blas
   type: pull-request
+  check_every: 10m
   source:
-    repo: spearow/rust-blas
+    repository: spearow/rust-blas
     access_token: ((sirmergealot-github-token))
-
+#    required_review_approvals: 1

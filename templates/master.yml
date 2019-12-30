@@ -1,0 +1,203 @@
+
+  - name: test-rust-cudnn
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    plan:
+    - in_parallel:
+      - get: rust-cudnn
+        trigger: true
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+{%- if backend.name == "cuda" %}
+      - get: container-{{ testenv.name }}-{{ backend }}
+        trigger: true
+{% endif %}
+{%- endfor %}
+{%- endfor %}
+
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+{%- if backend.name == "cuda" %}
+{% include "tags.yml" %}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cd cudnn-sys
+            cargo b
+            cargo t
+            cd -
+            cd cudnn
+            cargo b
+            cargo t
+          dir: rust-cudnn
+{% endif %}
+{%- endfor %}
+{%- endfor %}
+
+  - name: test-rust-cublas
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    plan:
+    - in_parallel:
+      - get: rust-cublas
+        trigger: true
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+{%- if backend.name == "cuda" %}
+      - get: container-{{ testenv.name }}-{{ backend }}
+        trigger: true
+{% endif %}
+{%- endfor %}
+{%- endfor %}
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+{%- if backend.name == "cuda" %}
+{% include "tags.yml" %}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cublas
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cd cublas-sys
+            cargo b
+            cargo t
+            cd -
+            cd cublas
+            cargo b
+            cargo t
+          dir: rust-cublas
+{% endif %}
+{%- endfor %}
+{%- endfor %}
+
+  - name: test-rust-blas
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    plan:
+    - in_parallel:
+      - get: rust-blas
+        trigger: true
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+{%- if backend.name == "native" %}
+      - get: container-{{ testenv.name }}-{{ backend }}
+        trigger: true
+{% endif %}
+{%- endfor %}
+{%- endfor %}
+
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+{%- if backend.name == "native" %}
+{% include "tags.yml" %}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo b
+            cargo t
+
+          dir: rust-blas
+{% endif %}
+{%- endfor %}
+{%- endfor %}
+
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+{% include "tags.yml" %}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: greenglas
+{% endfor %}
+{%- endfor %}
+
+  - name: test-juice
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    plan:
+    - in_parallel:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: juice
+        trigger: true
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+      - get: container-{{ testenv.name }}-{{ backend }}
+        trigger: true
+{% endfor %}
+{%- endfor %}
+
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+{% include "tags.yml" %}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: juice
+{% endfor %}
+{%- endfor %}

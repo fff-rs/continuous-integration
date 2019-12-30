@@ -279,4 +279,3 @@ jobs:
         build: copycat
         tag_as_latest: true
 
-

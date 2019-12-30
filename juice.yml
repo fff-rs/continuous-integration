@@ -2,20 +2,56 @@ resource_types:
 - name: pull-request
   type: docker-image
   source:
-    repository: jtarchie/pr
+    repository: teliaoss/github-pr-resource
+
 
 resources:
-# - name: sccache
-#   type: git
-#   source:
-#     branch: master
-#     uri: https://github.com/drahnr/sccache.git
 
-- name: greenglas
+
+
+- name: doc-juice
   type: git
   source:
-    branch: master
-    uri: https://github.com/spearow/greenglas.git
+    branch: gh-pages
+    uri: git@github.com:spearow/juice.git
+    private_key: ((sirmergealot-ssh-key))
+    git_config:
+    - name: user.email
+      value: sirmergealot@spearow.io
+    - name: user.name
+      value: "Sir Mergealot"
+
+- name: pr-juice
+  type: pull-request
+  check_every: 10m
+  source:
+    repository: spearow/juice
+    access_token: ((sirmergealot-github-token))
+#    required_review_approvals: 1
+
+- name: pr-rust-cudnn
+  type: pull-request
+  check_every: 10m
+  source:
+    repository: spearow/rust-cudnn
+    access_token: ((sirmergealot-github-token))
+#    required_review_approvals: 1
+
+- name: pr-rust-cublas
+  type: pull-request
+  check_every: 10m
+  source:
+    repository: spearow/rust-cublas
+    access_token: ((sirmergealot-github-token))
+#    required_review_approvals: 1
+
+- name: pr-rust-blas
+  type: pull-request
+  check_every: 10m
+  source:
+    repository: spearow/rust-blas
+    access_token: ((sirmergealot-github-token))
+#    required_review_approvals: 1
 
 - name: juice
   type: git
@@ -40,100 +76,6 @@ resources:
   source:
     branch: master
     uri: https://github.com/spearow/rust-blas.git
-
-
-
-- name: doc-juice
-  type: git
-  source:
-    branch: gh-pages
-    uri: git@github.com:spearow/juice.git
-    private_key: ((sirmergealot-ssh-key))
-    git_config:
-    - name: user.email
-      value: sirmergealot@spearow.io
-    - name: user.name
-      value: "Sir Mergealot"
-
-# - name: doc-coaster-nn
-#   type: git
-#   source:
-#     branch: gh-pages
-#     uri: git@github.com:spearow/coaster-nn.git
-#     private_key: ((sirmergealot-ssh-key))
-#     git_config:
-#     - name: user.email
-#       value: sirmergealot@spearow.io
-#     - name: user.name
-#       value: "Sir Mergealot"
-
-# - name: doc-coaster-blas
-#   type: git
-#   source:
-#     branch: gh-pages
-#     uri: git@github.com:spearow/coaster-blas.git
-#     private_key: ((sirmergealot-ssh-key))
-#     git_config:
-#     - name: user.email
-#       value: sirmergealot@spearow.io
-#     - name: user.name
-#       value: "Sir Mergealot"
-
-# - name: doc-coaster
-#   type: git
-#   source:
-#     branch: gh-pages
-#     uri: git@github.com:spearow/coaster.git
-#     private_key: ((sirmergealot-ssh-key))
-#     git_config:
-#     - name: user.email
-#       value: sirmergealot@spearow.io
-#     - name: user.name
-#       value: "Sir Mergealot"
-
-- name: doc-greenglas
-  type: git
-  source:
-    branch: gh-pages
-    uri: git@github.com:spearow/greenglas.git
-    private_key: ((sirmergealot-ssh-key))
-    git_config:
-    - name: user.email
-      value: sirmergealot@spearow.io
-    - name: user.name
-      value: "Sir Mergealot"
-
-
-- name: pr-juice
-  type: pull-request
-  source:
-    repo: spearow/juice
-    access_token: ((sirmergealot-github-token))
-
-- name: pr-greenglas
-  type: pull-request
-  source:
-    repo: spearow/greenglas
-    access_token: ((sirmergealot-github-token))
-
-- name: pr-rust-cudnn
-  type: pull-request
-  source:
-    repo: spearow/rust-cudnn
-    access_token: ((sirmergealot-github-token))
-
-- name: pr-rust-cublas
-  type: pull-request
-  source:
-    repo: spearow/rust-cublas
-    access_token: ((sirmergealot-github-token))
-
-- name: pr-rust-blas
-  type: pull-request
-  source:
-    repo: spearow/rust-blas
-    access_token: ((sirmergealot-github-token))
-
 
 
 
@@ -184,76 +126,27 @@ resources:
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
 
-
 groups:
 - name: stack
   jobs:
   - test-juice
-  - test-greenglas
   - test-rust-blas
   - test-rust-cudnn
   - test-rust-cublas
 - name: documentation
   jobs:
   - doc-juice
-  - doc-greenglas
 - name: pull-request
   jobs:
   - pr-test-juice
-  - pr-test-greenglas
   - pr-test-rust-blas
   - pr-test-rust-cudnn
   - pr-test-rust-cublas
 
 jobs:
-  - name: doc-greenglas
-    build_logs_to_retain: 2
-    public: true
-    serial: true
-    plan:
-    - in_parallel:
-      - get: rust-cudnn
-      - get: rust-blas
-      - get: rust-cublas
-      - get: doc-greenglas
-      - get: greenglas
-        trigger: true
-        passed: [test-greenglas]
-      - get: container-misc
-        trigger: true
-    - task: gen-doc
-      image: container-misc
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: rust-cudnn
-        - name: doc-greenglas
-        - name: greenglas
-        outputs:
-        - name: doc-greenglas-updated
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cd greenglas
-            cargo doc --no-deps
-            cd -
-            git clone doc-greenglas doc-greenglas-updated
-            rm -rf doc-greenglas-updated/*
-            cp -rf greenglas/target/doc/* doc-greenglas-updated/
-            cd doc-greenglas-updated
-            echo "<meta http-equiv=refresh content=0;url=greenglas/index.html>" > index.html
-            git config --global user.email "sirmergealot@spearow.io"
-            git config --global user.name "Sir Mergealot"
-            git add -A && git commit -m"doc/automatic: update" || true
-    - put: doc-greenglas
-      params: { repository: doc-greenglas-updated, force: true }
 
   - name: doc-juice
-    build_logs_to_retain: 2
+    build_logs_to_retain: 5
     public: true
     serial: true
     plan:
@@ -264,10 +157,37 @@ jobs:
       - get: doc-juice
       - get: juice
         trigger: true
-        #passed: [test-juice]
       - get: container-misc
         trigger: true
-    - task: gen-doc
+
+    - task: gen-greenglas-doc
+      image: container-misc
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        - name: rust-cublas
+        - name: rust-cudnn
+        - name: doc-greenglas
+        - name: juice
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            cd juice/greenglas
+            cargo doc --no-deps
+            cd -
+            git clone doc-greenglas doc-greenglas-updated
+            rm -rf doc-greenglas-updated/*
+            cp -rf greenglas/target/doc/* doc-greenglas-updated/
+            cd doc-greenglas-updated
+            echo "<meta http-equiv=refresh content=0;url=greenglas/index.html>" > index.html
+            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.name "Sir Mergealot"
+            git add -A && git commit -m"doc/automatic: update" || true
+
+    - task: gen-juice-doc
       image: container-misc
       config:
         platform: linux
@@ -299,586 +219,11 @@ jobs:
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
             git add -A && git commit -m"doc/automatic: update" || true
+
     - put: doc-juice
       params: { repository: doc-juice-updated, force: true }
 
-
-
-
-  - name: test-rust-cudnn
-    build_logs_to_retain: 4
-    public: true
-    serial: true
-    plan:
-    - in_parallel:
-      - get: rust-cudnn
-        trigger: true
-
-
-
-      - get: container-fedora-cuda
-        trigger: true
-
-
-
-
-
-
-
-
-
-
-
-
-
-#      tags: [cuda, nv-compute-cap-3.5]
-    - task: build-fedora-cuda
-      image: container-fedora-cuda
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            prepare
-            cd cudnn-sys
-            cargo b
-            cargo t
-            cd -
-            cd cudnn
-            cargo b
-            cargo t
-          dir: rust-cudnn
-
-
-
-
-
-
-
-
-
-
-  - name: test-rust-cublas
-    build_logs_to_retain: 4
-    public: true
-    serial: true
-    plan:
-    - in_parallel:
-      - get: rust-cublas
-        trigger: true
-
-
-
-      - get: container-fedora-cuda
-        trigger: true
-
-
-
-
-
-
-
-
-
-
-
-
-
-#      tags: [cuda, nv-compute-cap-3.5]
-    - task: build-fedora-cuda
-      image: container-fedora-cuda
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cublas
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            prepare
-            cd cublas-sys
-            cargo b
-            cargo t
-            cd -
-            cd cublas
-            cargo b
-            cargo t
-          dir: rust-cublas
-
-
-
-
-
-
-
-
-
-
-  - name: test-rust-blas
-    build_logs_to_retain: 4
-    public: true
-    serial: true
-    plan:
-    - in_parallel:
-      - get: rust-blas
-        trigger: true
-
-
-
-
-
-
-
-      - get: container-fedora-native
-        trigger: true
-
-
-
-
-
-
-
-
-
-
-
-
-
-    - task: test-fedora-native
-      image: container-fedora-native
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            prepare
-            cargo b
-            cargo t
-
-          dir: rust-blas
-
-
-
-
-
-
-  - name: test-greenglas
-    build_logs_to_retain: 4
-    public: true
-    serial: true
-    plan:
-    - in_parallel:
-      - get: rust-cudnn
-      - get: rust-blas
-      - get: rust-cublas
-      - get: greenglas
-        trigger: true
-
-
-      - get: container-fedora-cuda
-        trigger: true
-
-      - get: container-fedora-default
-        trigger: true
-
-      - get: container-fedora-native
-        trigger: true
-
-      - get: container-fedora-opencl
-        trigger: true
-
-
-
-
-
-
-#      tags: [cuda, nv-compute-cap-3.5]
-    - task: build-fedora-cuda
-      image: container-fedora-cuda
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: greenglas
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo build --no-default-features --features=native,cuda
-          dir: greenglas
-
-
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
-    - task: test-fedora-default
-      image: container-fedora-default
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: greenglas
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo test
-          dir: greenglas
-
-
-    - task: test-fedora-native
-      image: container-fedora-native
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: greenglas
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo test --no-default-features --features=native
-          dir: greenglas
-
-
-#      tags: [opencl]
-    - task: test-fedora-opencl
-      image: container-fedora-opencl
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: greenglas
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo test --no-default-features --features=native,opencl
-          dir: greenglas
-
-
-
-  - name: test-juice
-    build_logs_to_retain: 4
-    public: true
-    serial: true
-    plan:
-    - in_parallel:
-      - get: rust-cudnn
-      - get: rust-blas
-      - get: rust-cublas
-      - get: juice
-        trigger: true
-
-
-      - get: container-fedora-cuda
-        trigger: true
-
-      - get: container-fedora-default
-        trigger: true
-
-      - get: container-fedora-native
-        trigger: true
-
-      - get: container-fedora-opencl
-        trigger: true
-
-
-
-
-
-#      tags: [cuda, nv-compute-cap-3.5]
-    - task: build-fedora-cuda
-      image: container-fedora-cuda
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: juice
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo build --no-default-features --features=native,cuda
-          dir: juice
-
-
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
-    - task: test-fedora-default
-      image: container-fedora-default
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: juice
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo test
-          dir: juice
-
-
-    - task: test-fedora-native
-      image: container-fedora-native
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: juice
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo test --no-default-features --features=native
-          dir: juice
-
-
-#      tags: [opencl]
-    - task: test-fedora-opencl
-      image: container-fedora-opencl
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: juice
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo test --no-default-features --features=native,opencl
-          dir: juice
-
-
-
-#################################
-
+####### PR #### RUST-CUDNN ####
 
   - name: pr-test-rust-cudnn
     build_logs_to_retain: 4
@@ -887,29 +232,16 @@ jobs:
     plan:
     - in_parallel:
       - get: pr-rust-cudnn
+        version: every
         trigger: true
-
-
-
       - get: container-fedora-cuda
         trigger: true
-
-
-
-
-
-
-
-
-
-
-
 
 
 #      tags: [cuda, nv-compute-cap-3.5]
     - task: build-fedora-cuda
       image: container-fedora-cuda
-      privileged: true
+      # privileged: true
       config:
         platform: linux
         inputs:
@@ -931,12 +263,7 @@ jobs:
 
 
 
-
-
-
-
-
-
+####### PR #### RUST-CUBLAS ####
 
   - name: pr-test-rust-cublas
     build_logs_to_retain: 4
@@ -946,28 +273,15 @@ jobs:
     - in_parallel:
       - get: pr-rust-cublas
         trigger: true
-
-
-
+        version: every
       - get: container-fedora-cuda
         trigger: true
-
-
-
-
-
-
-
-
-
-
-
 
 
 #      tags: [cuda, nv-compute-cap-3.5]
     - task: build-fedora-cuda
       image: container-fedora-cuda
-      privileged: true
+      # privileged: true
       config:
         platform: linux
         inputs:
@@ -989,12 +303,7 @@ jobs:
 
 
 
-
-
-
-
-
-
+####### PR #### RUST-BLAS ####
 
   - name: pr-test-rust-blas
     build_logs_to_retain: 4
@@ -1004,31 +313,19 @@ jobs:
     - in_parallel:
       - get: pr-rust-blas
         trigger: true
-
-
-
-
-
-
-
+        version: every
       - get: container-fedora-native
         trigger: true
 
-
-
-
-
-
-
-
-
-
-
-
+    - put: pr-rust-blas-stat
+      resource: pr-rust-blas
+      params:
+        path: pr-rust-blas
+        status: pending
 
     - task: test-fedora-native
       image: container-fedora-native
-      privileged: true
+      # privileged: true
       config:
         platform: linux
         inputs:
@@ -1044,213 +341,22 @@ jobs:
 
           dir: pr-rust-blas
 
+      on_failure:
+        put: pr-rust-blas-stat
+        resource: pr-rust-blas
+        params:
+          path: pr-rust-blas
+          status: failure
 
 
+    - put: pr-rust-blas-stat
+      resource: pr-rust-blas
+      params:
+        path: pr-rust-blas
+        status: success
 
 
-
-  - name: pr-test-greenglas
-    build_logs_to_retain: 4
-    public: true
-    serial: true
-    plan:
-    - in_parallel:
-      - get: rust-cudnn
-      - get: rust-blas
-      - get: rust-cublas
-      - get: pr-greenglas
-        trigger: true
-
-
-      - get: container-fedora-cuda
-        trigger: true
-
-      - get: container-fedora-default
-        trigger: true
-
-      - get: container-fedora-native
-        trigger: true
-
-      - get: container-fedora-opencl
-        trigger: true
-
-
-
-
-
-
-#      tags: [cuda, nv-compute-cap-3.5]
-    - task: build-fedora-cuda
-      image: container-fedora-cuda
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: greenglas
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo build --no-default-features --features=native,cuda
-          dir: pr-greenglas
-
-
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
-    - task: test-fedora-default
-      image: container-fedora-default
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: greenglas
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo test
-          dir: pr-greenglas
-
-
-    - task: test-fedora-native
-      image: container-fedora-native
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: greenglas
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo test --no-default-features --features=native
-          dir: pr-greenglas
-
-
-#      tags: [opencl]
-    - task: test-fedora-opencl
-      image: container-fedora-opencl
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: greenglas
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-
-            function toml_path_array {  
-                local pre="[\""
-                local post="\"]"
-                local first=${1}
-                local d='","'
-                shift
-                echo -n "${pre}"
-                echo -n "${first}"
-                printf "%s" "${@/#/$d}";
-                echo -n "${post}"
-            }
-
-
-            function sanitize_paths {
-                for item in ${*}; do
-                    dirname $(realpath ${item})
-                done
-            }
-
-            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
-            cargo test --no-default-features --features=native,opencl
-          dir: pr-greenglas
-
-
-
+####### PR #### JUICE ####
   - name: pr-test-juice
     build_logs_to_retain: 4
     public: true
@@ -1262,8 +368,7 @@ jobs:
       - get: rust-cublas
       - get: pr-juice
         trigger: true
-
-
+        version: every
       - get: container-fedora-cuda
         trigger: true
 
@@ -1277,13 +382,16 @@ jobs:
         trigger: true
 
 
-
-
+    - put: pr-juice-stat
+      resource: pr-juice
+      params:
+        path: pr-juice
+        status: pending
 
 #      tags: [cuda, nv-compute-cap-3.5]
     - task: build-fedora-cuda
       image: container-fedora-cuda
-      privileged: true
+      # privileged: true
       config:
         platform: linux
         inputs:
@@ -1322,11 +430,18 @@ jobs:
             cargo build --no-default-features --features=native,cuda
           dir: pr-juice
 
+      on_failure:
+        put: pr-juice-stat
+        resource: pr-juice
+        params:
+          path: pr-juice
+          status: failure
+
 
 #      tags: [cuda, nv-compute-cap-3.5, opencl]
     - task: test-fedora-default
       image: container-fedora-default
-      privileged: true
+      # privileged: true
       config:
         platform: linux
         inputs:
@@ -1365,10 +480,17 @@ jobs:
             cargo test
           dir: pr-juice
 
+      on_failure:
+        put: pr-juice-stat
+        resource: pr-juice
+        params:
+          path: pr-juice
+          status: failure
+
 
     - task: test-fedora-native
       image: container-fedora-native
-      privileged: true
+      # privileged: true
       config:
         platform: linux
         inputs:
@@ -1407,11 +529,18 @@ jobs:
             cargo test --no-default-features --features=native
           dir: pr-juice
 
+      on_failure:
+        put: pr-juice-stat
+        resource: pr-juice
+        params:
+          path: pr-juice
+          status: failure
+
 
 #      tags: [opencl]
     - task: test-fedora-opencl
       image: container-fedora-opencl
-      privileged: true
+      # privileged: true
       config:
         platform: linux
         inputs:
@@ -1450,6 +579,485 @@ jobs:
             cargo test --no-default-features --features=native,opencl
           dir: pr-juice
 
+      on_failure:
+        put: pr-juice-stat
+        resource: pr-juice
+        params:
+          path: pr-juice
+          status: failure
 
 
-#################################
+    - put: pr-juice-stat
+      resource: pr-juice
+      params:
+        path: pr-juice
+        status: success
+
+
+  - name: test-rust-cudnn
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    plan:
+    - in_parallel:
+      - get: rust-cudnn
+        trigger: true
+      - get: container-fedora-cuda
+        trigger: true
+
+
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
+      image: container-fedora-cuda
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cd cudnn-sys
+            cargo b
+            cargo t
+            cd -
+            cd cudnn
+            cargo b
+            cargo t
+          dir: rust-cudnn
+
+
+  - name: test-rust-cublas
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    plan:
+    - in_parallel:
+      - get: rust-cublas
+        trigger: true
+      - get: container-fedora-cuda
+        trigger: true
+
+
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
+      image: container-fedora-cuda
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cublas
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cd cublas-sys
+            cargo b
+            cargo t
+            cd -
+            cd cublas
+            cargo b
+            cargo t
+          dir: rust-cublas
+
+
+  - name: test-rust-blas
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    plan:
+    - in_parallel:
+      - get: rust-blas
+        trigger: true
+      - get: container-fedora-native
+        trigger: true
+
+
+    - task: test-fedora-native
+      image: container-fedora-native
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo b
+            cargo t
+
+          dir: rust-blas
+
+
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
+      image: container-fedora-cuda
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
+            cargo build --no-default-features --features=native,cuda
+          dir: greenglas
+
+
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
+    - task: test-fedora-default
+      image: container-fedora-default
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
+            cargo test
+          dir: greenglas
+
+
+    - task: test-fedora-native
+      image: container-fedora-native
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
+            cargo test --no-default-features --features=native
+          dir: greenglas
+
+
+#      tags: [opencl]
+    - task: test-fedora-opencl
+      image: container-fedora-opencl
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: greenglas
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
+            cargo test --no-default-features --features=native,opencl
+          dir: greenglas
+
+
+  - name: test-juice
+    build_logs_to_retain: 4
+    public: true
+    serial: true
+    plan:
+    - in_parallel:
+      - get: rust-cudnn
+      - get: rust-blas
+      - get: rust-cublas
+      - get: juice
+        trigger: true
+      - get: container-fedora-cuda
+        trigger: true
+
+      - get: container-fedora-default
+        trigger: true
+
+      - get: container-fedora-native
+        trigger: true
+
+      - get: container-fedora-opencl
+        trigger: true
+
+
+#      tags: [cuda, nv-compute-cap-3.5]
+    - task: build-fedora-cuda
+      image: container-fedora-cuda
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
+            cargo build --no-default-features --features=native,cuda
+          dir: juice
+
+
+#      tags: [cuda, nv-compute-cap-3.5, opencl]
+    - task: test-fedora-default
+      image: container-fedora-default
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
+            cargo test
+          dir: juice
+
+
+    - task: test-fedora-native
+      image: container-fedora-native
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
+            cargo test --no-default-features --features=native
+          dir: juice
+
+
+#      tags: [opencl]
+    - task: test-fedora-opencl
+      image: container-fedora-opencl
+      # privileged: true
+      config:
+        platform: linux
+        inputs:
+        - name: rust-cudnn
+        - name: rust-blas
+        - name: rust-cublas
+        - name: juice
+        caches:
+        - path: target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+
+            function toml_path_array {  
+                local pre="[\""
+                local post="\"]"
+                local first=${1}
+                local d='","'
+                shift
+                echo -n "${pre}"
+                echo -n "${first}"
+                printf "%s" "${@/#/$d}";
+                echo -n "${post}"
+            }
+
+
+            function sanitize_paths {
+                for item in ${*}; do
+                    dirname $(realpath ${item})
+                done
+            }
+
+            toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))            prepare
+            cargo test --no-default-features --features=native,opencl
+          dir: juice
