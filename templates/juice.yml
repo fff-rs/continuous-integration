@@ -11,12 +11,6 @@ resources:
 #     branch: master
 #     uri: https://github.com/drahnr/sccache.git
 
-- name: greenglas
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/greenglas.git
-
 - name: juice
   type: git
   source:
@@ -72,101 +66,12 @@ groups:
   - pr-test-rust-cublas
 
 jobs:
-  - name: doc-greenglas
-    build_logs_to_retain: 2
-    public: true
-    serial: true
-    plan:
-    - in_parallel:
-      - get: rust-cudnn
-      - get: rust-blas
-      - get: rust-cublas
-      - get: doc-greenglas
-      - get: greenglas
-        trigger: true
-        passed: [test-greenglas]
-      - get: container-misc
-        trigger: true
-    - task: gen-doc
-      image: container-misc
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: rust-cudnn
-        - name: doc-greenglas
-        - name: greenglas
-        outputs:
-        - name: doc-greenglas-updated
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cd greenglas
-            cargo doc --no-deps
-            cd -
-            git clone doc-greenglas doc-greenglas-updated
-            rm -rf doc-greenglas-updated/*
-            cp -rf greenglas/target/doc/* doc-greenglas-updated/
-            cd doc-greenglas-updated
-            echo "<meta http-equiv=refresh content=0;url=greenglas/index.html>" > index.html
-            git config --global user.email "sirmergealot@spearow.io"
-            git config --global user.name "Sir Mergealot"
-            git add -A && git commit -m"doc/automatic: update" || true
-    - put: doc-greenglas
-      params: { repository: doc-greenglas-updated, force: true }
 
-  - name: doc-juice
-    build_logs_to_retain: 2
-    public: true
-    serial: true
-    plan:
-    - in_parallel:
-      - get: rust-cudnn
-      - get: rust-blas
-      - get: rust-cublas
-      - get: doc-juice
-      - get: juice
-        trigger: true
-        #passed: [test-juice]
-      - get: container-misc
-        trigger: true
-    - task: gen-doc
-      image: container-misc
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: rust-cudnn
-        - name: juice
-        - name: doc-juice
-        outputs:
-        - name: doc-juice-updated
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cd juice
-            cargo doc --no-deps
-            cd doc
-            mdbook build
-            cd ../..
+{% include "doc.yml" %}
 
-            git clone doc-juice doc-juice-updated
-            rm -rf doc-juice-updated/*
-            cp -rf juice/target/doc/* doc-juice-updated/
-            cp -rf juice/doc/book doc-juice-updated/book
-            cd doc-juice-updated
-            echo "<meta http-equiv=refresh content=0;url=juice/index.html>" > index.html
-            git config --global user.email "sirmergealot@spearow.io"
-            git config --global user.name "Sir Mergealot"
-            git add -A && git commit -m"doc/automatic: update" || true
-    - put: doc-juice
-      params: { repository: doc-juice-updated, force: true }
+######################
+####### cudnn  #######
+######################
 
 
 {% for which in ["", "pr-"] %}
@@ -215,6 +120,11 @@ jobs:
 {% endif %}
 {% endfor %}
 {% endfor %}
+
+
+######################
+####### cublas #######
+######################
 
   - name: {{ which }}test-rust-cublas
     build_logs_to_retain: 4
@@ -299,50 +209,6 @@ jobs:
 
           dir: {{ which }}rust-blas
 {% endif %}
-{% endfor %}
-{% endfor %}
-
-  - name: {{ which }}test-greenglas
-    build_logs_to_retain: 4
-    public: true
-    serial: true
-    plan:
-    - in_parallel:
-      - get: rust-cudnn
-      - get: rust-blas
-      - get: rust-cublas
-      - get: {{ which }}greenglas
-        trigger: true
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
-      - get: container-{{ testenv.name }}-{{ backend }}
-        trigger: true
-{% endfor %}
-{% endfor %}
-
-{% for testenv in testenvs %}
-{% for backend in testenv.backends %}
-{% include "tags.yml" %}
-    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
-      privileged: true
-      config:
-        platform: linux
-        inputs:
-        - name: rust-cudnn
-        - name: rust-blas
-        - name: rust-cublas
-        - name: greenglas
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-{% include "cargo-config.yml" -%}
-{% include "cargo.yml" %}
-          dir: {{ which }}greenglas
 {% endfor %}
 {% endfor %}
 

@@ -1,0 +1,77 @@
+- name: doc-juice
+  build_logs_to_retain: 5
+  public: true
+  serial: true
+  plan:
+  - in_parallel:
+    - get: rust-cudnn
+    - get: rust-blas
+    - get: rust-cublas
+    - get: doc-juice
+    - get: juice
+      trigger: true
+    - get: container-misc
+      trigger: true
+  - in_parallel:
+    - task: gen-doc
+    image: container-misc
+    config:
+      platform: linux
+      inputs:
+      - name: rust-blas
+      - name: rust-cublas
+      - name: rust-cudnn
+      - name: doc-greenglas
+      - name: juice
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          cd juice/greenglas
+          cargo doc --no-deps
+          cd -
+          git clone doc-greenglas doc-greenglas-updated
+          rm -rf doc-greenglas-updated/*
+          cp -rf greenglas/target/doc/* doc-greenglas-updated/
+          cd doc-greenglas-updated
+          echo "<meta http-equiv=refresh content=0;url=greenglas/index.html>" > index.html
+          git config --global user.email "sirmergealot@spearow.io"
+          git config --global user.name "Sir Mergealot"
+          git add -A && git commit -m"doc/automatic: update" || true
+
+  - task: gen-juice-doc
+    image: container-misc
+    config:
+      platform: linux
+      inputs:
+      - name: rust-blas
+      - name: rust-cublas
+      - name: rust-cudnn
+      - name: juice
+      - name: doc-juice
+      outputs:
+      - name: doc-juice-updated
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          cd juice
+          cargo doc --no-deps
+          cd doc
+          mdbook build
+          cd ../..
+
+          git clone doc-juice doc-juice-updated
+          rm -rf doc-juice-updated/*
+          cp -rf juice/target/doc/* doc-juice-updated/
+          cp -rf juice/doc/book doc-juice-updated/book
+          cd doc-juice-updated
+          echo "<meta http-equiv=refresh content=0;url=juice/index.html>" > index.html
+          git config --global user.email "sirmergealot@spearow.io"
+          git config --global user.name "Sir Mergealot"
+          git add -A && git commit -m"doc/automatic: update" || true
+
+  - put: doc-juice
+    params: { repository: doc-juice-updated, force: true }
