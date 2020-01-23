@@ -1,5 +1,5 @@
 
-            function toml_path_array {  
+            function toml_path_array {
                 local pre="[\""
                 local post="\"]"
                 local first=${1}
