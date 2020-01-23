@@ -20,6 +20,7 @@ groups:
 - name: stack
   jobs:
   - test-juice
+  - test-greenglas
   - test-rust-blas
   - test-rust-cudnn
   - test-rust-cublas

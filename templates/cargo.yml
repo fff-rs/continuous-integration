@@ -9,10 +9,10 @@
 {%- endif %}
 {%- else -%}
 {%- if backend.name == "default" %}
-            cargo test
+            # cargo test
 {%- else if backend.name == "native" %}
             cargo test --no-default-features --features=native
 {%- else %}
-            cargo test --no-default-features --features=native,{{ backend.name }}
+            # cargo test --no-default-features --features=native,{{ backend.name }}
 {%- endif %}
 {%- endif -%}
