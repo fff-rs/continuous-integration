@@ -3,21 +3,3 @@
   source:
     branch: master
     uri: https://github.com/spearow/juice.git
-
-- name: rust-cudnn
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/rust-cudnn.git
-
-- name: rust-cublas
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/rust-cublas.git
-
-- name: rust-blas
-  type: git
-  source:
-    branch: master
-    uri: https://github.com/spearow/rust-blas.git

@@ -4,9 +4,6 @@
     serial: true
     plan:
     - in_parallel:
-      - get: rust-cudnn
-      - get: rust-blas
-      - get: rust-cublas
       - get: doc-juice
       - get: juice
         trigger: true
@@ -44,9 +41,6 @@
       config:
         platform: linux
         inputs:
-        - name: rust-blas
-        - name: rust-cublas
-        - name: rust-cudnn
         - name: juice
         - name: doc-juice
         outputs:

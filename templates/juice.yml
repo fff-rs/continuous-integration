@@ -7,7 +7,6 @@ resource_types:
 
 resources:
 
-
 {% include "doc-resources.yml" %}
 
 {% include "pr-resources.yml" %}
@@ -20,18 +19,14 @@ groups:
 - name: stack
   jobs:
   - test-juice
-  - test-rust-blas
-  - test-rust-cudnn
-  - test-rust-cublas
+
 - name: documentation
   jobs:
   - doc-juice
+
 - name: pull-request
   jobs:
   - pr-test-juice
-  - pr-test-rust-blas
-  - pr-test-rust-cudnn
-  - pr-test-rust-cublas
 
 jobs:
 
