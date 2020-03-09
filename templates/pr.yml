@@ -208,7 +208,7 @@
           - |
 {% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
-          dir: pr-juice/juice
+          dir: pr-juice
 
       on_failure:
         put: pr-juice-stat
