@@ -20,6 +20,7 @@
 
 {%- if backend.name == "cuda" %}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      tags: [framework:cuda]
       image: container-{{ testenv.name }}-{{ backend }}
       # privileged: true
       config:

@@ -8,8 +8,8 @@
     password: ((quay-spearow-password))
     max_concurrent_downloads: 2
     max_concurrent_uploads: 2
-{% endfor %}
-{% endfor %}
+{%- endfor -%}
+{%- endfor %}
 
 - name: container-misc
   type: docker-image
