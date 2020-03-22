@@ -1,4 +1,5 @@
             prepare
+            cargo-override-injection
 {%- if backend.execute == BackendExecute::Build -%}
 {%- if backend.name == "default" %}
             cargo build

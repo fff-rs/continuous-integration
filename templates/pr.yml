@@ -1,165 +1,3 @@
-# ####### PR #### RUST-CUDNN ####
-
-#   - name: pr-test-rust-cudnn
-#     build_logs_to_retain: 4
-#     public: true
-#     serial: true
-#     plan:
-#     - in_parallel:
-#       - get: pr-rust-cudnn
-#         version: every
-#         trigger: true
-# {%- for testenv in testenvs %}
-# {%- for backend in testenv.backends %}
-# {%- if backend.name == "cuda" %}
-#       - get: container-{{ testenv.name }}-{{ backend }}
-#         trigger: true
-# {% endif %}
-# {%- endfor %}
-# {%- endfor %}
-
-# {%- for testenv in testenvs %}
-# {%- for backend in testenv.backends %}
-# {%- if backend.name == "cuda" %}
-# {% include "tags.yml" %}
-#     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#       image: container-{{ testenv.name }}-{{ backend }}
-#       # privileged: true
-#       config:
-#         platform: linux
-#         inputs:
-#         - name: pr-rust-cudnn
-#         run:
-#           path: sh
-#           args:
-#           - -exc
-#           - |
-#             prepare
-#             cd cudnn-sys
-#             cargo b
-#             cargo t
-#             cd -
-#             cd cudnn
-#             cargo b
-#             cargo t
-#           dir: pr-rust-cudnn
-# {% endif %}
-# {%- endfor %}
-# {%- endfor %}
-
-
-# ####### PR #### RUST-CUBLAS ####
-
-#   - name: pr-test-rust-cublas
-#     build_logs_to_retain: 4
-#     public: true
-#     serial: true
-#     plan:
-#     - in_parallel:
-#       - get: pr-rust-cublas
-#         trigger: true
-#         version: every
-# {%- for testenv in testenvs %}
-# {%- for backend in testenv.backends %}
-# {%- if backend.name == "cuda" %}
-#       - get: container-{{ testenv.name }}-{{ backend }}
-#         trigger: true
-# {% endif %}
-# {%- endfor %}
-# {%- endfor %}
-# {%- for testenv in testenvs %}
-# {%- for backend in testenv.backends %}
-# {%- if backend.name == "cuda" %}
-# {% include "tags.yml" %}
-#     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#       image: container-{{ testenv.name }}-{{ backend }}
-#       # privileged: true
-#       config:
-#         platform: linux
-#         inputs:
-#         - name: pr-rust-cublas
-#         run:
-#           path: sh
-#           args:
-#           - -exc
-#           - |
-#             prepare
-#             cd cublas-sys
-#             cargo b
-#             cargo t
-#             cd -
-#             cd cublas
-#             cargo b
-#             cargo t
-#           dir: pr-rust-cublas
-# {% endif %}
-# {%- endfor %}
-# {%- endfor %}
-
-
-# ####### PR #### RUST-BLAS ####
-
-#   - name: pr-test-rust-blas
-#     build_logs_to_retain: 4
-#     public: true
-#     serial: true
-#     plan:
-#     - in_parallel:
-#       - get: pr-rust-blas
-#         trigger: true
-#         version: every
-# {%- for testenv in testenvs %}
-# {%- for backend in testenv.backends %}
-# {%- if backend.name == "native" %}
-#       - get: container-{{ testenv.name }}-{{ backend }}
-#         trigger: true
-# {% endif %}
-# {%- endfor %}
-# {%- endfor %}
-#     - put: pr-rust-blas-stat
-#       resource: pr-rust-blas
-#       params:
-#         path: pr-rust-blas
-#         status: pending
-# {%- for testenv in testenvs %}
-# {%- for backend in testenv.backends %}
-# {%- if backend.name == "native" %}
-# {% include "tags.yml" %}
-#     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#       image: container-{{ testenv.name }}-{{ backend }}
-#       # privileged: true
-#       config:
-#         platform: linux
-#         inputs:
-#         - name: pr-rust-blas
-#         run:
-#           path: sh
-#           args:
-#           - -exc
-#           - |
-#             prepare
-#             cargo b
-#             cargo t
-
-#           dir: pr-rust-blas
-
-#       on_failure:
-#         put: pr-rust-blas-stat
-#         resource: pr-rust-blas
-#         params:
-#           path: pr-rust-blas
-#           status: failure
-# {% endif %}
-# {%- endfor %}
-# {%- endfor %}
-
-#     - put: pr-rust-blas-stat
-#       resource: pr-rust-blas
-#       params:
-#         path: pr-rust-blas
-#         status: success
-
-
 ####### PR #### JUICE ####
   - name: pr-test-juice
     build_logs_to_retain: 4
@@ -185,10 +23,92 @@
 
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
-{% include "tags.yml" %}
+{%- if backend.name == "native" %}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
-      # privileged: true
+      {% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: pr-rust-cudnn
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo b
+            cargo t
+          dir: pr-juice/rust-blas
+      on_failure:
+        put: pr-juice-stat
+        resource: pr-juice
+        params:
+          path: pr-juice
+          status: failure
+{% endif %}
+
+{%- if backend.name == "cuda" %}
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: pr-juice
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cd cublas-sys
+            cargo b
+            cargo t
+            cd -
+            cd cublas
+            cargo b
+            cargo t
+          dir: pr-juice/rcublas
+      on_failure:
+        put: pr-juice-stat
+        resource: pr-juice
+        params:
+          path: pr-juice
+          status: failure
+
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: pr-juice
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cd cudnn-sys
+            cargo b
+            cargo t
+            cd -
+            cd cudnn
+            cargo b
+            cargo t
+          dir: pr-juice/rcudnn
+      on_failure:
+        put: pr-juice-stat
+        resource: pr-juice
+        params:
+          path: pr-juice
+          status: failure
+{% endif %}
+
+    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
       config:
         platform: linux
         inputs:
@@ -202,7 +122,7 @@
           - |
 {% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
-          dir: pr-juice
+          dir: pr-juice/juice
 
       on_failure:
         put: pr-juice-stat

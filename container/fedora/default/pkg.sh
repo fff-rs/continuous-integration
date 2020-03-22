@@ -17,7 +17,7 @@ dnf install -y dnf-plugins-core \
 			clinfo \
 			ocl-icd \
 			ocl-icd-devel \
-			nvidia-driver-cuda \
+			nvidia-driver-cuda-libs \
 			nvidia-driver-cuda \
 	&& dnf erase -y beignet pocl
 # ocl-icd \ # OpenCL.so.1

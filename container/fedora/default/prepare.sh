@@ -3,3 +3,5 @@
 nvidia-smi
 
 clinfo
+
+pwd

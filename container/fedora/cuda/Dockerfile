@@ -9,5 +9,6 @@ RUN chmod +x /tmp/*.sh && \
 
 COPY escalate.sh /usr/local/bin/escalate
 COPY fedora/default/prepare.sh /usr/local/bin/prepare
+COPY cargo-override-injection.sh /usr/local/bin/cargo-override-injection
 
 RUN chmod +x /usr/local/bin/*

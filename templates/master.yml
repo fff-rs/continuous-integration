@@ -16,13 +16,10 @@
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
 
-{% include "tags.yml" %}
-
 {%- if backend.name == "cuda" %}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      tags: [framework:cuda]
       image: container-{{ testenv.name }}-{{ backend }}
-      # privileged: true
+{% include "tags.yml" %}
       config:
         platform: linux
         inputs:
@@ -40,11 +37,11 @@
             cd cudnn
             cargo build
             cargo build --tests
-          dir: juice/rust-cudnn
+          dir: juice/rcudnn
 
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
-      # privileged: true
+{% include "tags.yml" %}
       config:
         platform: linux
         inputs:
@@ -62,13 +59,12 @@
             cd cublas
             cargo build
             cargo build --tests
-          dir: juice/rust-cublas
+          dir: juice/rcublas
 {% endif %}
 
-{% include "tags.yml" %}
     - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
-      # privileged: true
+{% include "tags.yml" %}
       config:
         platform: linux
         inputs:
