@@ -1,10 +1,11 @@
-  - name: doc-juice
+  - name: documentation-update
     build_logs_to_retain: 5
     public: true
     serial: true
     plan:
     - in_parallel:
-      - get: doc-juice
+      - get: docs
+        resource: doc-juice
       - get: juice
         trigger: true
       - get: container-misc
@@ -42,29 +43,36 @@
         platform: linux
         inputs:
         - name: juice
-        - name: doc-juice
+        - name: docs
         outputs:
-        - name: doc-juice-updated
+        - name: docs-updated
         run:
           path: sh
           args:
           - -exc
           - |
             cargo doc --no-deps
-            cd doc
-            mdbook build
-            cd ../..
 
-            git clone doc-juice doc-juice-updated
-            rm -rf doc-juice-updated/*
-            cp -rf juice/target/doc/* doc-juice-updated/
-            cp -rf juice/doc/book doc-juice-updated/book
-            cd doc-juice-updated
+            cd juice/doc
+            mdbook build
+            cd ..; pwd
+            cd ..; pwd
+
+            cd ..; pwd
+
+            git clone docs docs-updated
+            rm -rf docs-updated/*
+
+            cp -rf juice/target/doc/* docs-updated/
+            cp -rf juice/juice/doc/book docs-updated/book
+
+            cd docs-updated
             echo "<meta http-equiv=refresh content=0;url=juice/index.html>" > index.html
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
-            git add -A && git commit -m"doc/automatic: update" || true
-          dir: juice/juice
+            git add -A && git commit -m"docs/automatic: update" || true
+          dir: juice
 
-    - put: doc-juice
-      params: { repository: doc-juice-updated, force: true }
+    - put: docs
+      resource: doc-juice
+      params: { repository: docs-updated, force: true }

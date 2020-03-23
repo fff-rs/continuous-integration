@@ -15,18 +15,18 @@ resources:
 
 {% include "container-resources.yml" %}
 
-groups:
-- name: stack
-  jobs:
-  - test-juice
+# groups:
+# - name: stack
+#   jobs:
+#   - test-juice
 
-- name: documentation
-  jobs:
-  - doc-juice
+# - name: documentation
+#   jobs:
+#   - doc-juice
 
-- name: pull-request
-  jobs:
-  - pr-test-juice
+# - name: pull-request
+#   jobs:
+#   - pr-test-juice
 
 jobs:
 
