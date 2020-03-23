@@ -50,7 +50,6 @@
           args:
           - -exc
           - |
-            cd juice
             cargo doc --no-deps
             cd doc
             mdbook build
@@ -65,6 +64,7 @@
             git config --global user.email "sirmergealot@spearow.io"
             git config --global user.name "Sir Mergealot"
             git add -A && git commit -m"doc/automatic: update" || true
+          dir: juice/juice
 
     - put: doc-juice
       params: { repository: doc-juice-updated, force: true }
