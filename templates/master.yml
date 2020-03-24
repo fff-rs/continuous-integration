@@ -16,8 +16,119 @@
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
 
-{%- if backend.name == "cuda" %}
-    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+    - task: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: juice
+        caches:
+        - path: cargo_home
+        - path: juice/coaster/target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: juice/coaster
+
+    - task: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: juice
+        caches:
+        - path: cargo_home
+        - path: juice/coaster-blas/target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: juice/coaster-blas
+
+    - task: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: juice
+        caches:
+        - path: cargo_home
+        - path: juice/coaster-nn/target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: juice/coaster-nn
+
+    - task: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: juice
+        caches:
+        - path: cargo_home
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: juice/greenglas
+
+    - task: juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: juice
+        caches:
+        - path: cargo_home
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: juice/juice
+
+{%- match backend.name.as_ref() -%}
+{%- when "native" %}
+    - task: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+      {% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: rust-blas
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            prepare
+            cargo b
+            cargo t
+          dir: juice/rust-blas
+{%- when "cuda" %}
+    - task: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
       config:
@@ -29,6 +140,7 @@
           args:
           - -exc
           - |
+
             prepare
             cd cudnn-sys
             cargo build
@@ -39,7 +151,7 @@
             cargo build --tests
           dir: juice/rcudnn
 
-    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+    - task: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
       config:
@@ -51,6 +163,8 @@
           args:
           - -exc
           - |
+            export CARGO_HOME=$(pwd)/../../cargo_home
+            mkdir -p ${CARGO_HOME}
             prepare
             cd cublas-sys
             cargo build
@@ -60,24 +174,9 @@
             cargo build
             cargo build --tests
           dir: juice/rcublas
-{% endif %}
+{% else -%}
+  # no special treament for {{ backend.name }}
+{% endmatch %}
 
-    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
-      config:
-        platform: linux
-        inputs:
-        - name: juice
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-{% include "cargo-config.yml" -%}
-{% include "cargo.yml" %}
-          dir: juice/juice
-{% endfor %}
+{% endfor -%}
 {%- endfor %}

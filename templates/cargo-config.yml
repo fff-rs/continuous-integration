@@ -19,3 +19,8 @@
             }
 
             toml_path_array $(sanitize_paths $(fd --absolute-path Cargo.toml ../..))
+
+            # two levels up is the cache
+            export CARGO_HOME=$(pwd)/../../cargo_home
+            echo "Sweet (cached) home is \"$CARGO_HOME\""
+            mkdir -p $CARGO_HOME

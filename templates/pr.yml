@@ -23,14 +23,127 @@
 
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
-{%- if backend.name == "native" %}
-    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+
+
+
+    - task: pr-coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: pr-juice
+        caches:
+        - path: cargo_home
+        - path: pr-juice/coaster/target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: pr-juice/coaster
+
+
+    - task: pr-coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: pr-juice
+        caches:
+        - path: cargo_home
+        - path: pr-juice/coaster-blas/target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: pr-juice/coaster-blas
+
+    - task: pr-coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: pr-juice
+        caches:
+        - path: cargo_home
+        - path: pr-juice/coaster-nn/target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: pr-juice/coaster-nn
+
+    - task: pr-greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: pr-juice
+        caches:
+        - path: cargo_home
+        - path: pr-juice/greenglas/target
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: pr-juice/greenglas
+
+      on_failure:
+        put: pr-juice-stat
+        resource: pr-juice
+        params:
+          path: pr-juice
+          status: failure
+
+    - task: pr-juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+      image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+      config:
+        platform: linux
+        inputs:
+        - name: pr-juice
+        caches:
+        - path: cargo_home
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+{% include "cargo-config.yml" -%}
+{% include "cargo.yml" %}
+          dir: pr-juice/juice
+
+      on_failure:
+        put: pr-juice-stat
+        resource: pr-juice
+        params:
+          path: pr-juice
+          status: failure
+
+{%- match backend.name.as_ref() %}
+{%- when "native" %}
+    - task: pr-rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
       {% include "tags.yml" %}
       config:
         platform: linux
         inputs:
-        - name: pr-rust-cudnn
+        - name: pr-juice
         run:
           path: sh
           args:
@@ -46,10 +159,9 @@
         params:
           path: pr-juice
           status: failure
-{% endif %}
 
-{%- if backend.name == "cuda" %}
-    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+{%- when "cuda" %}
+    - task: pr-rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
       config:
@@ -77,7 +189,7 @@
           path: pr-juice
           status: failure
 
-    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+    - task: pr-rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
       image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
       config:
@@ -104,32 +216,10 @@
         params:
           path: pr-juice
           status: failure
-{% endif %}
+{% else -%}
+  # no special treament for {{ backend.name }}
+{% endmatch %}
 
-    - task: {{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
-      config:
-        platform: linux
-        inputs:
-        - name: pr-juice
-        caches:
-        - path: target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-{% include "cargo-config.yml" -%}
-{% include "cargo.yml" %}
-          dir: pr-juice/juice
-
-      on_failure:
-        put: pr-juice-stat
-        resource: pr-juice
-        params:
-          path: pr-juice
-          status: failure
 {% endfor %}
 {%- endfor %}
 
