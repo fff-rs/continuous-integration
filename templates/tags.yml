@@ -1,21 +1,11 @@
-{%- if backend.name == "native" %}
-{%- else if backend.name == "cuda" %}
-#      tags: [cuda, nv-compute-cap-3.5]
-{%- else if backend.name == "opencl" %}
-#      tags: [opencl]
-{%- else if backend.name == "default" %}
-#      tags: [cuda, nv-compute-cap-3.5, opencl]
-{%- endif %}
-
 {% let name = backend.name.as_str() %}
 {%- match name %}
 {%- when "cuda" %}
-      tags: [framework:cuda]
+          tags: [framework:cuda]
 {%- when "opencl" %}
-      tags: [framework:opencl]
+          tags: [framework:opencl]
 {%- when "default" %}
-      tags: [framework:cuda] # tags: [framework:opencl,framework:cuda]
+          tags: [framework:opencl,framework:cuda]
 {%- else -%}
-{%- endmatch -%}
-
-
+{%- endmatch %}
+{# ALSO MODIFY CONTAINER TAGS ACCORDINGLY! #}

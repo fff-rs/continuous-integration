@@ -1,21 +1,21 @@
-            prepare
-            cargo-override-injection
+                prepare
+                cargo-override-injection
 {%- if backend.execute == BackendExecute::Build -%}
 {%- if backend.name == "default" %}
-            cargo build
+                cargo build
 {%- else if backend.name == "native" %}
-            cargo build --no-default-features --features=native
+                cargo build --no-default-features --features=native
 {%- else %}
-            cargo build --no-default-features --features=native,{{ backend.name }}
+                cargo build --no-default-features --features=native,{{ backend.name }}
 {%- endif %}
 {%- else -%}
 {%- if backend.name == "default" %}
-            cargo build --tests
-            cargo test
+                cargo build --tests
+                cargo test
 {%- else if backend.name == "native" %}
-            cargo test --no-default-features --features=native
+                cargo test --no-default-features --features=native
 {%- else %}
-            cargo build --tests --no-default-features --features=native,{{ backend.name }}
-            cargo test --no-default-features --features=native,{{ backend.name }}
+                cargo build --tests --no-default-features --features=native,{{ backend.name }}
+                cargo test --no-default-features --features=native,{{ backend.name }}
 {%- endif %}
 {%- endif -%}

@@ -46,11 +46,14 @@
         - name: docs
         outputs:
         - name: docs-updated
+        caches:
+        - path: cargo_home
         run:
           path: sh
           args:
           - -exc
           - |
+            export CARGO_HOME=../cargo_home
             cargo doc --no-deps
 
             cd juice/doc

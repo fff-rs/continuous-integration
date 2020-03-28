@@ -16,166 +16,175 @@
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
 
-    - task: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
+    - in_parallel:
+{%- match backend.name.as_ref() %}
+{%- when "native" %}
+        limit: 4
+{%- else %}
+        limit: 2
+{%- endmatch %}
+        fail_fast: false
+        steps:
+        - task: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
-      config:
-        platform: linux
-        inputs:
-        - name: juice
-        caches:
-        - path: cargo_home
-        - path: juice/coaster/target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
+          config:
+            platform: linux
+            inputs:
+            - name: juice
+            caches:
+            - path: cargo_home
+            - path: juice/coaster/target
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
 {% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
-          dir: juice/coaster
+              dir: juice/coaster
 
-    - task: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
+        - task: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
-      config:
-        platform: linux
-        inputs:
-        - name: juice
-        caches:
-        - path: cargo_home
-        - path: juice/coaster-blas/target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
+          config:
+            platform: linux
+            inputs:
+            - name: juice
+            caches:
+            - path: cargo_home
+            - path: juice/coaster-blas/target
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
 {% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
-          dir: juice/coaster-blas
+              dir: juice/coaster-blas
 
-    - task: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
+        - task: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
-      config:
-        platform: linux
-        inputs:
-        - name: juice
-        caches:
-        - path: cargo_home
-        - path: juice/coaster-nn/target
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
+          config:
+            platform: linux
+            inputs:
+            - name: juice
+            caches:
+            - path: cargo_home
+            - path: juice/coaster-nn/target
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
 {% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
-          dir: juice/coaster-nn
+              dir: juice/coaster-nn
 
-    - task: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
+        - task: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
-      config:
-        platform: linux
-        inputs:
-        - name: juice
-        caches:
-        - path: cargo_home
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
+          config:
+            platform: linux
+            inputs:
+            - name: juice
+            caches:
+            - path: cargo_home
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
 {% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
-          dir: juice/greenglas
+              dir: juice/greenglas
 
-    - task: juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
+        - task: juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
-      config:
-        platform: linux
-        inputs:
-        - name: juice
-        caches:
-        - path: cargo_home
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
+          config:
+            platform: linux
+            inputs:
+            - name: juice
+            caches:
+            - path: cargo_home
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
 {% include "cargo-config.yml" -%}
 {% include "cargo.yml" %}
-          dir: juice/juice
+              dir: juice/juice
 
 {%- match backend.name.as_ref() -%}
 {%- when "native" %}
-    - task: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
+        - task: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
       {% include "tags.yml" %}
-      config:
-        platform: linux
-        inputs:
-        - name: rust-blas
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            prepare
-            cargo b
-            cargo t
-          dir: juice/rust-blas
+          config:
+            platform: linux
+            inputs:
+            - name: rust-blas
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
+                prepare
+                cargo b
+                cargo t
+              dir: juice/rust-blas
 {%- when "cuda" %}
-    - task: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
+        - task: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
-      config:
-        platform: linux
-        inputs:
-        - name: juice
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
+          config:
+            platform: linux
+            inputs:
+            - name: juice
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
 
-            prepare
-            cd cudnn-sys
-            cargo build
-            cargo build --tests
-            cd -
-            cd cudnn
-            cargo build
-            cargo build --tests
-          dir: juice/rcudnn
+                prepare
+                cd cudnn-sys
+                cargo build
+                cargo build --tests
+                cd -
+                cd cudnn
+                cargo build
+                cargo build --tests
+              dir: juice/rcudnn
 
-    - task: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-      image: container-{{ testenv.name }}-{{ backend }}
+        - task: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
-      config:
-        platform: linux
-        inputs:
-        - name: juice
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            export CARGO_HOME=$(pwd)/../../cargo_home
-            mkdir -p ${CARGO_HOME}
-            prepare
-            cd cublas-sys
-            cargo build
-            cargo build --tests
-            cd -
-            cd cublas
-            cargo build
-            cargo build --tests
-          dir: juice/rcublas
+          config:
+            platform: linux
+            inputs:
+            - name: juice
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
+                export CARGO_HOME=$(pwd)/../../cargo_home
+                mkdir -p ${CARGO_HOME}
+                prepare
+                cd cublas-sys
+                cargo build
+                cargo build --tests
+                cd -
+                cd cublas
+                cargo build
+                cargo build --tests
+              dir: juice/rcublas
 {% else -%}
-  # no special treament for {{ backend.name }}
+      # no special treament for {{ backend.name }}
 {% endmatch %}
 
 {% endfor -%}
