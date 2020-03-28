@@ -17,7 +17,6 @@
 
     - put: pr-juice-stat
       resource: pr-juice
-      inputs: []
       params:
         path: pr-juice
         status: pending
@@ -53,7 +52,6 @@
           on_failure:
             put: pr-juice-stat
             resource: pr-juice
-            inputs: []
             params:
               path: pr-juice
               status: failure
@@ -79,7 +77,6 @@
           on_failure:
             put: pr-juice-stat
             resource: pr-juice
-            inputs: []
             params:
               path: pr-juice
               status: failure
@@ -106,7 +103,6 @@
           on_failure:
             put: pr-juice-stat
             resource: pr-juice
-            inputs: []
             params:
               path: pr-juice
               status: failure
@@ -132,7 +128,6 @@
           on_failure:
             put: pr-juice-stat
             resource: pr-juice
-            inputs: []
             params:
               path: pr-juice
               status: failure
@@ -157,7 +152,6 @@
           on_failure:
             put: pr-juice-stat
             resource: pr-juice
-            inputs: []
             params:
               path: pr-juice
               status: failure
@@ -183,7 +177,6 @@
           on_failure:
             put: pr-juice-stat
             resource: pr-juice
-            inputs: []
             params:
               path: pr-juice
               status: failure
@@ -214,7 +207,6 @@
             put: pr-juice-stat
             resource: pr-juice
             params:
-              inputs: []
               path: pr-juice
               status: failure
 
@@ -242,7 +234,6 @@
           on_failure:
             put: pr-juice-stat
             resource: pr-juice
-            inputs: []
             params:
               path: pr-juice
               status: failure
@@ -255,7 +246,6 @@
 
         - put: pr-juice-stat
           resource: pr-juice
-          inputs: []
           params:
             path: pr-juice
             status: success

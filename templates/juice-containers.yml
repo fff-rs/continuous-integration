@@ -40,7 +40,6 @@ jobs:
             cp -rfv ci/container/*.sh ./copycat/
 
     - put: container-misc
-      inputs: detect
       params:
         load_base: container-fedora-base
         build: copycat
@@ -76,7 +75,6 @@ jobs:
             cp -rfv ci/container/*.sh ./copycat/
 
     - put: container-{{ testenv.name }}-base
-      inputs: detect
       params:
         build: copycat
         tag_as_latest: true
@@ -113,7 +111,6 @@ jobs:
             cp -rfv ci/container/*.sh ./copycat/
 
     - put: container-{{ testenv.name }}-{{ backend }}
-      inputs: detect
       params:
         load_base: container-{{ testenv.name }}-base
         build: copycat
