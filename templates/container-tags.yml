@@ -5,6 +5,6 @@
 {%- when "opencl" %}
   tags: [framework:opencl]
 {%- when "default" %}
-  tags: [framework:cuda] # tags: [framework:opencl,framework:cuda]
+  tags: [framework:opencl,framework:cuda]
 {%- else -%}
 {%- endmatch %}

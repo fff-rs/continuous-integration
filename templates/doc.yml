@@ -77,5 +77,6 @@
           dir: juice
 
     - put: docs
+      inputs: [docs-updated]
       resource: doc-juice
       params: { repository: docs-updated, force: true }

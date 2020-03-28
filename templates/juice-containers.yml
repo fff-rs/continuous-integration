@@ -83,6 +83,7 @@ jobs:
 
 {% for backend in testenv.backends %}
   - name: create-oci-{{ testenv.name }}-{{ backend }}
+{% include "container-tags2.yml" %}
     serial_groups: [constructors]
     build_logs_to_retain: 2
     plan:
