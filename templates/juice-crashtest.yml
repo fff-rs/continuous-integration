@@ -1,0 +1,14 @@
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: teliaoss/github-pr-resource
+
+
+resources:
+
+{% include "master-resources.yml" %}
+
+jobs:
+
+{% include "master.yml" %}

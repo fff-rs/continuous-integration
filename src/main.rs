@@ -275,6 +275,13 @@ struct ContainerYml<'a> {
 }
 
 
+#[derive(Template)]
+#[template(path = "juice-crashtest.yml", escape = "none")]
+struct CrashTestYml<'a> {
+    testenvs: &'a Vec<TestEnv>,
+}
+
+
 
 fn run() -> Result<()> {
     let cwd: PathBuf = env::current_dir().unwrap_or(PathBuf::from("HOME").join("spearow").join(
@@ -322,24 +329,25 @@ fn run() -> Result<()> {
 
     let juice = JuiceYml { testenvs: &testenvs };
     let containers = ContainerYml { testenvs: &testenvs };
+    let crashtest = CrashTestYml { testenvs: &testenvs };
 
-    let mut f_juice = OpenOptions::new()
-        .write(true)
-        .create(true)
-        .truncate(true)
-        .open("juice.yml")?;
-    f_juice.write_all(
-        juice.render().unwrap().as_str().as_bytes(),
-    )?;
 
-    let mut f_containers = OpenOptions::new()
-        .write(true)
-        .create(true)
-        .truncate(true)
-        .open("juice-containers.yml")?;
-    f_containers.write_all(
-        containers.render().unwrap().as_str().as_bytes(),
-    )?;
+    fn dump<T : askama::Template, P: AsRef<Path>>(template : &T, dest: P) -> Result<()> {
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(dest.as_ref())?;
+        let content = template.render().map_err(|e| format!("Failed to render template {:?}:", e))?;
+        file.write_all(
+            content.as_str().as_bytes(),
+        )?;
+        Ok(())
+    }
+
+    dump(&juice, "juice-containers.yml")?;
+    dump(&containers, "juice-containers.yml")?;
+    dump(&crashtest, "juice-crashtest.yml")?;
     Ok(())
 }
 
