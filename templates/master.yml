@@ -17,12 +17,7 @@
 {%- for backend in testenv.backends %}
 
     - in_parallel:
-{%- match backend.name.as_ref() %}
-{%- when "native" %}
-        limit: 4
-{%- else %}
-        limit: 2
-{%- endmatch %}
+{% include "parallelism.yml" %}
         fail_fast: false
         steps:
         - task: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}

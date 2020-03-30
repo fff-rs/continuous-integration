@@ -1,23 +1,23 @@
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
 - name: container-{{ testenv.name }}-{{ backend }}
-  type: docker-image
+  type: registry-image
 {% include "container-tags.yml" %}
   source:
     repository: quay.io/spearow/machine-learning-container-{{ testenv.name }}-{{ backend }}
     username: ((quay-spearow-username))
     password: ((quay-spearow-password))
-    max_concurrent_downloads: 2
-    max_concurrent_uploads: 2
+    # max_concurrent_downloads: 4
+    # max_concurrent_uploads: 2
 {%- endfor -%}
 {%- endfor %}
 
 - name: container-misc
-  type: docker-image
+  type: registry-image
   source:
     repository: quay.io/spearow/doc-gen-container
     username: ((quay-spearow-username))
     password: ((quay-spearow-password))
-    max_concurrent_downloads: 2
-    max_concurrent_uploads: 2
+    # max_concurrent_downloads: 4
+    # max_concurrent_uploads: 2
 

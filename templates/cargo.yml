@@ -1,5 +1,7 @@
                 prepare
                 cargo-override-injection
+                export RUST_LOG=juice=debug
+                export RUST_BACKTRACE=1
 {%- if backend.execute == BackendExecute::Build -%}
 {%- if backend.name == "default" %}
                 cargo build

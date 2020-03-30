@@ -1,0 +1,10 @@
+{%- match backend.name.as_ref() %}
+{%- when "native" %}
+        limit: 4
+{%- when "cuda" %}
+        limit: 1
+{%- when "default" %}
+        limit: 1
+{%- else %}
+        limit: 2
+{%- endmatch %}
