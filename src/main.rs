@@ -265,12 +265,14 @@ impl Default for TestEnv {
 #[derive(Template)]
 #[template(path = "juice.yml", escape = "none" )]
 struct JuiceYml<'a> {
+    passive: bool, // false
     testenvs: &'a Vec<TestEnv>,
 }
 
 #[derive(Template)]
 #[template(path = "juice-containers.yml", escape = "none")]
 struct ContainerYml<'a> {
+    passive: bool, // false
     testenvs: &'a Vec<TestEnv>,
 }
 
@@ -278,6 +280,8 @@ struct ContainerYml<'a> {
 #[derive(Template)]
 #[template(path = "juice-crashtest.yml", escape = "none")]
 struct CrashTestYml<'a> {
+    // only external events trigger this
+    passive: bool, // true
     testenvs: &'a Vec<TestEnv>,
 }
 
@@ -327,9 +331,9 @@ fn run() -> Result<()> {
         println!("test envs: {:?}", testenv);
     }
 
-    let juice = JuiceYml { testenvs: &testenvs };
-    let containers = ContainerYml { testenvs: &testenvs };
-    let crashtest = CrashTestYml { testenvs: &testenvs };
+    let juice = JuiceYml { testenvs: &testenvs, passive: false };
+    let containers = ContainerYml { testenvs: &testenvs, passive: false };
+    let crashtest = CrashTestYml { testenvs: &testenvs, passive: true };
 
 
     fn dump<T : askama::Template, P: AsRef<Path>>(template : &T, dest: P) -> Result<()> {

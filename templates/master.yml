@@ -5,11 +5,11 @@
     plan:
     - in_parallel:
       - get: juice
-        trigger: true
+        trigger: {{ !passive }}
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
       - get: container-{{ testenv.name }}-{{ backend }}
-        trigger: true
+        trigger: {{ !passive }}
 {% endfor %}
 {%- endfor %}
 

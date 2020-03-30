@@ -1,11 +1,19 @@
-resource_types:
-- name: pull-request
-  type: docker-image
-  source:
-    repository: teliaoss/github-pr-resource
-
-
 resources:
+
+{% for testenv in testenvs %}
+{% for backend in testenv.backends %}
+- name: container-{{ testenv.name }}-{{ backend }}
+  type: registry-image
+{% include "container-tags.yml" %}
+  source:
+    repository: quay.io/spearow/machine-learning-container-{{ testenv.name }}-{{ backend }}
+{%- endfor -%}
+{%- endfor %}
+
+# - name: container-misc
+#   type: registry-image
+#   source:
+#     repository: quay.io/spearow/doc-gen-container
 
 {% include "master-resources.yml" %}
 
