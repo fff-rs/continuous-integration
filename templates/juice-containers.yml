@@ -6,30 +6,57 @@ resources:
     uri: https://github.com/spearow/continuous-integration.git
 
 {% include "container-resources.yml" %}
-{% include "container-resources-preload.yml" %}
+{# include "container-resources-preload.yml" #}
+
+
+groups:
+  {% for testenv in testenvs %}
+  - name: {{ testenv.name.as_str() }}
+    jobs:
+  {% for backend in testenv.backends %}
+      - create-oci-{{ testenv.name }}-{{ backend }}
+  {%- endfor %}
+  {%- endfor %}
+
+  - name: misc
+    jobs:
+      - create-oci-misc
 
 jobs:
-  - name: build-misc
+  - name: create-oci-misc
     serial_groups: [constructors]
     build_logs_to_retain: 2
+    serial: true
     plan:
     - get: ci
       resource: git-ci
       trigger: true
-    - get: container
-      resource: container-misc
 
-    - get: container-fedora-base
-      params: { save: true }
+    - task: composition
+      privileged: true
 
-    - task: gen-misc
-      image: container
       config:
         platform: linux
+
+        image_resource:
+          type: registry-image
+          source:
+            repository: vito/oci-build-task
+
+        params:
+          CONTEXT: copycat
+          TAG: latest
+
         inputs:
         - name: ci
+
         outputs:
+        - name: image
         - name: copycat
+
+        caches:
+        - path: copycat
+
         run:
           path: sh
           args:
@@ -38,69 +65,52 @@ jobs:
             cp -rfv ci/container/misc/Dockerfile ./copycat/
             cp -rfv ci/container/misc ./copycat/
             cp -rfv ci/container/*.sh ./copycat/
+            pwd
+            build
 
     - put: container-misc
       params:
-        load_base: container-fedora-base
-        build: copycat
-        tag_as_latest: true
+        image: copycat/image/image.tar
+
 
 
 {% for testenv in testenvs %}
-  - name: create-oci-{{ testenv.name }}-base
-    serial_groups: [constructors]
-    build_logs_to_retain: 2
-    plan:
-    - get: ci
-      resource: git-ci
-      trigger: true
-
-    - get: container-fedora-base
-
-    - task: composition
-      image: container-fedora-base
-      config:
-        platform: linux
-        inputs:
-        - name: ci
-        outputs:
-        - name: copycat
-        run:
-          path: sh
-          args:
-          - -exc
-          - |
-            cp -rfv ci/container/{{ testenv.name }} ./copycat/
-            cp -rfv ci/container/{{ testenv.name }}/Dockerfile ./copycat/
-            cp -rfv ci/container/*.sh ./copycat/
-
-    - put: container-{{ testenv.name }}-base
-      params:
-        build: copycat
-        tag_as_latest: true
-
 {% for backend in testenv.backends %}
   - name: create-oci-{{ testenv.name }}-{{ backend }}
-{% include "container-tags2.yml" %}
     serial_groups: [constructors]
     build_logs_to_retain: 2
+    serial: true
     plan:
     - get: ci
       resource: git-ci
       trigger: true
 
-    - get: container-{{ testenv.name }}-base
-      passed: [create-oci-{{ testenv.name }}-base]
-      params: { save: true }
-
     - task: composition
-      image: container-{{ testenv.name }}-base
+      privileged: true
+      {% include "container-tags2.yml" %}
+
       config:
         platform: linux
+
+        image_resource:
+          type: registry-image
+          source:
+            repository: vito/oci-build-task
+
+        params:
+          CONTEXT: copycat
+          TAG: latest
+
         inputs:
         - name: ci
+
         outputs:
+        - name: image
         - name: copycat
+
+        caches:
+        - path: copycat
+
         run:
           path: sh
           args:
@@ -109,12 +119,14 @@ jobs:
             cp -rfv ci/container/{{ testenv.name }} ./copycat/
             cp -rfv ci/container/{{ testenv.name }}/{{ backend }}/Dockerfile ./copycat/
             cp -rfv ci/container/*.sh ./copycat/
+            pwd
+            build
+
+          dir: copycat
 
     - put: container-{{ testenv.name }}-{{ backend }}
       params:
-        load_base: container-{{ testenv.name }}-base
-        build: copycat
-        tag_as_latest: true
+        image: copycat/image/image.tar
 
-{% endfor %}
+{%- endfor %}
 {%- endfor %}
