@@ -3,13 +3,12 @@
     public: true
     serial: true
     plan:
-    - in_parallel:
-      - get: juice
-        trigger: {{ !passive }}
+    - get: juice
+      trigger: {{ !passive }}
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
-      - get: container-{{ testenv.name }}-{{ backend }}
-        trigger: {{ !passive }}
+    - get: container-{{ testenv.name }}-{{ backend }}
+      trigger: {{ !passive }}
 {% endfor %}
 {%- endfor %}
 
@@ -18,7 +17,7 @@
 
     - in_parallel:
 {% include "parallelism.yml" %}
-        fail_fast: false
+        fail_fast: true
         steps:
         - task: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}

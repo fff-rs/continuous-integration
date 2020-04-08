@@ -5,6 +5,4 @@
     repository: quay.io/spearow/machine-learning-container-{{ testenv.name }}-base
     username: ((quay-spearow-username))
     password: ((quay-spearow-password))
-    # max_concurrent_downloads: 4
-    # max_concurrent_uploads: 2
 {% endfor %}

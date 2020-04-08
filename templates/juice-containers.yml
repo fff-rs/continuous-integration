@@ -6,13 +6,13 @@ resources:
     uri: https://github.com/spearow/continuous-integration.git
 
 {% include "container-resources.yml" %}
-{# include "container-resources-preload.yml" #}
-
+{% include "container-resources-preload.yml" %}
 
 groups:
   {% for testenv in testenvs %}
   - name: {{ testenv.name.as_str() }}
     jobs:
+      - create-oci-{{ testenv.name }}-base
   {% for backend in testenv.backends %}
       - create-oci-{{ testenv.name }}-{{ backend }}
   {%- endfor %}
@@ -21,6 +21,7 @@ groups:
   - name: misc
     jobs:
       - create-oci-misc
+
 
 jobs:
   - name: create-oci-misc
@@ -55,7 +56,7 @@ jobs:
         - name: copycat
 
         caches:
-        - path: copycat
+        - path: cache
 
         run:
           path: sh
@@ -70,11 +71,57 @@ jobs:
 
     - put: container-misc
       params:
-        image: copycat/image/image.tar
-
+        image: image/image.tar
 
 
 {% for testenv in testenvs %}
+  - name: create-oci-{{ testenv.name }}-base
+    serial_groups: [constructors]
+    build_logs_to_retain: 2
+    serial: true
+    plan:
+    - get: ci
+      resource: git-ci
+      trigger: true
+
+    - task: composition
+      privileged: true
+
+      config:
+        platform: linux
+
+        image_resource:
+          type: registry-image
+          source:
+            repository: vito/oci-build-task
+
+        params:
+          CONTEXT: ci/container
+          DOCKERFILE: ci/container/{{ testenv.name }}/Dockerfile
+          TAG: latest
+
+        inputs:
+        - name: ci
+
+        outputs:
+        - name: image
+        - name: copycat
+
+        caches:
+        - path: cache
+
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            pwd
+            build
+
+    - put: container-{{ testenv.name }}-base
+      params:
+        image: image/image.tar
+
 {% for backend in testenv.backends %}
   - name: create-oci-{{ testenv.name }}-{{ backend }}
     serial_groups: [constructors]
@@ -98,7 +145,8 @@ jobs:
             repository: vito/oci-build-task
 
         params:
-          CONTEXT: copycat
+          CONTEXT: ci/container
+          DOCKERFILE: ci/container/{{ testenv.name }}/{{ backend }}/Dockerfile
           TAG: latest
 
         inputs:
@@ -109,24 +157,19 @@ jobs:
         - name: copycat
 
         caches:
-        - path: copycat
+        - path: cache
 
         run:
           path: sh
           args:
           - -exc
           - |
-            cp -rfv ci/container/{{ testenv.name }} ./copycat/
-            cp -rfv ci/container/{{ testenv.name }}/{{ backend }}/Dockerfile ./copycat/
-            cp -rfv ci/container/*.sh ./copycat/
             pwd
             build
 
-          dir: copycat
-
     - put: container-{{ testenv.name }}-{{ backend }}
       params:
-        image: copycat/image/image.tar
+        image: image/image.tar
 
 {%- endfor %}
 {%- endfor %}

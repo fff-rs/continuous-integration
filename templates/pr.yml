@@ -4,14 +4,13 @@
     public: true
     serial: true
     plan:
-    - in_parallel:
-      - get: pr-juice
-        trigger: true
-        version: every
+    - get: pr-juice
+      trigger: true
+      version: every
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
-      - get: container-{{ testenv.name }}-{{ backend }}
-        trigger: true
+    - get: container-{{ testenv.name }}-{{ backend }}
+      trigger: true
 {% endfor %}
 {%- endfor %}
 
