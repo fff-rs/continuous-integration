@@ -130,6 +130,10 @@ jobs:
     plan:
     - get: ci
       resource: git-ci
+
+    - get: base
+      resource: container-{{ testenv.name }}-base
+      passed: [create-oci-{{ testenv.name }}-base]
       trigger: true
 
     - task: composition
