@@ -349,7 +349,7 @@ fn run() -> Result<()> {
         Ok(())
     }
 
-    dump(&juice, "juice-containers.yml")?;
+    dump(&juice, "juice.yml")?;
     dump(&containers, "juice-containers.yml")?;
     dump(&crashtest, "juice-crashtest.yml")?;
     Ok(())
