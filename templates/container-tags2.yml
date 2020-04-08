@@ -1,10 +1,10 @@
 {% let name = backend.name.as_str() %}
 {%- match name %}
 {%- when "cuda" %}
-      tags: [framework:cuda]
+      #tags: [framework:cuda]
 {%- when "opencl" %}
-      tags: [framework:opencl]
+      #tags: [framework:opencl]
 {%- when "default" %}
-      tags: [framework:opencl,framework:cuda]
+      #tags: [framework:opencl,framework:cuda]
 {%- else -%}
 {%- endmatch %}
