@@ -1,5 +1,5 @@
 FROM fedora:latest
-MAINTAINER Bernhard Schuster "bernhard@spearow.io"
+LABEL maintainer="Bernhard Schuster <bernhard@spearow.io>""
 
 RUN dnf update -y && \
 	dnf install -y \
