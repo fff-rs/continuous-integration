@@ -13,11 +13,11 @@
 {%- else -%}
 {%- if backend.name == "default" %}
                 cargo build --tests
-                cargo test
+                cargo test -- --nocapture
 {%- else if backend.name == "native" %}
-                cargo test --no-default-features --features=native
+                cargo test --no-default-features --features=native -- --nocapture
 {%- else %}
                 cargo build --tests --no-default-features --features=native,{{ backend.name }}
-                cargo test --no-default-features --features=native,{{ backend.name }}
+                cargo test --no-default-features --features=native,{{ backend.name }} -- --nocapture
 {%- endif %}
 {%- endif -%}

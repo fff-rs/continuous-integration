@@ -40,7 +40,7 @@
               args:
               - -exc
               - |
-{% include "cargo-config.yml" -%}
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
               dir: pr-juice/coaster
           on_failure:
@@ -65,7 +65,7 @@
               args:
               - -exc
               - |
-{% include "cargo-config.yml" -%}
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
               dir: pr-juice/coaster-blas
           on_failure:
@@ -91,7 +91,7 @@
               args:
               - -exc
               - |
-{% include "cargo-config.yml" -%}
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
               dir: pr-juice/coaster-nn
           on_failure:
@@ -116,7 +116,7 @@
               args:
               - -exc
               - |
-{% include "cargo-config.yml" -%}
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
               dir: pr-juice/greenglas
           on_failure:
@@ -140,7 +140,7 @@
               args:
               - -exc
               - |
-{% include "cargo-config.yml" -%}
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
               dir: pr-juice/juice
           on_failure:

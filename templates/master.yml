@@ -34,7 +34,7 @@
               args:
               - -exc
               - |
-{% include "cargo-config.yml" -%}
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
               dir: juice/coaster
 
@@ -53,7 +53,7 @@
               args:
               - -exc
               - |
-{% include "cargo-config.yml" -%}
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
               dir: juice/coaster-blas
 
@@ -72,7 +72,7 @@
               args:
               - -exc
               - |
-{% include "cargo-config.yml" -%}
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
               dir: juice/coaster-nn
 
@@ -90,7 +90,7 @@
               args:
               - -exc
               - |
-{% include "cargo-config.yml" -%}
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
               dir: juice/greenglas
 
@@ -108,7 +108,7 @@
               args:
               - -exc
               - |
-{% include "cargo-config.yml" -%}
+{% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
               dir: juice/juice
 
