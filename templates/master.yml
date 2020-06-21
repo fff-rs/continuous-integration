@@ -127,8 +127,8 @@
               - -exc
               - |
                 prepare
-                cargo b
-                cargo t
+                cargo build
+                cargo test
               dir: juice/rust-blas
 {%- when "cuda" %}
         - task: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
@@ -138,20 +138,23 @@
             platform: linux
             inputs:
             - name: juice
+            caches:
+            - path: cargo_home
             run:
               path: sh
               args:
               - -exc
               - |
-
+                export CARGO_HOME=$(pwd)/../../cargo_home
+                mkdir -p ${CARGO_HOME}
                 prepare
                 cd cudnn-sys
                 cargo build
-                cargo build --tests
+                cargo test -- --nocapture
                 cd -
                 cd cudnn
                 cargo build
-                cargo build --tests
+                cargo test -- --nocapture
               dir: juice/rcudnn
 
         - task: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
@@ -161,6 +164,8 @@
             platform: linux
             inputs:
             - name: juice
+            caches:
+            - path: cargo_home
             run:
               path: sh
               args:
@@ -171,11 +176,11 @@
                 prepare
                 cd cublas-sys
                 cargo build
-                cargo build --tests
+                cargo test -- --nocapture
                 cd -
                 cd cublas
                 cargo build
-                cargo build --tests
+                cargo test -- --nocapture
               dir: juice/rcublas
 {% else -%}
       # no special treament for {{ backend.name }}
