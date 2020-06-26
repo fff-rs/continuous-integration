@@ -18,7 +18,70 @@
       resource: pr-juice
       params:
         path: pr-juice
+        context: greenlit
         status: pending
+# way too slow, see https://github.com/telia-oss/github-pr-resource/issues/214 for details
+# {%- for testenv in testenvs %}
+# {%- for backend in testenv.backends %}
+#     - put: pr-juice-stat
+#       resource: pr-juice
+#       params:
+#         path: pr-juice
+#         context: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+#         status: pending
+
+#     - put: pr-juice-stat
+#       resource: pr-juice
+#       params:
+#         path: pr-juice
+#         context: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+#         status: pending
+
+#     - put: pr-juice-stat
+#       resource: pr-juice
+#       params:
+#         path: pr-juice
+#         context: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+#         status: pending
+
+#     - put: pr-juice-stat
+#       resource: pr-juice
+#       params:
+#         path: pr-juice
+#         context: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+#         status: pending
+
+#     - put: pr-juice-stat
+#       resource: pr-juice
+#       params:
+#         path: pr-juice
+#         context: examples-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+#         status: pending
+
+#     - put: pr-juice-stat
+#       resource: pr-juice
+#       params:
+#         path: pr-juice
+#         context: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+#         status: pending
+
+#     - put: pr-juice-stat
+#       resource: pr-juice
+#       params:
+#         path: pr-juice
+#         context: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+#         status: pending
+
+#     - put: pr-juice-stat
+#       resource: pr-juice
+#       params:
+#         path: pr-juice
+#         context: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+#         status: pending
+
+# {% endfor %}
+# {%- endfor %}
+
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
     - in_parallel:
@@ -48,7 +111,15 @@
             resource: pr-juice
             params:
               path: pr-juice
+              context: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: pr-juice
+            params:
+              path: pr-juice
+              context: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: success
 
         - task: pr-coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
@@ -73,8 +144,15 @@
             resource: pr-juice
             params:
               path: pr-juice
+              context: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: failure
-              
+          on_success:
+            put: pr-juice-stat
+            resource: pr-juice
+            params:
+              path: pr-juice
+              context: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: success
 
         - task: pr-coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
@@ -99,7 +177,15 @@
             resource: pr-juice
             params:
               path: pr-juice
+              context: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: pr-juice
+            params:
+              path: pr-juice
+              context: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: success
 
         - task: pr-greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
@@ -124,7 +210,15 @@
             resource: pr-juice
             params:
               path: pr-juice
+              context: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: pr-juice
+            params:
+              path: pr-juice
+              context: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: success
 
         - task: pr-juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
@@ -148,7 +242,47 @@
             resource: pr-juice
             params:
               path: pr-juice
+              context: juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: pr-juice
+            params:
+              path: pr-juice
+              context: juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: success
+
+        - task: pr-examples-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+          config:
+            platform: linux
+            inputs:
+            - name: pr-juice
+            caches:
+            - path: cargo_home
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
+{% include "cargo-config.yml" %}
+{% include "cargo.yml" %}
+              dir: pr-juice/juice-examples
+          on_failure:
+            put: pr-juice-stat
+            resource: pr-juice
+            params:
+              path: pr-juice
+              context: examples-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: pr-juice
+            params:
+              path: pr-juice
+              context: examples-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: success
 
 {%- match backend.name.as_ref() %}
 {%- when "native" %}
@@ -173,7 +307,15 @@
             resource: pr-juice
             params:
               path: pr-juice
+              context: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: pr-juice
+            params:
+              path: pr-juice
+              context: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: success
 
 {%- when "cuda" %}
         - task: pr-rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
@@ -201,8 +343,14 @@
             put: pr-juice-stat
             resource: pr-juice
             params:
-              path: pr-juice
+              path: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: pr-juice
+            params:
+              path: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: success
 
         - task: pr-rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
@@ -230,7 +378,15 @@
             resource: pr-juice
             params:
               path: pr-juice
+              context: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: pr-juice
+            params:
+              path: pr-juice
+              context: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: success
 {% else -%}
       # no special treament for {{ backend.name }}
 {% endmatch %}
@@ -242,4 +398,5 @@
           resource: pr-juice
           params:
             path: pr-juice
+            context: greenlit
             status: success
