@@ -4,3 +4,4 @@ cred*
 /target/
 **/*.rs.bk
 *~
+/*.yml
