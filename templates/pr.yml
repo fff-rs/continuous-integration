@@ -442,6 +442,7 @@
               - -exc
               - |
                 prepare
+                export RUST_LOG=rcublas=trace,cudnn=trace
                 cd cudnn-sys
                 cargo b
                 cargo t

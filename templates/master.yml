@@ -166,6 +166,7 @@
                 export CARGO_HOME=$(pwd)/../../cargo_home
                 mkdir -p ${CARGO_HOME}
                 prepare
+                export RUST_LOG=rcudnn=trace,rcudnn-sys=trace
                 cd cudnn-sys
                 cargo build
                 cargo test -- --nocapture
@@ -192,6 +193,7 @@
                 export CARGO_HOME=$(pwd)/../../cargo_home
                 mkdir -p ${CARGO_HOME}
                 prepare
+                export RUST_LOG=rcublas=trace,rcublas-sys=trace
                 cd cublas-sys
                 cargo build
                 cargo test -- --nocapture
