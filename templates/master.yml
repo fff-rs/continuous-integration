@@ -112,7 +112,7 @@
 {% include "cargo.yml" %}
               dir: juice/juice
 
-        - task: examples-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+        - task: example-mackeyglass-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
           config:
@@ -127,8 +127,34 @@
               - -exc
               - |
 {% include "cargo-config.yml" %}
-{% include "cargo.yml" %}
+                cd mackey-glass-rnn-regression
+                prepare
+{% include "cargo-build.yml" %}
               dir: juice/juice-examples
+
+{%- match backend.name.as_ref() -%}
+{%- when "cuda" %}
+        - task: example-mnist-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+          config:
+            platform: linux
+            inputs:
+            - name: juice
+            caches:
+            - path: cargo_home
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
+{% include "cargo-config.yml" %}
+                cd mnist-image-multiclass-classification
+                prepare
+{% include "cargo-build.yml" %}
+              dir: juice/juice-examples
+{%- else %}
+{%- endmatch %}
 
 {%- match backend.name.as_ref() -%}
 {%- when "native" %}

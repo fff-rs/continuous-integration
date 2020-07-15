@@ -1,5 +1,5 @@
                 # two levels up is the cache
-                export CARGO_HOME=$(pwd)/../../cargo_home
+                export CARGO_HOME=$(realpath "$(pwd)/../../cargo_home")
                 echo "Sweet (cached) home is \"$CARGO_HOME\""
-                export RUST_LOG=coaster=warn,rcublas=debug,rcublas-sys=debug
+                # export RUST_LOG=coaster=warn,rcublas=debug,rcublas-sys=debug
                 mkdir -p $CARGO_HOME

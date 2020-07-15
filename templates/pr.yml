@@ -309,7 +309,7 @@
               context: juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: success
 
-        - task: pr-examples-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+        - task: pr-examples-mackeyglass-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
 {% include "tags.yml" %}
           config:
@@ -324,7 +324,9 @@
               - -exc
               - |
 {% include "cargo-config.yml" %}
-{% include "cargo.yml" %}
+                cd mackey-glass-rnn-regression
+                prepare
+{% include "cargo-build.yml" %}
               dir: pr-juice/juice-examples
           on_failure:
             put: pr-juice-stat
@@ -334,7 +336,7 @@
             params:
               path: pr-juice
               base_context: sirmergealot
-              context: examples-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: example-mackeyglass-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: failure
           on_success:
             put: pr-juice-stat
@@ -344,8 +346,52 @@
             params:
               path: pr-juice
               base_context: sirmergealot
-              context: examples-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: example-mackeyglass-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
               status: success
+{%- match backend.name.as_ref() %}
+{%- when "cuda" %}
+        - task: pr-example-mnist-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+          image: container-{{ testenv.name }}-{{ backend }}
+{% include "tags.yml" %}
+          config:
+            platform: linux
+            inputs:
+            - name: pr-juice
+            caches:
+            - path: cargo_home
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
+{% include "cargo-config.yml" %}
+                cd mnist-image-multiclass-classification
+                prepare
+{% include "cargo-build.yml" %}
+              dir: pr-juice/juice-examples
+          on_failure:
+            put: pr-juice-stat
+            resource: pr-juice
+            get_params:
+              skip_download: true
+            params:
+              path: pr-juice
+              base_context: sirmergealot
+              context: example-mnist-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: pr-juice
+            get_params:
+              skip_download: true
+            params:
+              path: pr-juice
+              base_context: sirmergealot
+              context: example-mnist-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              status: success
+{%- else %}
+{%- endmatch %}
+
 
 {%- match backend.name.as_ref() %}
 {%- when "native" %}
