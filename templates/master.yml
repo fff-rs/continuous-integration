@@ -164,7 +164,7 @@
           config:
             platform: linux
             inputs:
-            - name: rust-blas
+            - name: juice
             run:
               path: sh
               args:
