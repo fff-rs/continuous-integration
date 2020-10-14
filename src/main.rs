@@ -1,39 +1,20 @@
-use std::fs;
-use std::fs::OpenOptions;
-use std::io::prelude::*;
-
-use std::path::Path;
-use std::path::PathBuf;
-
-use std::env;
-use std::fmt;
-
-#[macro_use]
-extern crate error_chain;
+use anyhow::anyhow;
 
 #[macro_use]
 extern crate askama;
 
 use askama::Template;
 
-#[macro_use]
-extern crate lazy_static;
-extern crate regex;
+use fs::OpenOptions;
+use fs_err as fs;
+use std::env;
+use std::io::prelude::*;
+use std::path::{Path, PathBuf};
 
-use regex::Regex;
+mod types;
+use self::types::*;
 
-
-use std::cmp::Ordering;
-
-
-error_chain! {
-    foreign_links {
-        Fmt(::std::fmt::Error);
-        Io(::std::io::Error) #[cfg(unix)];
-
-    }
-}
-
+// /// Legacy approach to obtain multiple `pkg.sh` variants depending on the backend.
 // fn get_pkg_helper_regex(text: &String) -> Option<String> {
 //     lazy_static! {
 //         static ref RE: Regex = Regex::new(r"^pkg\.sh\.(.*)$").unwrap();
@@ -44,6 +25,8 @@ error_chain! {
 //     return None;
 // }
 
+/// Checks if there is a `BUILD_ONLY` file in the directory to determine
+/// if this backend should only be built or built and run (default).
 fn get_backend_execute_type(directory: &Path) -> Result<BackendExecute> {
     let entries = fs::read_dir(directory)?;
     for entry in entries {
@@ -59,16 +42,19 @@ fn get_backend_execute_type(directory: &Path) -> Result<BackendExecute> {
     Ok(BackendExecute::Test)
 }
 
+/// Read all sub dirs from a base dir.
+///
+/// Each dir that matches a backend is treated as such.
 fn get_backends(directory: &Path) -> Result<Vec<Backend>> {
-    Ok(
-        fs::read_dir(directory)?
-            .filter_map(|entry| entry.ok())
-            .map(|entry| {
-                let pathbuf: PathBuf = entry.path().into();
-                pathbuf
-            })
-            .filter(|entry| entry.is_dir())
-            .filter_map(|entry| if let Some(name) = entry.file_name() {
+    Ok(fs::read_dir(directory)?
+        .filter_map(|entry| entry.ok())
+        .map(|entry| {
+            let pathbuf: PathBuf = entry.path().into();
+            pathbuf
+        })
+        .filter(|entry| entry.is_dir())
+        .filter_map(|entry| {
+            if let Some(name) = entry.file_name() {
                 let name = name.to_str().expect("invalid unicode");
                 get_backend_execute_type(&entry)
                     .ok()
@@ -76,229 +62,23 @@ fn get_backends(directory: &Path) -> Result<Vec<Backend>> {
                     .or(None)
             } else {
                 None
-            })
-            .collect(),
-    )
-}
-
-
-
-#[derive(Debug)]
-enum TestEnvType {
-    Darwin(String),
-    Linux(String),
-    Windows(String),
-    Unknown,
-}
-
-
-impl TestEnvType {
-    pub fn as_str(&self) -> String {
-        let y = String::from("Unknown");
-        match *self {
-            TestEnvType::Linux(ref x) => x,
-            TestEnvType::Windows(ref x) => x,
-            TestEnvType::Darwin(ref x) => x,
-            _ => &y,
-        }.clone()
-    }
-}
-
-impl Ord for TestEnvType {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match *self {
-            TestEnvType::Linux(ref z) => {
-                match *other {
-                    _ => Ordering::Greater,
-                    TestEnvType::Linux(ref x) => z.cmp(x),
-                    TestEnvType::Darwin(_) => Ordering::Less,
-                    TestEnvType::Windows(_) => Ordering::Less,
-                }
             }
-            TestEnvType::Darwin(ref z) => {
-                match *other {
-                    _ => Ordering::Equal,
-                    TestEnvType::Linux(_) => Ordering::Greater,
-                    TestEnvType::Darwin(ref x) => z.cmp(x),
-                    TestEnvType::Windows(_) => Ordering::Less,
-                }
-            }
-            TestEnvType::Windows(ref z) => {
-                match *other {
-                    _ => Ordering::Less,
-                    TestEnvType::Linux(_) => Ordering::Greater,
-                    TestEnvType::Darwin(_) => Ordering::Greater,
-                    TestEnvType::Windows(ref x) => z.cmp(x),
-                }
-            }
-            _ => {
-                match *other {
-                    _ => Ordering::Equal,
-                    TestEnvType::Linux(_) => Ordering::Less,
-                    TestEnvType::Windows(_) => Ordering::Less,
-                    TestEnvType::Darwin(_) => Ordering::Less,
-                }
-            }
-        }
-    }
+        })
+        .collect())
 }
-
-impl PartialOrd for TestEnvType {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl PartialEq for TestEnvType {
-    fn eq(&self, other: &Self) -> bool {
-        self.cmp(other) == Ordering::Equal
-    }
-}
-
-impl Eq for TestEnvType {}
-
-impl fmt::Display for TestEnvType {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Write strictly the first element into the supplied output
-        // stream: `f`. Returns `fmt::Result` which indicates whether the
-        // operation succeeded or failed. Note that `write!` uses syntax which
-        // is very similar to `println!`.
-        write!(f, "{}", self.as_str())
-    }
-}
-
-
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-enum BackendExecute {
-    Build,
-    Test,
-}
-
-impl fmt::Display for BackendExecute {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Write strictly the first element into the supplied output
-        // stream: `f`. Returns `fmt::Result` which indicates whether the
-        // operation succeeded or failed. Note that `write!` uses syntax which
-        // is very similar to `println!`.
-        let echo = match *self {
-            BackendExecute::Build => "build",
-            BackendExecute::Test => "test",
-        };
-        write!(f, "{}", echo)
-    }
-}
-
-
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-struct Backend {
-    name: String,
-    execute: BackendExecute,
-}
-
-impl fmt::Display for Backend {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", &self.name)
-    }
-}
-
-impl<T> From<(T, BackendExecute)> for Backend
-where
-    T: Into<String>,
-{
-    fn from(tuple: (T, BackendExecute)) -> Self {
-        Self {
-            name: tuple.0.into(),
-            execute: tuple.1,
-        }
-    }
-}
-
-#[derive(Debug)]
-struct TestEnv {
-    name: TestEnvType,
-    backends: Vec<Backend>,
-}
-
-
-
-impl Ord for TestEnv {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.name.cmp(&other.name)
-    }
-}
-
-impl PartialOrd for TestEnv {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.name.cmp(&other.name))
-    }
-}
-
-impl PartialEq for TestEnv {
-    fn eq(&self, other: &Self) -> bool {
-        self.name.cmp(&other.name) == Ordering::Equal
-    }
-}
-
-
-impl Eq for TestEnv {}
-
-impl TestEnv {
-    /// TODO currently only Linux envs are supported by this idiotic implementation
-    pub fn new(name: String, backends: Vec<Backend>) -> Self {
-        Self {
-            name: TestEnvType::Linux(name),
-            backends: backends,
-        }
-    }
-}
-
-impl Default for TestEnv {
-    fn default() -> Self {
-        Self {
-            name: TestEnvType::Unknown,
-            backends: vec![],
-        }
-    }
-}
-
-
-#[derive(Template)]
-#[template(path = "juice.yml", escape = "none" )]
-struct JuiceYml<'a> {
-    passive: bool, // false
-    testenvs: &'a Vec<TestEnv>,
-}
-
-#[derive(Template)]
-#[template(path = "juice-containers.yml", escape = "none")]
-struct ContainerYml<'a> {
-    passive: bool, // false
-    testenvs: &'a Vec<TestEnv>,
-}
-
-
-#[derive(Template)]
-#[template(path = "juice-crashtest.yml", escape = "none")]
-struct CrashTestYml<'a> {
-    // only external events trigger this
-    passive: bool, // true
-    testenvs: &'a Vec<TestEnv>,
-}
-
-
 
 fn run() -> Result<()> {
-    let cwd: PathBuf = env::current_dir().unwrap_or(PathBuf::from("HOME").join("spearow").join(
-        "continuous-integration",
-    ));
+    let cwd: PathBuf = env::current_dir().unwrap_or(
+        PathBuf::from("HOME")
+            .join("spearow")
+            .join("continuous-integration"),
+    );
 
     let base: PathBuf = env::var("JUICE_CONTAINERS")
         .unwrap_or(cwd.join("container").to_string_lossy().to_string())
         .into();
 
     println!("Using {} as base container dir", base.display());
-
-
 
     let mut testenvs: Vec<TestEnv> = fs::read_dir(base)?
         .filter_map(|entry| entry.ok())
@@ -307,21 +87,22 @@ fn run() -> Result<()> {
             let pathbuf: PathBuf = entry.path().into();
             pathbuf
         })
-        .filter_map(|entry| if let Some(filename) = entry.file_name() {
-
-            if let Ok(mut backends) = get_backends(&entry) {
-                if backends.len() > 0 {
-                    backends.sort();
-                    let filename = String::from(filename.to_string_lossy());
-                    Some(TestEnv::new(filename, backends))
+        .filter_map(|entry| {
+            if let Some(filename) = entry.file_name() {
+                if let Ok(mut backends) = get_backends(&entry) {
+                    if backends.len() > 0 {
+                        backends.sort();
+                        let filename = String::from(filename.to_string_lossy());
+                        Some(TestEnv::new(filename, backends))
+                    } else {
+                        None
+                    }
                 } else {
                     None
                 }
             } else {
                 None
             }
-        } else {
-            None
         })
         .collect();
 
@@ -331,21 +112,29 @@ fn run() -> Result<()> {
         println!("test envs: {:?}", testenv);
     }
 
-    let juice = JuiceYml { testenvs: &testenvs, passive: false };
-    let containers = ContainerYml { testenvs: &testenvs, passive: false };
-    let crashtest = CrashTestYml { testenvs: &testenvs, passive: true };
+    let juice = JuiceYml {
+        testenvs: &testenvs,
+        passive: false,
+    };
+    let containers = ContainerYml {
+        testenvs: &testenvs,
+        passive: false,
+    };
+    let crashtest = CrashTestYml {
+        testenvs: &testenvs,
+        passive: true,
+    };
 
-
-    fn dump<T : askama::Template, P: AsRef<Path>>(template : &T, dest: P) -> Result<()> {
+    fn dump<T: askama::Template, P: AsRef<Path>>(template: &T, dest: P) -> Result<()> {
         let mut file = OpenOptions::new()
             .write(true)
             .create(true)
             .truncate(true)
             .open(dest.as_ref())?;
-        let content = template.render().map_err(|e| format!("Failed to render template {:?}:", e))?;
-        file.write_all(
-            content.as_str().as_bytes(),
-        )?;
+        let content = template
+            .render()
+            .map_err(|e| anyhow!("Failed to render template").context(e))?;
+        file.write_all(content.as_str().as_bytes())?;
         Ok(())
     }
 
@@ -355,16 +144,12 @@ fn run() -> Result<()> {
     Ok(())
 }
 
-
 fn main() {
-    if let Err(ref e) = run() {
-        use std::io::Write;
-        use error_chain::ChainedError;
-
-        let stderr = &mut ::std::io::stderr();
-        let errmsg = "Error writing to stderr";
-
-        writeln!(stderr, "{}", e.display_chain()).expect(errmsg);
-        ::std::process::exit(1);
+    if let Err(err) = run() {
+        eprintln!("ERROR: {}", err);
+        err.chain()
+            .skip(1)
+            .for_each(|cause| eprintln!("because: {}", cause));
+        std::process::exit(1);
     }
 }

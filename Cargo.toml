@@ -1,14 +1,16 @@
 [package]
 name = "concourse-matrix"
-version = "0.1.0"
+version = "0.1.2"
 authors = ["Bernhard Schuster <bernhard@ahoi.io>"]
 edition = "2018"
 
 [dependencies]
-askama = "0.8"
+dirs = "3"
+fs-err = "2"
+askama = "0.10"
 regex = "1"
 lazy_static = "1"
-error-chain = "^0.11"
+anyhow = "1"
 
 [build-dependencies]
-askama = "0.8"
+askama = "0.10"
