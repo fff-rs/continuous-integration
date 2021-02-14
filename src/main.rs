@@ -1,8 +1,5 @@
 use anyhow::anyhow;
 
-#[macro_use]
-extern crate askama;
-
 use askama::Template;
 
 use fs::OpenOptions;
