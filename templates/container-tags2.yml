@@ -2,9 +2,11 @@
 {%- match name %}
 {%- when "cuda" %}
       tags: [framework:cuda]
+      # privileged: true # FIXME this must be replaced with some proper selinux rules
 {%- when "opencl" %}
       #tags: [framework:opencl]
 {%- when "default" %}
       tags: [framework:opencl,framework:cuda]
-{%- else -%}
+      # privileged: true # FIXME this must be replaced with some proper selinux rules
+{%- else %}
 {%- endmatch %}

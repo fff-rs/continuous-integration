@@ -138,6 +138,7 @@ fn run() -> Result<()> {
     dump(&juice, "juice.yml")?;
     dump(&containers, "juice-containers.yml")?;
     dump(&crashtest, "juice-crashtest.yml")?;
+    println!("=== YAML Generation Complete ===");
     Ok(())
 }
 
