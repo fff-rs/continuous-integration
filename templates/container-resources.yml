@@ -2,7 +2,7 @@
 {% for backend in testenv.backends %}
 - name: container-{{ testenv.name }}-{{ backend }}
   type: registry-image
-{% include "container-tags.yml" %}
+{% include "tags2.yml" %}
   source:
     repository: quay.io/spearow/machine-learning-container-{{ testenv.name }}-{{ backend }}
     username: ((quay-spearow-username))

@@ -84,22 +84,21 @@ fn run() -> Result<()> {
             let pathbuf: PathBuf = entry.path().into();
             pathbuf
         })
+        .filter(|entry| entry.file_name().is_some())
         .filter_map(|entry| {
             if let Some(filename) = entry.file_name() {
-                if let Ok(mut backends) = get_backends(&entry) {
-                    if backends.len() > 0 {
-                        backends.sort();
-                        let filename = String::from(filename.to_string_lossy());
-                        Some(TestEnv::new(filename, backends))
-                    } else {
-                        None
-                    }
-                } else {
-                    None
+                if let Ok(bb) = get_backends(&entry) {
+                    return Some((filename.to_owned(), bb));
                 }
-            } else {
-                None
             }
+            None
+        })
+        .filter(|(_, backends)| !backends.is_empty())
+        .map(|(filename, mut backends)| {
+            backends.sort();
+            let filename = String::from(filename.to_string_lossy());
+            TestEnv::new(filename, backends)
+            // TestEnv::new(filename, vec![Backend::new("cuda", BackendExecute::Test)])
         })
         .collect();
 

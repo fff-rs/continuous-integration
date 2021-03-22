@@ -9,6 +9,7 @@
 {%- for backend in testenv.backends %}
     - get: container-{{ testenv.name }}-{{ backend }}
       trigger: {{ !passive }}
+{% include "tags8.yml" %}
 {% endfor %}
 {%- endfor %}
 
@@ -21,7 +22,7 @@
         steps:
         - task: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
+{% include "tagsA.yml" %}
           config:
             platform: linux
             inputs:
@@ -40,7 +41,7 @@
 
         - task: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
+{% include "tagsA.yml" %}
           config:
             platform: linux
             inputs:
@@ -59,7 +60,7 @@
 
         - task: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
+{% include "tagsA.yml" %}
           config:
             platform: linux
             inputs:
@@ -78,7 +79,7 @@
 
         - task: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
+{% include "tagsA.yml" %}
           config:
             platform: linux
             inputs:
@@ -96,7 +97,7 @@
 
         - task: juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
+{% include "tagsA.yml" %}
           config:
             platform: linux
             inputs:
@@ -114,7 +115,7 @@
 
         - task: example-mackeyglass-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
+{% include "tagsA.yml" %}
           config:
             platform: linux
             inputs:
@@ -136,7 +137,7 @@
 {%- when "cuda" %}
         - task: example-mnist-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
+{% include "tagsA.yml" %}
           config:
             platform: linux
             inputs:
@@ -160,7 +161,7 @@
 {%- when "native" %}
         - task: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
-      {% include "tags.yml" %}
+{% include "tagsA.yml" %}
           config:
             platform: linux
             inputs:
@@ -177,7 +178,7 @@
 {%- when "cuda" %}
         - task: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
+{% include "tagsA.yml" %}
           config:
             platform: linux
             inputs:
@@ -204,7 +205,7 @@
 
         - task: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
           image: container-{{ testenv.name }}-{{ backend }}
-{% include "tags.yml" %}
+{% include "tagsA.yml" %}
           config:
             platform: linux
             inputs:

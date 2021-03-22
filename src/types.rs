@@ -130,6 +130,15 @@ where
     }
 }
 
+impl Backend {
+    pub fn new(s: &'static str, execute: BackendExecute) -> Self {
+        Self {
+            name: s.to_owned(),
+            execute,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct TestEnv {
     pub(crate) name: TestEnvType,
@@ -175,14 +184,14 @@ impl Default for TestEnv {
     }
 }
 
-#[derive(Template)]
+#[derive(askama::Template)]
 #[template(path = "juice.yml", escape = "none")]
 pub struct JuiceYml<'a> {
     pub(crate) passive: bool, // false
     pub(crate) testenvs: &'a Vec<TestEnv>,
 }
 
-#[derive(Template)]
+#[derive(askama::Template)]
 #[template(path = "juice-containers.yml", escape = "none")]
 pub struct ContainerYml<'a> {
     #[allow(dead_code)]
@@ -190,7 +199,7 @@ pub struct ContainerYml<'a> {
     pub(crate) testenvs: &'a Vec<TestEnv>,
 }
 
-#[derive(Template)]
+#[derive(askama::Template)]
 #[template(path = "juice-crashtest.yml", escape = "none")]
 pub struct CrashTestYml<'a> {
     // only external events trigger this
