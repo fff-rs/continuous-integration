@@ -4,7 +4,7 @@ use std::cmp::Ordering;
 use std::fmt;
 
 pub type Result<T> = std::result::Result<T, anyhow::Error>;
-
+use std::ops::Add;
 #[derive(Debug, Clone)]
 pub enum TestEnvType {
     #[allow(dead_code)]
@@ -19,15 +19,13 @@ pub enum TestEnvType {
 }
 
 impl TestEnvType {
-    pub fn as_str(&self) -> String {
-        let y = String::from("Unknown");
+    pub fn as_str(&self) -> &str {
         match *self {
-            TestEnvType::Linux(ref x) => x,
-            TestEnvType::Windows(ref x) => x,
-            TestEnvType::Darwin(ref x) => x,
-            _ => &y,
+            TestEnvType::Linux(ref x) => x.as_str(),
+            TestEnvType::Windows(ref x) => x.as_str(),
+            TestEnvType::Darwin(ref x) => x.as_str(),
+            _ => "Unknown",
         }
-        .clone()
     }
 }
 
@@ -78,11 +76,7 @@ impl Eq for TestEnvType {}
 
 impl fmt::Display for TestEnvType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Write strictly the first element into the supplied output
-        // stream: `f`. Returns `fmt::Result` which indicates whether the
-        // operation succeeded or failed. Note that `write!` uses syntax which
-        // is very similar to `println!`.
-        write!(f, "{}", self.as_str())
+        f.write_str(self.as_str())
     }
 }
 
@@ -114,7 +108,7 @@ pub struct Backend {
 
 impl fmt::Display for Backend {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", &self.name)
+        write!(f, "{}", self.as_str())
     }
 }
 
@@ -136,6 +130,10 @@ impl Backend {
             name: s.to_owned(),
             execute,
         }
+    }
+
+    pub fn as_str(&self) -> &str {
+        self.name.as_str()
     }
 }
 
@@ -173,6 +171,17 @@ impl TestEnv {
             backends,
         }
     }
+
+    pub fn as_str(&self) -> &str {
+        self.name.as_str()
+    }
+}
+
+
+impl fmt::Display for TestEnv {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str(self.as_str())
+    }
 }
 
 impl Default for TestEnv {
@@ -185,7 +194,7 @@ impl Default for TestEnv {
 }
 
 #[derive(askama::Template)]
-#[template(path = "juice.yml", escape = "none")]
+#[template(path = "juice.yml", escape = "none", print = "all")]
 pub struct JuiceYml<'a> {
     pub(crate) passive: bool, // false
     pub(crate) testenvs: &'a Vec<TestEnv>,

@@ -1,4 +1,4 @@
-{%- match backend.name.as_ref() %}
+{%- match backend.as_str() %}
 {%- when "native" %}
         limit: 4
 {%- when "cuda" %}

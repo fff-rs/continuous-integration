@@ -3,19 +3,19 @@
                 export RUST_LOG=juice=debug
                 export RUST_BACKTRACE=1
 {%- if backend.execute == BackendExecute::Build -%}
-{%- if backend.name == "default" %}
+{%- if backend.as_str() == "default" %}
                 cargo build
-{%- else if backend.name == "native" %}
+{%- else if backend.as_str() == "native" %}
                 cargo build --no-default-features --features=native
 {%- else %}
-                cargo build --no-default-features --features=native,{{ backend.name }}
+                cargo build --no-default-features --features=native,{{ backend }}
 {%- endif %}
 {%- else -%}
-{%- if backend.name == "default" %}
+{%- if backend.as_str() == "default" %}
                 cargo test -- --nocapture
-{%- else if backend.name == "native" %}
+{%- else if backend.as_str() == "native" %}
                 cargo test --no-default-features --features=native -- --nocapture
 {%- else %}
-                cargo test --no-default-features --features=native,{{ backend.name }} -- --nocapture
+                cargo test --no-default-features --features=native,{{ backend }} -- --nocapture
 {%- endif %}
 {%- endif -%}

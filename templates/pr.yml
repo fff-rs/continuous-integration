@@ -1,132 +1,52 @@
 ####### PR #### JUICE ####
-  - name: pr-test-juice
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+
+{%- let ext = testenv.to_string().add("-").add(backend.as_str()) %}
+{%- let pr_juice = "pr-juice" %}
+
+  - name: pr-test-juice-{{ ext }}
     build_logs_to_retain: 4
     public: true
     serial: true
     plan:
-    - get: pr-juice
+    - get: {{ pr_juice }}
       trigger: true
       version: every
-{%- for testenv in testenvs %}
-{%- for backend in testenv.backends %}
-    - get: container-{{ testenv.name }}-{{ backend }}
-{% include "tags8.yml" %}
-      trigger: true
-{% include "tags8.yml" %}
-{% endfor %}
-{%- endfor %}
 
     - put: pr-juice-stat
-      resource: pr-juice
+      resource: {{ pr_juice }}
       get_params:
         skip_download: true
       params:
-        path: pr-juice
+        path: {{ pr_juice }}
         base_context: sirmergealot
-        context: greenlit
+        context: greenlit-{{ ext }}
         status: pending
-# way too slow, see https://github.com/telia-oss/github-pr-resource/issues/214 for details
-# {%- for testenv in testenvs %}
-# {%- for backend in testenv.backends %}
-#     - put: pr-juice-stat
-#       resource: pr-juice
-#       get_params:
-#         skip_download: true
-#       params:
-#         path: pr-juice
-#         base_context: sirmergealot
-#         context: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#         status: pending
 
-#     - put: pr-juice-stat
-#       resource: pr-juice
-#       get_params:
-#         skip_download: true
-#       params:
-#         path: pr-juice
-#         base_context: sirmergealot
-#         context: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#         status: pending
+{%- match backend.as_str() %}
+{%- when "cuda" %}
+{%- when "opencl" %}
+{%- when "default" %}
+{%- else %}
+    - get: container-{{ ext }}
+{% include "tags8.yml" %}
+      trigger: true
+{%- endmatch %}
 
-#     - put: pr-juice-stat
-#       resource: pr-juice
-#       get_params:
-#         skip_download: true
-#       params:
-#         path: pr-juice
-#         base_context: sirmergealot
-#         context: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#         status: pending
-
-#     - put: pr-juice-stat
-#       resource: pr-juice
-#       get_params:
-#         skip_download: true
-#       params:
-#         path: pr-juice
-#         base_context: sirmergealot
-#         context: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#         status: pending
-
-#     - put: pr-juice-stat
-#       resource: pr-juice
-#       get_params:
-#         skip_download: true
-#       params:
-#         path: pr-juice
-#         base_context: sirmergealot
-#         context: examples-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#         status: pending
-
-#     - put: pr-juice-stat
-#       resource: pr-juice
-#       get_params:
-#         skip_download: true
-#       params:
-#         path: pr-juice
-#         base_context: sirmergealot
-#         context: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#         status: pending
-
-#     - put: pr-juice-stat
-#       resource: pr-juice
-#       get_params:
-#         skip_download: true
-#       params:
-#         path: pr-juice
-#         base_context: sirmergealot
-#         context: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#         status: pending
-
-#     - put: pr-juice-stat
-#       resource: pr-juice
-#       get_params:
-#         skip_download: true
-#       params:
-#         path: pr-juice
-#         base_context: sirmergealot
-#         context: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-#         status: pending
-
-# {% endfor %}
-# {%- endfor %}
-
-{%- for testenv in testenvs %}
-{%- for backend in testenv.backends %}
     - in_parallel:
 {% include "parallelism.yml" %}
         fail_fast: false
         steps:
-        - task: pr-coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: pr-coaster-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
-            - name: pr-juice
+            - name: {{ pr_juice }}
             caches:
             - path: cargo_home
-            - path: pr-juice/coaster/target
+            - path: {{ pr_juice }}/coaster/target
             run:
               path: sh
               args:
@@ -134,38 +54,36 @@
               - |
 {% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
-              dir: pr-juice/coaster
+              dir: {{ pr_juice }}/coaster
           on_failure:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: coaster-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: coaster-{{ backend.execute }}-{{ ext }}
               status: success
 
-        - task: pr-coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: pr-coaster-blas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
-            - name: pr-juice
+            - name: {{ pr_juice }}
             caches:
             - path: cargo_home
-            - path: pr-juice/coaster-blas/target
+            - path: {{ pr_juice }}/coaster-blas/target
             run:
               path: sh
               args:
@@ -173,38 +91,36 @@
               - |
 {% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
-              dir: pr-juice/coaster-blas
+              dir: {{ pr_juice }}/coaster-blas
           on_failure:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: coaster-blas-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: coaster-blas-{{ backend.execute }}-{{ ext }}
               status: success
 
-        - task: pr-coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: pr-coaster-nn-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
-            - name: pr-juice
+            - name: {{ pr_juice }}
             caches:
             - path: cargo_home
-            - path: pr-juice/coaster-nn/target
+            - path: {{ pr_juice }}/coaster-nn/target
             run:
               path: sh
               args:
@@ -212,38 +128,36 @@
               - |
 {% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
-              dir: pr-juice/coaster-nn
+              dir: {{ pr_juice }}/coaster-nn
           on_failure:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: coaster-nn-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: coaster-nn-{{ backend.execute }}-{{ ext }}
               status: success
 
-        - task: pr-greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: pr-greenglas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
-            - name: pr-juice
+            - name: {{ pr_juice }}
             caches:
             - path: cargo_home
-            - path: pr-juice/greenglas/target
+            - path: {{ pr_juice }}/greenglas/target
             run:
               path: sh
               args:
@@ -251,35 +165,34 @@
               - |
 {% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
-              dir: pr-juice/greenglas
+              dir: {{ pr_juice }}/greenglas
           on_failure:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: greenglas-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: greenglas-{{ backend.execute }}-{{ ext }}
               status: success
 
-        - task: pr-juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: pr-juice-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
-            - name: pr-juice
+            - name: {{ pr_juice }}
             caches:
             - path: cargo_home
             run:
@@ -289,35 +202,33 @@
               - |
 {% include "cargo-config.yml" %}
 {% include "cargo.yml" %}
-              dir: pr-juice/juice
+              dir: {{ pr_juice }}/juice
           on_failure:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: juice-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: juice-{{ backend.execute }}-{{ ext }}
               status: success
 
-        - task: pr-examples-mackeyglass-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: pr-examples-mackeyglass-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
-            - name: pr-juice
+            - name: {{ pr_juice }}
             caches:
             - path: cargo_home
             run:
@@ -329,36 +240,34 @@
                 cd mackey-glass-rnn-regression
                 prepare
 {% include "cargo-build.yml" %}
-              dir: pr-juice/juice-examples
+              dir: {{ pr_juice }}/juice-examples
           on_failure:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: example-mackeyglass-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: example-mackeyglass-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: example-mackeyglass-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: example-mackeyglass-{{ backend.execute }}-{{ ext }}
               status: success
-{%- match backend.name.as_ref() %}
+{%- match backend.as_str() %}
 {%- when "cuda" %}
-        - task: pr-example-mnist-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: pr-example-mnist-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
-            - name: pr-juice
+            - name: {{ pr_juice }}
             caches:
             - path: cargo_home
             run:
@@ -370,40 +279,37 @@
                 cd mnist-image-multiclass-classification
                 prepare
 {% include "cargo-build.yml" %}
-              dir: pr-juice/juice-examples
+              dir: {{ pr_juice }}/juice-examples
           on_failure:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: example-mnist-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: example-mnist-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: example-mnist-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: example-mnist-{{ backend.execute }}-{{ ext }}
               status: success
 {%- else %}
 {%- endmatch %}
 
-
-{%- match backend.name.as_ref() %}
+{%- match backend.as_str() %}
 {%- when "native" %}
-        - task: pr-rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: pr-rust-blas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
-            - name: pr-juice
+            - name: {{ pr_juice }}
             run:
               path: sh
               args:
@@ -412,36 +318,34 @@
                 prepare
                 cargo b
                 cargo t
-              dir: pr-juice/rust-blas
+              dir: {{ pr_juice }}/rust-blas
           on_failure:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: rust-blas-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: rust-blas-{{ backend.execute }}-{{ ext }}
               status: success
 
 {%- when "cuda" %}
-        - task: pr-rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: pr-rcublas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
-            - name: pr-juice
+            - name: {{ pr_juice }}
             run:
               path: sh
               args:
@@ -455,35 +359,33 @@
                 cd cublas
                 cargo b
                 cargo t
-              dir: pr-juice/rcublas
+              dir: {{ pr_juice }}/rcublas
           on_failure:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: rcublas-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: rcudnn-{{ backend.execute }}-{{ ext }}
               status: success
 
-        - task: pr-rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: pr-rcudnn-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
-            - name: pr-juice
+            - name: {{ pr_juice }}
             run:
               path: sh
               args:
@@ -498,38 +400,38 @@
                 cd cudnn
                 cargo b
                 cargo t
-              dir: pr-juice/rcudnn
+              dir: {{ pr_juice }}/rcudnn
           on_failure:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: rcudnn-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
             put: pr-juice-stat
-            resource: pr-juice
+            resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: pr-juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
-              context: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
+              context: rcudnn-{{ backend.execute }}-{{ ext }}
               status: success
 {% else -%}
       # no special treament for {{ backend.name }}
 {% endmatch %}
 
+        - put: pr-juice-stat
+          resource: {{ pr_juice }}
+          params:
+            path: {{ pr_juice }}
+            base_context: sirmergealot
+            context: greenlit-{{ ext }}
+            status: success
+
 {% endfor %}
 {%- endfor %}
-
-        - put: pr-juice-stat
-          resource: pr-juice
-          params:
-            path: pr-juice
-            base_context: sirmergealot
-            context: greenlit
-            status: success

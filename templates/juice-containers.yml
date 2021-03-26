@@ -10,11 +10,11 @@ resources:
 
 groups:
   {% for testenv in testenvs %}
-  - name: {{ testenv.name.as_str() }}
+  - name: {{ testenv.as_str() }}
     jobs:
-      - create-oci-{{ testenv.name }}-base
+      - create-oci-{{ testenv.as_str() }}-base
   {% for backend in testenv.backends %}
-      - create-oci-{{ testenv.name }}-{{ backend }}
+      - create-oci-{{ testenv.as_str() }}-{{ backend }}
   {%- endfor %}
   {%- endfor %}
 
@@ -75,7 +75,7 @@ jobs:
 
 
 {% for testenv in testenvs %}
-  - name: create-oci-{{ testenv.name }}-base
+  - name: create-oci-{{ testenv }}-base
     serial_groups: [constructors]
     build_logs_to_retain: 2
     serial: true
@@ -97,7 +97,7 @@ jobs:
 
         params:
           CONTEXT: ci/container
-          DOCKERFILE: ci/container/{{ testenv.name }}/Dockerfile
+          DOCKERFILE: ci/container/{{ testenv }}/Dockerfile
           TAG: latest
 
         inputs:
@@ -118,24 +118,24 @@ jobs:
             pwd
             build
 
-    - put: container-{{ testenv.name }}-base
+    - put: container-{{ testenv }}-base
       params:
         image: image/image.tar
 
 {% for backend in testenv.backends %}
-  - name: create-oci-{{ testenv.name }}-{{ backend }}
+  - name: create-oci-{{ testenv }}-{{ backend }}
     serial_groups: [constructors]
     build_logs_to_retain: 2
     serial: true
     plan:
     - get: ci
       resource: git-ci
-      passed: [create-oci-{{ testenv.name }}-base]
+      passed: [create-oci-{{ testenv }}-base]
       trigger: true
 
     - get: base
-      resource: container-{{ testenv.name }}-base
-      passed: [create-oci-{{ testenv.name }}-base]
+      resource: container-{{ testenv }}-base
+      passed: [create-oci-{{ testenv }}-base]
       trigger: true
 
     - task: composition
@@ -152,7 +152,7 @@ jobs:
 
         params:
           CONTEXT: ci/container
-          DOCKERFILE: ci/container/{{ testenv.name }}/{{ backend }}/Dockerfile
+          DOCKERFILE: ci/container/{{ testenv }}/{{ backend }}/Dockerfile
           TAG: latest
 
         inputs:
@@ -173,7 +173,7 @@ jobs:
             pwd
             build
 
-    - put: container-{{ testenv.name }}-{{ backend }}
+    - put: container-{{ testenv }}-{{ backend }}
       params:
         image: image/image.tar
 

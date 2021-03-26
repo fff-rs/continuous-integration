@@ -7,22 +7,31 @@
       trigger: {{ !passive }}
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
-    - get: container-{{ testenv.name }}-{{ backend }}
-      trigger: {{ !passive }}
+{%- let ext = testenv.to_string().add("-").add(backend.as_str()) %}
+
+{%- match backend.as_str() %}
+{%- when "cuda" %}
+{%- when "opencl" %}
+{%- when "default" %}
+{%- else %}
+    - get: container-{{ ext }}
 {% include "tags8.yml" %}
+      trigger: {{ !passive }}
+{%- endmatch %}
+
 {% endfor %}
 {%- endfor %}
 
 {%- for testenv in testenvs %}
 {%- for backend in testenv.backends %}
+{%- let ext = testenv.to_string().add("-").add(backend.as_str()) %}
 
     - in_parallel:
 {% include "parallelism.yml" %}
         fail_fast: true
         steps:
-        - task: coaster-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: coaster-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -39,9 +48,8 @@
 {% include "cargo.yml" %}
               dir: juice/coaster
 
-        - task: coaster-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: coaster-blas-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -58,9 +66,8 @@
 {% include "cargo.yml" %}
               dir: juice/coaster-blas
 
-        - task: coaster-nn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: coaster-nn-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -77,9 +84,8 @@
 {% include "cargo.yml" %}
               dir: juice/coaster-nn
 
-        - task: greenglas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: greenglas-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -95,9 +101,8 @@
 {% include "cargo.yml" %}
               dir: juice/greenglas
 
-        - task: juice-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: juice-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -113,9 +118,8 @@
 {% include "cargo.yml" %}
               dir: juice/juice
 
-        - task: example-mackeyglass-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: example-mackeyglass-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -133,11 +137,10 @@
 {% include "cargo-build.yml" %}
               dir: juice/juice-examples
 
-{%- match backend.name.as_ref() -%}
+{%- match backend.as_str() -%}
 {%- when "cuda" %}
-        - task: example-mnist-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: example-mnist-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -157,11 +160,10 @@
 {%- else %}
 {%- endmatch %}
 
-{%- match backend.name.as_ref() -%}
+{%- match backend.as_str() -%}
 {%- when "native" %}
-        - task: rust-blas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: rust-blas-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -176,9 +178,8 @@
                 cargo test
               dir: juice/rust-blas
 {%- when "cuda" %}
-        - task: rcudnn-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: rcudnn-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -203,9 +204,8 @@
                 cargo test -- --nocapture
               dir: juice/rcudnn
 
-        - task: rcublas-{{ backend.execute }}-{{ testenv.name }}-{{ backend }}
-          image: container-{{ testenv.name }}-{{ backend }}
-{% include "tagsA.yml" %}
+        - task: rcublas-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:

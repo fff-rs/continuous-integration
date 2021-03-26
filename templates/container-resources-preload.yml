@@ -1,8 +1,8 @@
 {% for testenv in testenvs %}
-- name: container-{{ testenv.name }}-base
+- name: container-{{ testenv }}-base
   type: registry-image
   source:
-    repository: quay.io/spearow/machine-learning-container-{{ testenv.name }}-base
+    repository: quay.io/spearow/machine-learning-container-{{ testenv }}-base
     username: ((quay-spearow-username))
     password: ((quay-spearow-password))
 {% endfor %}
