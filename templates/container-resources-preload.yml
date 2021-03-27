@@ -3,6 +3,7 @@
   type: registry-image
   source:
     repository: quay.io/spearow/machine-learning-container-{{ testenv }}-base
+    tag: latest
     username: ((quay-spearow-username))
     password: ((quay-spearow-password))
 {% endfor %}

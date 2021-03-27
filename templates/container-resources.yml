@@ -5,6 +5,7 @@
 # {% include "tags2.yml" %}
   source:
     repository: quay.io/spearow/machine-learning-container-{{ testenv }}-{{ backend }}
+    tag: latest
     username: ((quay-spearow-username))
     password: ((quay-spearow-password))
 {%- endfor -%}
@@ -14,5 +15,6 @@
   type: registry-image
   source:
     repository: quay.io/spearow/doc-gen-container
+    tag: latest
     username: ((quay-spearow-username))
     password: ((quay-spearow-password))

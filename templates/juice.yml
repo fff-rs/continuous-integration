@@ -42,7 +42,7 @@ resources:
 groups:
 - name: master
   jobs:
-  - test-juice
+  - test-juice-*
 
 - name: documentation
   jobs:

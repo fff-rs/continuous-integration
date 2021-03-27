@@ -16,6 +16,7 @@
 {%- else if backend.as_str() == "native" %}
                 cargo test --no-default-features --features=native -- --nocapture
 {%- else %}
+                nvcc --version || $(fd cuda.h /usr/include | rg '#define CUDA_VERSION ') || echo "Failed to extract cuda version!"
                 cargo test --no-default-features --features=native,{{ backend }} -- --nocapture
 {%- endif %}
 {%- endif -%}

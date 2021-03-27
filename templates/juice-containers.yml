@@ -140,7 +140,7 @@ jobs:
 
     - task: composition
       privileged: true
-{% include "tags8.yml" %}
+# {% include "tags8.yml" %}
 
       config:
         platform: linux

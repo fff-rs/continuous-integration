@@ -4,4 +4,4 @@
   source:
     repository: spearow/juice
     access_token: ((sirmergealot-github-token))
-    required_review_approvals: 1
+    required_review_approvals: 0

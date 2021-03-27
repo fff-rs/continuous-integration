@@ -1,14 +1,14 @@
-  - name: test-juice
+{%- for testenv in testenvs %}
+{%- for backend in testenv.backends %}
+{%- let ext = testenv.to_string().add("-").add(backend.as_str()) %}
+
+  - name: test-juice-{{ ext }}
     build_logs_to_retain: 4
     public: true
     serial: true
     plan:
     - get: juice
       trigger: {{ !passive }}
-{%- for testenv in testenvs %}
-{%- for backend in testenv.backends %}
-{%- let ext = testenv.to_string().add("-").add(backend.as_str()) %}
-
 {%- match backend.as_str() %}
 {%- when "cuda" %}
 {%- when "opencl" %}
@@ -18,13 +18,6 @@
 {% include "tags8.yml" %}
       trigger: {{ !passive }}
 {%- endmatch %}
-
-{% endfor %}
-{%- endfor %}
-
-{%- for testenv in testenvs %}
-{%- for backend in testenv.backends %}
-{%- let ext = testenv.to_string().add("-").add(backend.as_str()) %}
 
     - in_parallel:
 {% include "parallelism.yml" %}

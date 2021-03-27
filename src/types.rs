@@ -194,7 +194,7 @@ impl Default for TestEnv {
 }
 
 #[derive(askama::Template)]
-#[template(path = "juice.yml", escape = "none", print = "all")]
+#[template(path = "juice.yml", escape = "none")]
 pub struct JuiceYml<'a> {
     pub(crate) passive: bool, // false
     pub(crate) testenvs: &'a Vec<TestEnv>,
