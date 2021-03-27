@@ -11,7 +11,7 @@ RUN dnf update -y && \
 		openssl-static openssl-libs openssl-devel \
 		capnproto capnproto-libs capnproto-devel \
 		micro \
-		exa ripgrep \
+		exa ripgrep hyperfine fd-find \
 		dnf-plugins-core && \
 	dnf clean all
 
@@ -19,7 +19,7 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
 
 ENV PATH=/root/.cargo/bin:$PATH
 
-RUN cargo install fd-find
+RUN cargo --version && rustc --version
 
 RUN git config --global core.editor micro
 

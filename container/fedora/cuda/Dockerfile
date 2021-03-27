@@ -9,7 +9,7 @@ RUN chmod +x /tmp/*.sh && \
 
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-ENV NVIDIA_REQUIRE_CUDA "cuda>=8.0"
+ENV NVIDIA_REQUIRE_CUDA "cuda>=11.0"
 
 COPY escalate.sh /usr/local/bin/escalate
 COPY fedora/default/prepare.sh /usr/local/bin/prepare
