@@ -1,6 +1,7 @@
 - name: pr-juice
   type: pull-request
-  check_every: 10m
+  check_every: 3h
+  webhook_token: ((juice-pr-webhook-token))
   source:
     repository: spearow/juice
     access_token: ((sirmergealot-github-token))

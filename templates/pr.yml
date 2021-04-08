@@ -6,7 +6,7 @@
 {%- let pr_juice = "pr-juice" %}
 
   - name: pr-test-juice-{{ ext }}
-    build_logs_to_retain: 4
+    build_log_retention: { days: 60, builds: 4 }
     public: true
     serial: true
     plan:
@@ -38,6 +38,131 @@
 {% include "parallelism.yml" %}
         fail_fast: false
         steps:
+
+{%- match backend.as_str() %}
+{%- when "native" %}
+        - task: pr-rust-blas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
+          config:
+            platform: linux
+            inputs:
+            - name: {{ pr_juice }}
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
+                export RUST_BACKTRACE=1
+                prepare
+                cargo b
+                cargo t
+              dir: {{ pr_juice }}/rust-blas
+          on_failure:
+            put: pr-juice-stat
+            resource: {{ pr_juice }}
+            get_params:
+              skip_download: true
+            params:
+              path: {{ pr_juice }}
+              base_context: sirmergealot
+              context: rust-blas-{{ backend.execute }}-{{ ext }}
+              status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: {{ pr_juice }}
+            get_params:
+              skip_download: true
+            params:
+              path: {{ pr_juice }}
+              base_context: sirmergealot
+              context: rust-blas-{{ backend.execute }}-{{ ext }}
+              status: success
+
+{%- when "cuda" %}
+        - task: pr-rcudnn-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
+          config:
+            platform: linux
+            inputs:
+            - name: {{ pr_juice }}
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
+                export RUST_BACKTRACE=1
+                prepare
+                export RUST_LOG=rcublas=trace,rcudnn=trace
+                cd cudnn-sys
+                cargo b
+                cargo t
+                cd -
+                cd cudnn
+                cargo b
+                cargo t
+              dir: {{ pr_juice }}/rcudnn
+          on_failure:
+            put: pr-juice-stat
+            resource: {{ pr_juice }}
+            get_params:
+              skip_download: true
+            params:
+              path: {{ pr_juice }}
+              base_context: sirmergealot
+              context: rcudnn-{{ backend.execute }}-{{ ext }}
+              status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: {{ pr_juice }}
+            get_params:
+              skip_download: true
+            params:
+              path: {{ pr_juice }}
+              base_context: sirmergealot
+              context: rcudnn-{{ backend.execute }}-{{ ext }}
+              status: success
+
+        - task: pr-rcublas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
+          config:
+            platform: linux
+            inputs:
+            - name: {{ pr_juice }}
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
+                export RUST_BACKTRACE=1
+                prepare
+                cd cublas-sys
+                cargo b
+                cargo t
+                cd -
+                cd cublas
+                cargo b
+                cargo t
+              dir: {{ pr_juice }}/rcublas
+          on_failure:
+            put: pr-juice-stat
+            resource: {{ pr_juice }}
+            get_params:
+              skip_download: true
+            params:
+              path: {{ pr_juice }}
+              base_context: sirmergealot
+              context: rcublas-{{ backend.execute }}-{{ ext }}
+              status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: {{ pr_juice }}
+            get_params:
+              skip_download: true
+            params:
+              path: {{ pr_juice }}
+              base_context: sirmergealot
+              context: rcudnn-{{ backend.execute }}-{{ ext }}
+              status: success
+{% else -%}
+      # no special treament for {{ backend.name }}
+{% endmatch %}
         - task: pr-coaster-{{ backend.execute }}-{{ ext }}
 {% include "tagsnimage.yml" %}
           config:
@@ -302,129 +427,6 @@
               status: success
 {%- else %}
 {%- endmatch %}
-
-{%- match backend.as_str() %}
-{%- when "native" %}
-        - task: pr-rust-blas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
-          config:
-            platform: linux
-            inputs:
-            - name: {{ pr_juice }}
-            run:
-              path: sh
-              args:
-              - -exc
-              - |
-                prepare
-                cargo b
-                cargo t
-              dir: {{ pr_juice }}/rust-blas
-          on_failure:
-            put: pr-juice-stat
-            resource: {{ pr_juice }}
-            get_params:
-              skip_download: true
-            params:
-              path: {{ pr_juice }}
-              base_context: sirmergealot
-              context: rust-blas-{{ backend.execute }}-{{ ext }}
-              status: failure
-          on_success:
-            put: pr-juice-stat
-            resource: {{ pr_juice }}
-            get_params:
-              skip_download: true
-            params:
-              path: {{ pr_juice }}
-              base_context: sirmergealot
-              context: rust-blas-{{ backend.execute }}-{{ ext }}
-              status: success
-
-{%- when "cuda" %}
-        - task: pr-rcublas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
-          config:
-            platform: linux
-            inputs:
-            - name: {{ pr_juice }}
-            run:
-              path: sh
-              args:
-              - -exc
-              - |
-                prepare
-                cd cublas-sys
-                cargo b
-                cargo t
-                cd -
-                cd cublas
-                cargo b
-                cargo t
-              dir: {{ pr_juice }}/rcublas
-          on_failure:
-            put: pr-juice-stat
-            resource: {{ pr_juice }}
-            get_params:
-              skip_download: true
-            params:
-              path: {{ pr_juice }}
-              base_context: sirmergealot
-              context: rcublas-{{ backend.execute }}-{{ ext }}
-              status: failure
-          on_success:
-            put: pr-juice-stat
-            resource: {{ pr_juice }}
-            get_params:
-              skip_download: true
-            params:
-              path: {{ pr_juice }}
-              base_context: sirmergealot
-              context: rcudnn-{{ backend.execute }}-{{ ext }}
-              status: success
-
-        - task: pr-rcudnn-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
-          config:
-            platform: linux
-            inputs:
-            - name: {{ pr_juice }}
-            run:
-              path: sh
-              args:
-              - -exc
-              - |
-                prepare
-                export RUST_LOG=rcublas=trace,cudnn=trace
-                cd cudnn-sys
-                cargo b
-                cargo t
-                cd -
-                cd cudnn
-                cargo b
-                cargo t
-              dir: {{ pr_juice }}/rcudnn
-          on_failure:
-            put: pr-juice-stat
-            resource: {{ pr_juice }}
-            get_params:
-              skip_download: true
-            params:
-              path: {{ pr_juice }}
-              base_context: sirmergealot
-              context: rcudnn-{{ backend.execute }}-{{ ext }}
-              status: failure
-          on_success:
-            put: pr-juice-stat
-            resource: {{ pr_juice }}
-            get_params:
-              skip_download: true
-            params:
-              path: {{ pr_juice }}
-              base_context: sirmergealot
-              context: rcudnn-{{ backend.execute }}-{{ ext }}
-              status: success
-{% else -%}
-      # no special treament for {{ backend.name }}
-{% endmatch %}
-
         - put: pr-juice-stat
           resource: {{ pr_juice }}
           params:

@@ -3,20 +3,27 @@
                 export RUST_LOG=juice=debug
                 export RUST_BACKTRACE=1
 {%- if backend.execute == BackendExecute::Build -%}
-{%- if backend.as_str() == "default" %}
-                cargo build
-{%- else if backend.as_str() == "native" %}
-                cargo build --no-default-features --features=native
+{%- match backend.as_str() -%}
+{%- when "default" %}
+                cargo test --no-run
+{%- when "native" %}
+                cargo test --no-run --no-default-features --features=native
 {%- else %}
-                cargo build --no-default-features --features=native,{{ backend }}
-{%- endif %}
+                cargo test --no-run --no-default-features --features=native,{{ backend }}
+{%- endmatch -%}
+
 {%- else -%}
-{%- if backend.as_str() == "default" %}
+
+{%- match backend.as_str() -%}
+{%- when "default" %}
                 cargo test -- --nocapture
-{%- else if backend.as_str() == "native" %}
+{%- when "native" %}
                 cargo test --no-default-features --features=native -- --nocapture
-{%- else %}
+{%- when "cuda" %}
                 nvcc --version || $(fd cuda.h /usr/include | rg '#define CUDA_VERSION ') || echo "Failed to extract cuda version!"
                 cargo test --no-default-features --features=native,{{ backend }} -- --nocapture
-{%- endif %}
+{%- else %}
+                cargo test --no-default-features --features=native,{{ backend }} -- --nocapture
+{%- endmatch -%}
+
 {%- endif -%}

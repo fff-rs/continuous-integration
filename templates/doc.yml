@@ -1,5 +1,5 @@
   - name: documentation-update
-    build_logs_to_retain: 5
+    build_log_retention: { days: 60, builds: 5 }
     public: true
     serial: true
     plan:

@@ -3,7 +3,7 @@
 {%- let ext = testenv.to_string().add("-").add(backend.as_str()) %}
 
   - name: test-juice-{{ ext }}
-    build_logs_to_retain: 4
+    build_log_retention: { days: 60, builds: 4 }
     public: true
     serial: true
     plan:
@@ -111,47 +111,6 @@
 {% include "cargo.yml" %}
               dir: juice/juice
 
-        - task: example-mackeyglass-{{ backend.execute }}-{{ ext }}
-{% include "tagsnimage.yml" %}
-          config:
-            platform: linux
-            inputs:
-            - name: juice
-            caches:
-            - path: cargo_home
-            run:
-              path: sh
-              args:
-              - -exc
-              - |
-{% include "cargo-config.yml" %}
-                cd mackey-glass-rnn-regression
-                prepare
-{% include "cargo-build.yml" %}
-              dir: juice/juice-examples
-
-{%- match backend.as_str() -%}
-{%- when "cuda" %}
-        - task: example-mnist-{{ backend.execute }}-{{ ext }}
-{% include "tagsnimage.yml" %}
-          config:
-            platform: linux
-            inputs:
-            - name: juice
-            caches:
-            - path: cargo_home
-            run:
-              path: sh
-              args:
-              - -exc
-              - |
-{% include "cargo-config.yml" %}
-                cd mnist-image-multiclass-classification
-                prepare
-{% include "cargo-build.yml" %}
-              dir: juice/juice-examples
-{%- else %}
-{%- endmatch %}
 
 {%- match backend.as_str() -%}
 {%- when "native" %}
@@ -225,6 +184,9 @@
 {% else -%}
       # no special treament for {{ backend.name }}
 {% endmatch %}
+
+
+{% include "master-examples.yml" %}
 
 {% endfor -%}
 {%- endfor %}

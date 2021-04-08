@@ -43,6 +43,7 @@ groups:
 - name: master
   jobs:
   - test-juice-*
+  - example-*
 
 - name: documentation
   jobs:
@@ -51,6 +52,7 @@ groups:
 - name: pull-request
   jobs:
   - pr-test-juice*
+  # - pr-example-*
 
 jobs:
 
