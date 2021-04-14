@@ -1,0 +1,10 @@
+                  export RUST_LOG=juice=debug
+                  export RUST_BACKTRACE=1
+
+                  {%- if backend.as_str() == "default" %}
+                  cargo run --release
+                  {%- else if backend.as_str() == "native" %}
+                  cargo run --release --no-default-features --features=native
+                  {%- else %}
+                  cargo run --release --no-default-features --features=native,{{ backend.name }}
+                  {%- endif %}

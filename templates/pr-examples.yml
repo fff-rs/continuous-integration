@@ -1,0 +1,156 @@
+
+{%- let examples = ["mackey-glass-rnn-regression", "mnist-image-multiclass-classification"] %}
+{%- let binaries = ["example-rnn-regression", "example-mnist-classification"] %}
+
+{%- for example in examples %}
+  {# a hacky trick to upcase a &usize to an usize #}
+  {% let binary = binaries.get(loop.index0 + 0).unwrap() %}
+  - name: pr-example-{{ example }}-{{ backend.execute }}-{{ ext }}
+    build_log_retention: { days: 60, builds: 4 }
+    public: true
+    serial: true
+    plan:
+    - get: juice
+      resource: {{ pr_juice }}
+      passed: [pr-test-juice-{{ ext }}]
+      trigger: true
+      version: every
+
+    - put: pr-juice-stat
+      resource: {{ pr_juice }}
+      get_params:
+        skip_download: true
+      params:
+        path: {{ pr_juice }}
+        base_context: sirmergealot
+        context: greenlit-{{ ext }}
+        status: pending
+
+{%- match backend.as_str() %}
+{%- when "cuda" %}
+{%- when "opencl" %}
+{%- when "default" %}
+{%- else %}
+    - get: container-{{ ext }}
+{% include "tags8.yml" %}
+      trigger: true
+{%- endmatch %}
+    - in_parallel:
+      - task: pr-example-build-{{ example }}-{{ backend.execute }}-{{ ext }}
+{%- match backend.as_str() -%}
+{%- when "cuda" %}
+        # image: container-{{ testenv }}-{{ backend }}
+        tags: [framework:cuda]
+{%- when "opencl" %}
+        # image: container-{{ testenv }}-{{ backend }}
+        tags: [framework:opencl]
+{%- when "default" %}
+        # image: container-{{ testenv }}-{{ backend }}
+        tags: [framework:opencl,framework:cuda]
+{%- else %}
+        image: container-{{ testenv }}-{{ backend }}
+        tags: []
+{%- endmatch %}
+        config:
+          platform: linux
+          inputs:
+          - name: juice
+          outputs:
+          - name: example-binary
+          caches:
+          - path: cargo_home
+          run:
+            path: sh
+            args:
+            - -exc
+            - |
+              export RUST_LOG=juice=debug
+              export RUST_BACKTRACE=1
+              export CARGO_HOME=$(realpath "$(pwd)/../../cargo_home")
+              echo "Sweet (cached) home is \"$CARGO_HOME\""
+              mkdir -p $CARGO_HOME
+
+              cd {{ example }}
+              prepare
+
+              {%- if backend.as_str() == "default" %}
+              cargo build --release
+              {%- else if backend.as_str() == "native" %}
+              cargo build --release --no-default-features --features=native
+              {%- else %}
+              cargo build --release --no-default-features --features=native,{{ backend.name }}
+              {%- endif %}example
+              cp ../../target/release/{{ binary }} ../../../example-binary/{{ example }}
+            dir: juice/juice-examples
+        on_success:
+          task: pr-example-run-{{ example }}-{{ backend.execute }}-{{ ext }}
+  {%- match backend.as_str() -%}
+  {%- when "cuda" %}
+          # image: container-{{ testenv }}-{{ backend }}
+          tags: [framework:cuda]
+  {%- when "opencl" %}
+          # image: container-{{ testenv }}-{{ backend }}
+          tags: [framework:opencl]
+  {%- when "default" %}
+          # image: container-{{ testenv }}-{{ backend }}
+          tags: [framework:opencl,framework:cuda]
+  {%- else %}
+          image: container-{{ testenv }}-{{ backend }}
+          tags: []
+  {%- endmatch %}
+          config:
+            platform: linux
+            timeout: 20m
+            inputs:
+            - name: juice
+            - name: example-binary
+            caches:
+            - path: cargo_home
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
+                export RUST_LOG=juice=debug
+                export RUST_BACKTRACE=1
+                export CARGO_HOME=$(realpath "$(pwd)/../../cargo_home")
+
+                cd {{ example }}
+                prepare
+
+                cp ../../../example-binary/{{ example }} ../../target/release/{{ example }}
+
+                ../../target/release/{{ example }}
+
+              dir: juice/juice-examples
+          on_failure:
+            put: pr-juice-stat
+            resource: {{ pr_juice }}
+            get_params:
+              skip_download: true
+            params:
+              path: juice
+              base_context: sirmergealot
+              context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
+              status: failure
+          on_success:
+            put: pr-juice-stat
+            resource: {{ pr_juice }}
+            get_params:
+              skip_download: true
+            params:
+              path: juice
+              base_context: sirmergealot
+              context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
+              status: success
+        on_failure:
+          put: pr-juice-stat
+          resource: {{ pr_juice }}
+          get_params:
+            skip_download: true
+          params:
+            path: juice
+            base_context: sirmergealot
+            context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
+            status: failure
+{%- endfor %}
