@@ -1,22 +1,25 @@
 
 {%- let examples = ["mackey-glass-rnn-regression", "mnist-image-multiclass-classification"] %}
 {%- let binaries = ["example-rnn-regression", "example-mnist-classification"] %}
+{%- let cmd1s = ["train --batch-size=4 --learning-rate=0.1 --momentum=0.2 trainednetwork.capnp", "--help"] %}
+{%- let cmd2s = ["test trainednetwork.capnp", "--help"] %}
 
 {%- for example in examples %}
   {# a hacky trick to upcase a &usize to an usize #}
   {% let binary = binaries.get(loop.index0 + 0).unwrap() %}
+  {% let cmd1 = cmd1s.get(loop.index0 + 0).unwrap() %}
+  {% let cmd2 = cmd2s.get(loop.index0 + 0).unwrap() %}
   - name: pr-example-{{ example }}-{{ backend.execute }}-{{ ext }}
     build_log_retention: { days: 60, builds: 4 }
     public: true
     serial: true
     plan:
-    - get: juice
-      resource: {{ pr_juice }}
+    - get: {{ pr_juice }}
       passed: [pr-test-juice-{{ ext }}]
       trigger: true
       version: every
 
-    - put: pr-juice-stat
+    - put: {{ pr_juice }}-stat
       resource: {{ pr_juice }}
       get_params:
         skip_download: true
@@ -54,7 +57,7 @@
         config:
           platform: linux
           inputs:
-          - name: juice
+          - name: {{ pr_juice }}
           outputs:
           - name: example-binary
           caches:
@@ -79,9 +82,9 @@
               cargo build --release --no-default-features --features=native
               {%- else %}
               cargo build --release --no-default-features --features=native,{{ backend.name }}
-              {%- endif %}example
+              {%- endif %}
               cp ../../target/release/{{ binary }} ../../../example-binary/{{ example }}
-            dir: juice/juice-examples
+            dir: {{ pr_juice }}/juice-examples
         on_success:
           task: pr-example-run-{{ example }}-{{ backend.execute }}-{{ ext }}
   {%- match backend.as_str() -%}
@@ -102,10 +105,11 @@
             platform: linux
             timeout: 20m
             inputs:
-            - name: juice
+            - name: {{ pr_juice }}
             - name: example-binary
             caches:
             - path: cargo_home
+            - path: cargo_target
             run:
               path: sh
               args:
@@ -114,42 +118,50 @@
                 export RUST_LOG=juice=debug
                 export RUST_BACKTRACE=1
                 export CARGO_HOME=$(realpath "$(pwd)/../../cargo_home")
+                export CARGO_TARGET_DIR=$(realpath "$(pwd)/../../cargo_target")
 
                 cd {{ example }}
                 prepare
 
-                cp ../../../example-binary/{{ example }} ../../target/release/{{ example }}
+  {%- match backend.as_str() -%}
+  {%- when "cuda" %}
+                ../../../example-binary/{{ binary }} {{ cmd1 }}
+                ../../../example-binary/{{ binary }} {{ cmd2 }}
+  {%- when "default" %}
+                ../../../example-binary/{{ binary }} {{ cmd1 }}
+                ../../../example-binary/{{ binary }} {{ cmd2 }}
+  {%- else %}
+                echo "Can only execute on backends w/ cuda for now, skipping."
+  {%- endmatch %}
 
-                ../../target/release/{{ example }}
-
-              dir: juice/juice-examples
+              dir: {{ pr_juice }}/juice-examples
           on_failure:
-            put: pr-juice-stat
+            put: {{ pr_juice }}-stat
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
               context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
-            put: pr-juice-stat
+            put: {{ pr_juice }}-stat
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
             params:
-              path: juice
+              path: {{ pr_juice }}
               base_context: sirmergealot
               context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
               status: success
         on_failure:
-          put: pr-juice-stat
+          put: {{ pr_juice }}-stat
           resource: {{ pr_juice }}
           get_params:
             skip_download: true
           params:
-            path: juice
+            path: {{ pr_juice }}
             base_context: sirmergealot
             context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
             status: failure

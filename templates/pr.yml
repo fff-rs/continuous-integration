@@ -356,7 +356,13 @@
             context: greenlit-{{ ext }}
             status: success
 
+{%- match backend.as_str() %}
+{%- when "default" %}
 {% include "pr-examples.yml" %}
+{%- when "cuda" %}
+{% include "pr-examples.yml" %}
+{%- else %}
+{% endmatch %}
 
 {% endfor %}
 {%- endfor %}

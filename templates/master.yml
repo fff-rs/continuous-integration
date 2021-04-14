@@ -186,7 +186,13 @@
 {% endmatch %}
 
 
-{% include "master-examples.yml" %}
 
+{%- match backend.as_str() %}
+{%- when "default" %}
+{% include "master-examples.yml" %}
+{%- when "cuda" %}
+{% include "master-examples.yml" %}
+{%- else %}
+{% endmatch %}
 {% endfor -%}
 {%- endfor %}
