@@ -62,6 +62,7 @@
           - name: example-binary
           caches:
           - path: cargo_home
+          - path: cargo_target
           run:
             path: sh
             args:
@@ -70,6 +71,8 @@
               export RUST_LOG=juice=debug
               export RUST_BACKTRACE=1
               export CARGO_HOME=$(realpath "$(pwd)/../../cargo_home")
+              export CARGO_TARGET_DIR=$(realpath "$(pwd)/../../cargo_target")
+
               echo "Sweet (cached) home is \"$CARGO_HOME\""
               mkdir -p $CARGO_HOME
 
@@ -83,8 +86,11 @@
               {%- else %}
               cargo build --release --no-default-features --features=native,{{ backend.name }}
               {%- endif %}
-              cp ../../target/release/{{ binary }} ../../../example-binary/{{ example }}
+
+              cp ${CARGO_TARGET_DIR}/release/{{ binary }} ../../../example-binary/{{ example }}
+
             dir: {{ pr_juice }}/juice-examples
+
         on_success:
           task: pr-example-run-{{ example }}-{{ backend.execute }}-{{ ext }}
   {%- match backend.as_str() -%}
@@ -107,9 +113,6 @@
             inputs:
             - name: {{ pr_juice }}
             - name: example-binary
-            caches:
-            - path: cargo_home
-            - path: cargo_target
             run:
               path: sh
               args:
@@ -117,19 +120,17 @@
               - |
                 export RUST_LOG=juice=debug
                 export RUST_BACKTRACE=1
-                export CARGO_HOME=$(realpath "$(pwd)/../../cargo_home")
-                export CARGO_TARGET_DIR=$(realpath "$(pwd)/../../cargo_target")
 
                 cd {{ example }}
                 prepare
 
   {%- match backend.as_str() -%}
   {%- when "cuda" %}
-                ../../../example-binary/{{ binary }} {{ cmd1 }}
-                ../../../example-binary/{{ binary }} {{ cmd2 }}
+                ../../../example-binary/{{ example }} {{ cmd1 }}
+                ../../../example-binary/{{ example }} {{ cmd2 }}
   {%- when "default" %}
-                ../../../example-binary/{{ binary }} {{ cmd1 }}
-                ../../../example-binary/{{ binary }} {{ cmd2 }}
+                ../../../example-binary/{{ example }} {{ cmd1 }}
+                ../../../example-binary/{{ example }} {{ cmd2 }}
   {%- else %}
                 echo "Can only execute on backends w/ cuda for now, skipping."
   {%- endmatch %}

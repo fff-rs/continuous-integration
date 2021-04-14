@@ -30,14 +30,14 @@
       - task: example-build-{{ example }}-{{ backend.execute }}-{{ ext }}
 {%- match backend.as_str() -%}
 {%- when "cuda" %}
-        # image: container-{{ testenv }}-{{ backend }}
-        tags: [framework:cuda]
+        image: container-{{ testenv }}-{{ backend }}
+        # tags: [framework:cuda]
 {%- when "opencl" %}
-        # image: container-{{ testenv }}-{{ backend }}
-        tags: [framework:opencl]
+        image: container-{{ testenv }}-{{ backend }}
+        # tags: [framework:opencl]
 {%- when "default" %}
-        # image: container-{{ testenv }}-{{ backend }}
-        tags: [framework:opencl,framework:cuda]
+        image: container-{{ testenv }}-{{ backend }}
+        # tags: [framework:opencl,framework:cuda]
 {%- else %}
         image: container-{{ testenv }}-{{ backend }}
         tags: []
@@ -73,8 +73,11 @@
               {%- else %}
               cargo build --release --no-default-features --features=native,{{ backend.name }}
               {%- endif %}
-              cp ../../target/release/{{ binary }} ../../../example-binary/{{ example }}
+
+              cp ${CARGO_TARGET_DIR}/release/{{ binary }} ../../../example-binary/{{ example }}
+
             dir: juice/juice-examples
+
         on_success:
           task: example-run-{{ example }}-{{ backend.execute }}-{{ ext }}
   {%- match backend.as_str() -%}
@@ -97,8 +100,6 @@
             inputs:
             - name: juice
             - name: example-binary
-            caches:
-            - path: cargo_home
             run:
               path: sh
               args:
@@ -106,18 +107,17 @@
               - |
                 export RUST_LOG=juice=debug
                 export RUST_BACKTRACE=1
-                export CARGO_HOME=$(realpath "$(pwd)/../../cargo_home")
 
                 cd {{ example }}
                 prepare
 
   {%- match backend.as_str() -%}
   {%- when "cuda" %}
-                ../../../example-binary/{{ binary }} {{ cmd1 }}
-                ../../../example-binary/{{ binary }} {{ cmd2 }}
+                ../../../example-binary/{{ example }} {{ cmd1 }}
+                ../../../example-binary/{{ example }} {{ cmd2 }}
   {%- when "default" %}
-                ../../../example-binary/{{ binary }} {{ cmd1 }}
-                ../../../example-binary/{{ binary }} {{ cmd2 }}
+                ../../../example-binary/{{ example }} {{ cmd1 }}
+                ../../../example-binary/{{ example }} {{ cmd2 }}
   {%- else %}
                 echo "Can only execute on backends w/ cuda for now, skipping."
   {%- endmatch %}
