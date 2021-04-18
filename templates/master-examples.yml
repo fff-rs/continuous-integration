@@ -1,14 +1,12 @@
 
 {%- let examples = ["mackey-glass-rnn-regression", "mnist-image-multiclass-classification"] %}
 {%- let binaries = ["example-rnn-regression", "example-mnist-classification"] %}
-{%- let cmd1s = ["train --batch-size=4 --learning-rate=0.1 --momentum=0.2 trainednetwork.capnp", "--help"] %}
-{%- let cmd2s = ["test trainednetwork.capnp", "--help"] %}
+{%- let cmds = [["train --batch-size=4 --learning-rate=0.1 --momentum=0.2 trainednetwork.capnp","test trainednetwork.capnp"], ["load-dataset fashion","fashion linear --batch-size 4 --learning-rate 0.1 --momentum 0.01"]] %}
 
 {%- for example in examples %}
   {# a hacky trick to upcase a &usize to an usize #}
   {% let binary = binaries.get(loop.index0 + 0).unwrap() %}
-  {% let cmd1 = cmd1s.get(loop.index0 + 0).unwrap() %}
-  {% let cmd2 = cmd2s.get(loop.index0 + 0).unwrap() %}
+  {% let cmdseq = cmds.get(loop.index0 + 0).unwrap() %}
   - name: example-{{ example }}-{{ backend.execute }}-{{ ext }}
     build_log_retention: { days: 60, builds: 4 }
     public: true
@@ -30,14 +28,14 @@
       - task: example-build-{{ example }}-{{ backend.execute }}-{{ ext }}
 {%- match backend.as_str() -%}
 {%- when "cuda" %}
-        image: container-{{ testenv }}-{{ backend }}
-        # tags: [framework:cuda]
+        # image: container-{{ testenv }}-{{ backend }}
+        tags: [framework:cuda]
 {%- when "opencl" %}
-        image: container-{{ testenv }}-{{ backend }}
-        # tags: [framework:opencl]
+        # image: container-{{ testenv }}-{{ backend }}
+        tags: [framework:opencl]
 {%- when "default" %}
-        image: container-{{ testenv }}-{{ backend }}
-        # tags: [framework:opencl,framework:cuda]
+        # image: container-{{ testenv }}-{{ backend }}
+        tags: [framework:opencl,framework:cuda]
 {%- else %}
         image: container-{{ testenv }}-{{ backend }}
         tags: []
@@ -111,16 +109,16 @@
                 cd {{ example }}
                 prepare
 
-  {%- match backend.as_str() -%}
-  {%- when "cuda" %}
-                ../../../example-binary/{{ example }} {{ cmd1 }}
-                ../../../example-binary/{{ example }} {{ cmd2 }}
-  {%- when "default" %}
-                ../../../example-binary/{{ example }} {{ cmd1 }}
-                ../../../example-binary/{{ example }} {{ cmd2 }}
-  {%- else %}
+{%- for cmd in cmdseq %}
+{%- match backend.as_str() -%}
+{%- when "cuda" %}
+                ../../../example-binary/{{ example }} {{ cmd }}
+{%- when "default" %}
+                ../../../example-binary/{{ example }} {{ cmd }}
+{%- else %}
                 echo "Can only execute on backends w/ cuda for now, skipping."
-  {%- endmatch %}
+{%- endmatch %}
+{%- endfor %}
 
               dir: juice/juice-examples
 
