@@ -338,23 +338,36 @@
               context: juice-{{ backend.execute }}-{{ ext }}
               status: failure
           on_success:
-            put: pr-juice-stat
-            resource: {{ pr_juice }}
-            get_params:
-              skip_download: true
-            params:
-              path: {{ pr_juice }}
-              base_context: sirmergealot
-              context: juice-{{ backend.execute }}-{{ ext }}
-              status: success
+            in_parallel:
+            - put: pr-juice-stat
+              resource: {{ pr_juice }}
+              get_params:
+                skip_download: true
+              params:
+                path: {{ pr_juice }}
+                base_context: sirmergealot
+                context: juice-{{ backend.execute }}-{{ ext }}
+                status: success
+{%- match backend.as_str() %}
+{%- when "cuda" %}
+{%- else %}
+            - put: {{ pr_juice }}-stat
+              resource: {{ pr_juice }}
+              params:
+                path: {{ pr_juice }}
+                base_context: sirmergealot
+                context: greenlit-{{ ext }}
+                status: success
+{% endmatch %}
 
-        - put: pr-juice-stat
+        on_failure:
+          put: {{ pr_juice }}-stat
           resource: {{ pr_juice }}
           params:
             path: {{ pr_juice }}
             base_context: sirmergealot
             context: greenlit-{{ ext }}
-            status: success
+            status: failure
 
 {%- match backend.as_str() %}
 {%- when "cuda" %}
