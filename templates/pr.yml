@@ -8,6 +8,7 @@
     build_log_retention: { days: 60, builds: 4 }
     public: true
     serial: true
+    serial_groups: [avoidoom]
     plan:
     - get: {{ pr_juice }}
       trigger: true

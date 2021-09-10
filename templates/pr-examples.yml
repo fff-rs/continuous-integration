@@ -10,6 +10,7 @@
     build_log_retention: { days: 60, builds: 4 }
     public: true
     serial: true
+    serial_groups: [avoidoom]
     plan:
     - get: {{ pr_juice }}
       passed: [pr-test-juice-{{ ext }}]
@@ -94,6 +95,7 @@
   {%- match backend.as_str() -%}
   {%- when "cuda" %}
             # image: container-{{ testenv }}-{{ backend }}
+            serial: true
             tags: [framework:cuda]
   {%- when "opencl" %}
             # image: container-{{ testenv }}-{{ backend }}
