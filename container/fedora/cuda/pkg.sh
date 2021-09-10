@@ -15,7 +15,7 @@ dnf install -y dnf-plugins-core \
 			cuda-cudart \
 			cuda-cudart-devel \
 			nvidia-driver-cuda \
-			libquadmath-devel libquadmath-static libquadmath \
+			libquadmath-devel libquadmath-static libquadmath
 
 #nvidia-driver-cuda provides nvidia-smi, which is helpful for debugging
 

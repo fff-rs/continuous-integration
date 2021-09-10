@@ -19,7 +19,7 @@ dnf install -y dnf-plugins-core \
 			ocl-icd-devel \
 			nvidia-driver-cuda-libs \
 			nvidia-driver-cuda \
-			libquadmath-devel libquadmath-static libquadmath \			
+			libquadmath-devel libquadmath-static libquadmath \
 	&& dnf erase -y beignet pocl
 # ocl-icd \ # OpenCL.so.1
 # ocl-icd-devel \ # OpenCL.so
