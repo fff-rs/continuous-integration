@@ -12,8 +12,8 @@ RUN dnf update -y && \
 		capnproto capnproto-libs capnproto-devel \
 		micro \
 		exa ripgrep hyperfine fd-find \
-		dnf-plugins-core && \
-		libquadmath-devel libquadmath-static libquadmath \
+		dnf-plugins-core \
+		libquadmath-devel libquadmath-static libquadmath && \
 	dnf clean all
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
