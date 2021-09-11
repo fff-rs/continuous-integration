@@ -24,7 +24,7 @@
       params:
         path: {{ pr_juice }}
         base_context: sirmergealot
-        context: greenlit-{{ ext }}
+        context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
         status: pending
 
 {%- match backend.as_str() %}
@@ -90,12 +90,11 @@
             dir: {{ pr_juice }}/juice-examples
 
         on_success:
-          do:
+          in_parallel:
           - task: pr-example-run-{{ example }}-{{ backend.execute }}-{{ ext }}
   {%- match backend.as_str() -%}
   {%- when "cuda" %}
             # image: container-{{ testenv }}-{{ backend }}
-            serial: true
             tags: [framework:cuda]
   {%- when "opencl" %}
             # image: container-{{ testenv }}-{{ backend }}
@@ -134,17 +133,9 @@
                   echo "Can only execute on backends w/ cuda for now, skipping."
 {%- endmatch %}
 {%- endfor %}
-
                 dir: {{ pr_juice }}/juice-examples
 
-          - put: {{ pr_juice }}-stat
-            resource: {{ pr_juice }}
-            params:
-              path: {{ pr_juice }}
-              base_context: sirmergealot
-              context: greenlit-{{ ext }}
-              status: success
-
+          # execution
           on_failure:
             put: {{ pr_juice }}-stat
             resource: {{ pr_juice }}
@@ -155,26 +146,19 @@
               base_context: sirmergealot
               context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
               status: failure
+          # execution
           on_success:
-            in_parallel:
-            - put: {{ pr_juice }}-stat
-              resource: {{ pr_juice }}
-              get_params:
-                skip_download: true
-              params:
-                path: {{ pr_juice }}
-                base_context: sirmergealot
-                context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
-                status: success
+            put: {{ pr_juice }}-stat
+            resource: {{ pr_juice }}
+            get_params:
+              skip_download: true
+            params:
+              path: {{ pr_juice }}
+              base_context: sirmergealot
+              context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
+              status: success
 
-            - put: {{ pr_juice }}-stat
-              resource: {{ pr_juice }}
-              params:
-                path: {{ pr_juice }}
-                base_context: sirmergealot
-                context: greenlit-{{ ext }}
-                status: success
-
+        # building
         on_failure:
           put: {{ pr_juice }}-stat
           resource: {{ pr_juice }}
