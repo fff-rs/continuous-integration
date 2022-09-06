@@ -149,8 +149,8 @@ jobs:
             repository: concourse/oci-build-task
 
         params:
-          DOCKERFILE: copycat/Containerfile
           CONTEXT: copycat
+          DOCKERFILE: copycat/Containerfile
           TAG: latest
 
         inputs:
