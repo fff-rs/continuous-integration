@@ -8,7 +8,7 @@ RUN dnf update -y && \
 	dnf install -y curl clang make cmake git \
 		llvm-devel \
 		valgrind \
-		openssl-static openssl-libs openssl-devel \
+		openssl-libs openssl-devel \
 		capnproto capnproto-libs capnproto-devel \
 		micro \
 		exa ripgrep hyperfine fd-find \

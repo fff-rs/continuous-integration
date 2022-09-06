@@ -4,7 +4,7 @@ dnf install -y dnf-plugins-core \
 	&& dnf config-manager -y --add-repo=https://negativo17.org/repos/fedora-nvidia.repo \
 	&& dnf install -y curl clang make cmake git \
 			openblas-static openblas-openmp openblas-devel \
-			openssl-static openssl-libs openssl-devel \
+			openssl-libs openssl-devel \
 			capnproto capnproto-libs capnproto-devel \
 			cuda-cudnn \
 			cuda-cudnn-devel \
@@ -27,4 +27,3 @@ dnf install -y dnf-plugins-core \
 # beignet # installed as weak dependency of ocl-icd
 # pocl # erase since this provides duplicate functionality which will cause errors
 # nvidia-driver-cuda provides nvidia-smi, which is helpful for debugging
-
