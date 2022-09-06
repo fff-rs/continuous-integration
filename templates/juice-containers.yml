@@ -46,7 +46,7 @@ jobs:
 
         params:
           CONTEXT: ci/container
-          DOCKERFILE: ci/container/{{ testenv }}/Dockerfile
+          DOCKERFILE: ci/container/{{ testenv }}/Containerfile
           TAG: latest
 
         inputs:
@@ -100,7 +100,7 @@ jobs:
 
         params:
           CONTEXT: ci/container
-          DOCKERFILE: ci/container/{{ testenv }}/{{ backend }}/Dockerfile
+          DOCKERFILE: ci/container/{{ testenv }}/{{ backend }}/Containerfile
           TAG: latest
 
         inputs:
@@ -167,7 +167,7 @@ jobs:
           args:
           - -exc
           - |
-            cp -rfv ci/container/misc/Dockerfile ./copycat/
+            cp -rfv ci/container/misc/Containerfile ./copycat/
             cp -rfv ci/container/misc ./copycat/
             cp -rfv ci/container/*.sh ./copycat/
             pwd

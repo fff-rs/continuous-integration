@@ -1,5 +1,5 @@
 FROM quay.io/spearow/machine-learning-container-fedora-base:latest
-MAINTAINER Bernhard Schuster "bernhard@spearow.io"
+LABEL maintainer="Bernhard Schuster <bernhard@spearow.io>"
 
 COPY fedora/default/pkg.sh /tmp/pkg.sh
 
