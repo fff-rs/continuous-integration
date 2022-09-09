@@ -40,13 +40,13 @@
       - task: pr-example-build-{{ example }}-{{ backend.execute }}-{{ ext }}
 {%- match backend.as_str() -%}
 {%- when "cuda" %}
-        # image: container-{{ testenv }}-{{ backend }}
+        image: container-{{ testenv }}-{{ backend }}
         tags: [framework:cuda]
 {%- when "opencl" %}
-        # image: container-{{ testenv }}-{{ backend }}
+        image: container-{{ testenv }}-{{ backend }}
         tags: [framework:opencl]
 {%- when "default" %}
-        # image: container-{{ testenv }}-{{ backend }}
+        image: container-{{ testenv }}-{{ backend }}
         tags: [framework:opencl,framework:cuda]
 {%- else %}
         image: container-{{ testenv }}-{{ backend }}
@@ -94,13 +94,13 @@
           - task: pr-example-run-{{ example }}-{{ backend.execute }}-{{ ext }}
   {%- match backend.as_str() -%}
   {%- when "cuda" %}
-            # image: container-{{ testenv }}-{{ backend }}
+            image: container-{{ testenv }}-{{ backend }}
             tags: [framework:cuda]
   {%- when "opencl" %}
-            # image: container-{{ testenv }}-{{ backend }}
+            image: container-{{ testenv }}-{{ backend }}
             tags: [framework:opencl]
   {%- when "default" %}
-            # image: container-{{ testenv }}-{{ backend }}
+            image: container-{{ testenv }}-{{ backend }}
             tags: [framework:opencl,framework:cuda]
   {%- else %}
             image: container-{{ testenv }}-{{ backend }}

@@ -24,15 +24,8 @@
         context: greenlit-{{ ext }}
         status: pending
 
-{%- match backend.as_str() %}
-{%- when "cuda" %}
-{%- when "opencl" %}
-{%- when "default" %}
-{%- else %}
     - get: container-{{ ext }}
-{% include "tags8.yml" %}
       trigger: true
-{%- endmatch %}
 
     - in_parallel:
 {% include "parallelism.yml" %}
@@ -41,7 +34,8 @@
 
 {%- match backend.as_str() %}
 {%- when "native" %}
-        - task: pr-rust-blas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
+        - task: pr-rust-blas-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -78,7 +72,8 @@
               status: success
 
 {%- when "cuda" %}
-        - task: pr-rcudnn-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
+        - task: pr-rcudnn-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -120,7 +115,8 @@
               context: rcudnn-{{ backend.execute }}-{{ ext }}
               status: success
 
-        - task: pr-rcublas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
+        - task: pr-rcublas-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -201,7 +197,8 @@
               context: coaster-{{ backend.execute }}-{{ ext }}
               status: success
 
-        - task: pr-coaster-nn-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
+        - task: pr-coaster-nn-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -238,7 +235,8 @@
               context: coaster-nn-{{ backend.execute }}-{{ ext }}
               status: success
 
-        - task: pr-coaster-blas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
+        - task: pr-coaster-blas-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:
@@ -275,7 +273,8 @@
               context: coaster-blas-{{ backend.execute }}-{{ ext }}
               status: success
 
-        - task: pr-greenglas-{{ backend.execute }}-{{ ext }}{% include "tagsnimage.yml" %}
+        - task: pr-greenglas-{{ backend.execute }}-{{ ext }}
+{% include "tagsnimage.yml" %}
           config:
             platform: linux
             inputs:

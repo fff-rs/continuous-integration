@@ -9,15 +9,9 @@
     plan:
     - get: juice
       trigger: {{ !passive }}
-{%- match backend.as_str() %}
-{%- when "cuda" %}
-{%- when "opencl" %}
-{%- when "default" %}
-{%- else %}
     - get: container-{{ ext }}
 {% include "tags8.yml" %}
       trigger: {{ !passive }}
-{%- endmatch %}
 
     - in_parallel:
 {% include "parallelism.yml" %}

@@ -20,15 +20,13 @@ resources:
 # TODO XXX a containerless concourse worker into the container
 # TODO XXX as such this is not needed for default,cuda,opencl backends
 # once fixed, use the "container-resources.yml" again
-{% if backend.as_str() == "native" %}
 - name: container-{{ testenv }}-{{ backend }}
   type: registry-image
-# {% include "tags2.yml" %}
+{% include "tags2.yml" %}
   source:
     repository: quay.io/spearow/machine-learning-container-{{ testenv }}-{{ backend }}
     username: ((quay-spearow-username))
     password: ((quay-spearow-password))
-{%- endif -%}
 {%- endfor -%}
 {%- endfor %}
 
