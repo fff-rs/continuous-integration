@@ -1,0 +1,10 @@
+{%- match backend.as_str() %}
+{%- when "cuda" %}
+          tags: [framework:cuda]
+{%- when "opencl" %}
+          tags: [framework:opencl]
+{%- when "default" %}
+          tags: [framework:opencl,framework:cuda]
+{%- else %}
+          tags: []
+{%- endmatch %}

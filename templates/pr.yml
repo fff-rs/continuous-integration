@@ -13,8 +13,10 @@
     - get: {{ pr_juice }}
       trigger: true
       version: every
+{% include "tags8.yml" %}
 
     - put: pr-juice-stat
+{% include "tags8.yml" %}
       resource: {{ pr_juice }}
       get_params:
         skip_download: true
@@ -25,6 +27,7 @@
         status: pending
 
     - get: container-{{ ext }}
+{% include "tags8.yml" %}
       trigger: true
 
     - in_parallel:
@@ -52,6 +55,7 @@
               dir: {{ pr_juice }}/rust-blas
           on_failure:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -62,6 +66,7 @@
               status: failure
           on_success:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -96,6 +101,7 @@
               dir: {{ pr_juice }}/rcudnn
           on_failure:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -106,6 +112,7 @@
               status: failure
           on_success:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -138,6 +145,7 @@
               dir: {{ pr_juice }}/rcublas
           on_failure:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -148,6 +156,7 @@
               status: failure
           on_success:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -178,6 +187,7 @@
               dir: {{ pr_juice }}/coaster
           on_failure:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -188,6 +198,7 @@
               status: failure
           on_success:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -216,6 +227,7 @@
               dir: {{ pr_juice }}/coaster-nn
           on_failure:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -226,6 +238,7 @@
               status: failure
           on_success:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -254,6 +267,7 @@
               dir: {{ pr_juice }}/coaster-blas
           on_failure:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -264,6 +278,7 @@
               status: failure
           on_success:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -292,6 +307,7 @@
               dir: {{ pr_juice }}/greenglas
           on_failure:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -302,6 +318,7 @@
               status: failure
           on_success:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -329,6 +346,7 @@
               dir: {{ pr_juice }}/juice
           on_failure:
             put: pr-juice-stat
+{% include "tagsC.yml" %}
             resource: {{ pr_juice }}
             get_params:
               skip_download: true
@@ -340,6 +358,7 @@
           on_success:
             in_parallel:
             - put: pr-juice-stat
+{% include "tagsE.yml" %}
               resource: {{ pr_juice }}
               get_params:
                 skip_download: true
@@ -349,6 +368,7 @@
                 context: juice-{{ backend.execute }}-{{ ext }}
                 status: success
             - put: {{ pr_juice }}-stat
+{% include "tagsE.yml" %}
               resource: {{ pr_juice }}
               get_params:
                 skip_download: true
@@ -360,6 +380,7 @@
 
         on_failure:
           put: {{ pr_juice }}-stat
+{% include "tagsA.yml" %}
           resource: {{ pr_juice }}
           params:
             path: {{ pr_juice }}
