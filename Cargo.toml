@@ -8,7 +8,7 @@ edition = "2018"
 dirs = "4"
 fs-err = "2"
 askama = "0.10"
-regex = "1"
+regex = "1.5.5"
 lazy_static = "1"
 anyhow = "1"
 
