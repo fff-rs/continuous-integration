@@ -29,31 +29,13 @@
         context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
         status: pending
 
-{%- match backend.as_str() %}
-{%- when "cuda" %}
-{%- when "opencl" %}
-{%- when "default" %}
-{%- else %}
     - get: container-{{ ext }}
 {% include "tags8.yml" %}
       trigger: true
-{%- endmatch %}
+
     - in_parallel:
       - task: pr-example-build-{{ example }}-{{ backend.execute }}-{{ ext }}
-{%- match backend.as_str() -%}
-{%- when "cuda" %}
-        image: container-{{ testenv }}-{{ backend }}
-        tags: [framework:cuda]
-{%- when "opencl" %}
-        image: container-{{ testenv }}-{{ backend }}
-        tags: [framework:opencl]
-{%- when "default" %}
-        image: container-{{ testenv }}-{{ backend }}
-        tags: [framework:opencl,framework:cuda]
-{%- else %}
-        image: container-{{ testenv }}-{{ backend }}
-        tags: []
-{%- endmatch %}
+{% include "tagsnimage2.yml" %}
         config:
           platform: linux
           inputs:
