@@ -18,7 +18,7 @@
       trigger: true
       version: every
 
-    - put: {{ pr_juice }}-stat
+    - put: pr-juice-stat
       resource: {{ pr_juice }}
 {% include "tags8.yml" %}
       get_params:
@@ -33,7 +33,7 @@
 {% include "tags8.yml" %}
       trigger: true
 
-    - in_parallel:
+    - do:
       - task: pr-example-build-{{ example }}-{{ backend.execute }}-{{ ext }}
 {% include "tagsnimage2.yml" %}
         config:
@@ -73,55 +73,67 @@
 
             dir: {{ pr_juice }}/juice-examples
 
-        on_success:
-          in_parallel:
-          - task: pr-example-run-{{ example }}-{{ backend.execute }}-{{ ext }}
-  {%- match backend.as_str() -%}
-  {%- when "cuda" %}
-            image: container-{{ testenv }}-{{ backend }}
-            tags: [framework:cuda]
-  {%- when "opencl" %}
-            image: container-{{ testenv }}-{{ backend }}
-            tags: [framework:opencl]
-  {%- when "default" %}
-            image: container-{{ testenv }}-{{ backend }}
-            tags: [framework:opencl,framework:cuda]
-  {%- else %}
-            image: container-{{ testenv }}-{{ backend }}
-            tags: []
-  {%- endmatch %}
-            config:
-              platform: linux
-              timeout: 20m
-              inputs:
-              - name: {{ pr_juice }}
-              - name: example-binary
-              run:
-                path: sh
-                args:
-                - -exc
-                - |
-                  export RUST_LOG=juice=debug
-                  export RUST_BACKTRACE=1
+        # building
+        on_failure:
+          put: pr-juice-stat
+          resource: {{ pr_juice }}
+{% include "tagsA.yml" %}
+          get_params:
+            skip_download: true
+          params:
+            path: {{ pr_juice }}
+            base_context: sirmergealot
+            context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
+            status: failure
 
-                  cd {{ example }}
-                  prepare
+        on_success:
+          task: pr-example-run-{{ example }}-{{ backend.execute }}-{{ ext }}
+{%- match backend.as_str() -%}
+{%- when "cuda" %}
+          image: container-{{ testenv }}-{{ backend }}
+          tags: [framework:cuda]
+{%- when "opencl" %}
+          image: container-{{ testenv }}-{{ backend }}
+          tags: [framework:opencl]
+{%- when "default" %}
+          image: container-{{ testenv }}-{{ backend }}
+          tags: [framework:opencl,framework:cuda]
+{%- else %}
+          image: container-{{ testenv }}-{{ backend }}
+          tags: []
+{%- endmatch %}
+          config:
+            platform: linux
+            timeout: 20m
+            inputs:
+            - name: {{ pr_juice }}
+            - name: example-binary
+            run:
+              path: sh
+              args:
+              - -exc
+              - |
+                export RUST_LOG=juice=debug
+                export RUST_BACKTRACE=1
+
+                cd {{ example }}
+                prepare
 
 {%- for cmd in cmdseq %}
 {%- match backend.as_str() -%}
 {%- when "cuda" %}
-                  ../../../example-binary/{{ example }} {{ cmd }}
+                ../../../example-binary/{{ example }} {{ cmd }}
 {%- when "default" %}
-                  ../../../example-binary/{{ example }} {{ cmd }}
+                ../../../example-binary/{{ example }} {{ cmd }}
 {%- else %}
-                  echo "Can only execute on backends w/ cuda for now, skipping."
+                echo "Can only execute on backends w/ cuda for now, skipping."
 {%- endmatch %}
 {%- endfor %}
-                dir: {{ pr_juice }}/juice-examples
+              dir: {{ pr_juice }}/juice-examples
 
           # execution
           on_failure:
-            put: {{ pr_juice }}-stat
+            put: pr-juice-stat
             resource: {{ pr_juice }}
 {% include "tagsC.yml" %}
             get_params:
@@ -131,9 +143,9 @@
               base_context: sirmergealot
               context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
               status: failure
-          # execution
+        # execution
           on_success:
-            put: {{ pr_juice }}-stat
+            put: pr-juice-stat
             resource: {{ pr_juice }}
 {% include "tagsC.yml" %}
             get_params:
@@ -144,17 +156,5 @@
               context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
               status: success
 
-        # building
-        on_failure:
-          put: {{ pr_juice }}-stat
-          resource: {{ pr_juice }}
-{% include "tagsA.yml" %}
-          get_params:
-            skip_download: true
-          params:
-            path: {{ pr_juice }}
-            base_context: sirmergealot
-            context: example-{{ example }}-{{ backend.execute }}-{{ ext }}
-            status: failure
 
 {%- endfor %}

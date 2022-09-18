@@ -21,7 +21,7 @@
       get_params:
         skip_download: true
       params:
-        path: {{ pr_juice }}
+        path: pr-juice
         base_context: sirmergealot
         context: greenlit-{{ ext }}
         status: pending
@@ -106,7 +106,7 @@
             get_params:
               skip_download: true
             params:
-              path: {{ pr_juice }}
+              path: pr-juice
               base_context: sirmergealot
               context: rcudnn-{{ backend.execute }}-{{ ext }}
               status: failure
@@ -168,6 +168,7 @@
 {% else -%}
       # no special treament for {{ backend.name }}
 {% endmatch %}
+
         - task: pr-coaster-{{ backend.execute }}-{{ ext }}
 {% include "tagsnimage.yml" %}
           config:
@@ -367,7 +368,7 @@
                 base_context: sirmergealot
                 context: juice-{{ backend.execute }}-{{ ext }}
                 status: success
-            - put: {{ pr_juice }}-stat
+            - put: pr-juice-stat
 {% include "tagsE.yml" %}
               resource: {{ pr_juice }}
               get_params:
@@ -379,7 +380,7 @@
                 status: success
 
         on_failure:
-          put: {{ pr_juice }}-stat
+          put: pr-juice-stat
 {% include "tagsA.yml" %}
           resource: {{ pr_juice }}
           params:

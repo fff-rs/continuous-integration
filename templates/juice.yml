@@ -7,19 +7,21 @@ resource_types:
 
 resources:
 
+### DOC ###
+
 {% include "doc-resources.yml" %}
 
+### PULL REQUEST ###
+
 {% include "pr-resources.yml" %}
+
+### MASTER ###
 
 {% include "master-resources.yml" %}
 
 
 {% for testenv in testenvs %}
 {% for backend in testenv.backends %}
-# TODO XXX currently there is a hack in place which puts
-# TODO XXX a containerless concourse worker into the container
-# TODO XXX as such this is not needed for default,cuda,opencl backends
-# once fixed, use the "container-resources.yml" again
 - name: container-{{ testenv }}-{{ backend }}
   type: registry-image
 {% include "tags2.yml" %}
@@ -54,8 +56,14 @@ groups:
 
 jobs:
 
+### DOC ###
+
 {% include "doc.yml" %}
 
+### PULL REQUEST ###
+
 {% include "pr.yml" %}
+
+### MASTER ###
 
 {% include "master.yml" %}

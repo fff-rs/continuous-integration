@@ -1,5 +1,7 @@
 - name: juice
   type: git
+  check_every: 3h
+  webhook_token: ((juice-webhook-token))
   source:
     branch: master
     uri: https://github.com/spearow/juice.git
