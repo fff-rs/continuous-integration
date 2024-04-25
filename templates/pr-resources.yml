@@ -3,6 +3,6 @@
   check_every: 3h
   webhook_token: ((juice-pr-webhook-token))
   source:
-    repository: spearow/juice
+    repository: fff-rs/juice
     access_token: ((sirmergealot-github-token))
     required_review_approvals: 0

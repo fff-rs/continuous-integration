@@ -4,4 +4,4 @@
   webhook_token: ((juice-webhook-token))
   source:
     branch: master
-    uri: https://github.com/spearow/juice.git
+    uri: https://github.com/fff-rs/juice.git

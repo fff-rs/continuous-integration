@@ -2,8 +2,8 @@
 - name: container-{{ testenv }}-base
   type: registry-image
   source:
-    repository: quay.io/spearow/machine-learning-container-{{ testenv }}-base
+    repository: quay.io/fff/machine-learning-container-{{ testenv }}-base
     tag: latest
-    username: ((quay-spearow-username))
-    password: ((quay-spearow-password))
+    username: ((quay-fff-username))
+    password: ((quay-fff-password))
 {% endfor %}

@@ -3,13 +3,10 @@
   type: git
   source:
     branch: gh-pages
-    uri: git@github.com:spearow/juice.git
+    uri: git@github.com:fff-rs/juice.git
     private_key: ((sirmergealot-ssh-key))
     git_config:
     - name: user.email
-      value: sirmergealot@spearow.io
+      value: sirmergealot@fff.rs
     - name: user.name
       value: "Sir Mergealot"
-
-
-

@@ -67,7 +67,7 @@ fn get_backends(directory: &Path) -> Result<Vec<Backend>> {
 fn run() -> Result<()> {
     let cwd: PathBuf = env::current_dir().unwrap_or(
         PathBuf::from("HOME")
-            .join("spearow")
+            .join("fff")
             .join("continuous-integration"),
     );
 

@@ -6,14 +6,14 @@ resources:
   type: registry-image
 {% include "tags2.yml" %}
   source:
-    repository: quay.io/spearow/machine-learning-container-{{ testenv }}-{{ backend }}
+    repository: quay.io/fff/machine-learning-container-{{ testenv }}-{{ backend }}
 {%- endfor -%}
 {%- endfor %}
 
 # - name: container-misc
 #   type: registry-image
 #   source:
-#     repository: quay.io/spearow/doc-gen-container
+#     repository: quay.io/fff/doc-gen-container
 
 {% include "master-resources.yml" %}
 

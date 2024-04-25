@@ -26,18 +26,18 @@ resources:
   type: registry-image
 {% include "tags2.yml" %}
   source:
-    repository: quay.io/spearow/machine-learning-container-{{ testenv }}-{{ backend }}
-    username: ((quay-spearow-username))
-    password: ((quay-spearow-password))
+    repository: quay.io/fff/machine-learning-container-{{ testenv }}-{{ backend }}
+    username: ((quay-fff-username))
+    password: ((quay-fff-password))
 {%- endfor -%}
 {%- endfor %}
 
 - name: container-misc
   type: registry-image
   source:
-    repository: quay.io/spearow/doc-gen-container
-    username: ((quay-spearow-username))
-    password: ((quay-spearow-password))
+    repository: quay.io/fff/doc-gen-container
+    username: ((quay-fff-username))
+    password: ((quay-fff-password))
 
 groups:
 - name: master

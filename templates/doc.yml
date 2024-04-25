@@ -33,7 +33,7 @@
     #         cp -rf greenglas/target/doc/* doc-greenglas-updated/
     #         cd doc-greenglas-updated
     #         echo "<meta http-equiv=refresh content=0;url=greenglas/index.html>" > index.html
-    #         git config --global user.email "sirmergealot@spearow.io"
+    #         git config --global user.email "sirmergealot@fff.rs"
     #         git config --global user.name "Sir Mergealot"
     #         git add -A && git commit -m"doc/automatic: update" || true
 
@@ -71,7 +71,7 @@
 
             cd docs-updated
             echo "<meta http-equiv=refresh content=0;url=juice/index.html>" > index.html
-            git config --global user.email "sirmergealot@spearow.io"
+            git config --global user.email "sirmergealot@fff.rs"
             git config --global user.name "Sir Mergealot"
             git add -A && git commit -m"docs/automatic: update" || true
           dir: juice
