@@ -8,7 +8,9 @@ Since the integration into the workspace repo, currently there is only the overa
 
 | Project          | Status |
 | ---------------- | --- |
-| juice | [![Build Status juice](https://ci.fff.rs/api/v1/teams/fff/pipelines/juice/jobs/test-juice/badge)](https://ci.fff.rs/teams/fff/pipelines/juice) |
+| juice (default) | [![Build Status juice (default)](https://ci.fff.rs/api/v1/teams/fff/pipelines/juice/jobs/test-juice-fedora-default/badge)](https://ci.fff.rs/teams/fff/pipelines/juice) |
+| juice (native) | [![Build Status juice (native)](https://ci.fff.rs/api/v1/teams/fff/pipelines/juice/jobs/test-juice-fedora-native/badge)](https://ci.fff.rs/teams/fff/pipelines/juice) |
+| juice (cuda) | [![Build Status juice (cuda)](https://ci.fff.rs/api/v1/teams/fff/pipelines/juice/jobs/test-juice-fedora-cuda/badge)](https://ci.fff.rs/teams/fff/pipelines/juice) |
 
 ## Base
 
