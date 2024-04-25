@@ -10,8 +10,8 @@ dnf install -y dnf-plugins-core \
 			cuda-cudnn-devel \
 			cuda \
 			cuda-devel \
-			cuda-cublas \
-			cuda-cublas-devel \
+			libcublas \
+			libcublas-devel \
 			cuda-cudart \
 			cuda-cudart-devel \
 			clinfo \
